@@ -1,0 +1,125 @@
+/* Tailwind CSS custom animation utilities for slide animations */
+@layer utilities {
+  /* Slide out animations */
+  @utility slide-out-to-right-* {
+    animation: slideOutRight 0.2s ease-in forwards;
+  }
+
+  @utility slide-out-to-left-* {
+    animation: slideOutLeft 0.2s ease-in forwards;
+  }
+
+  @utility slide-out-to-bottom-* {
+    animation: slideOutDown 0.2s ease-in forwards;
+  }
+
+  @utility slide-out-to-top-* {
+    animation: slideOutUp 0.2s ease-in forwards;
+  }
+
+  /* Slide in animations */
+  @utility slide-in-from-right-* {
+    animation: slideInRight 0.2s ease-out forwards;
+  }
+
+  @utility slide-in-from-left-* {
+    animation: slideInLeft 0.2s ease-out forwards;
+  }
+
+  @utility slide-in-from-bottom-* {
+    animation: slideInDown 0.2s ease-out forwards;
+  }
+
+  @utility slide-in-from-top-* {
+    animation: slideInUp 0.2s ease-out forwards;
+  }
+}
+
+/* Animation keyframes */
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutUp {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
