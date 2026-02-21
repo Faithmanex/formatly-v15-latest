@@ -12,7 +12,6 @@ export type Database = {
           document_limit: number
           documents_used: number
           subscription_id: string | null
-          stripe_customer_id: string | null
           created_at: string
           updated_at: string
         }
@@ -25,7 +24,6 @@ export type Database = {
           document_limit?: number
           documents_used?: number
           subscription_id?: string | null
-          stripe_customer_id?: string | null
         }
         Update: {
           full_name?: string | null
@@ -34,7 +32,6 @@ export type Database = {
           document_limit?: number
           documents_used?: number
           subscription_id?: string | null
-          stripe_customer_id?: string | null
         }
       }
       documents: {
@@ -199,8 +196,6 @@ export type Database = {
           document_limit: number
           features: any
           is_active: boolean
-          stripe_price_id_monthly: string | null
-          stripe_price_id_yearly: string | null
           created_at: string
           updated_at: string
         }
@@ -212,8 +207,6 @@ export type Database = {
           document_limit: number
           features?: any
           is_active?: boolean
-          stripe_price_id_monthly?: string | null
-          stripe_price_id_yearly?: string | null
         }
         Update: {
           name?: string
@@ -223,8 +216,6 @@ export type Database = {
           document_limit?: number
           features?: any
           is_active?: boolean
-          stripe_price_id_monthly?: string | null
-          stripe_price_id_yearly?: string | null
         }
       }
       subscriptions: {
@@ -240,8 +231,6 @@ export type Database = {
           canceled_at: string | null
           trial_start: string | null
           trial_end: string | null
-          stripe_subscription_id: string | null
-          stripe_customer_id: string | null
           created_at: string
           updated_at: string
         }
@@ -256,8 +245,6 @@ export type Database = {
           canceled_at?: string | null
           trial_start?: string | null
           trial_end?: string | null
-          stripe_subscription_id?: string | null
-          stripe_customer_id?: string | null
         }
         Update: {
           plan_id?: string
@@ -269,8 +256,6 @@ export type Database = {
           canceled_at?: string | null
           trial_start?: string | null
           trial_end?: string | null
-          stripe_subscription_id?: string | null
-          stripe_customer_id?: string | null
         }
       }
       invoices: {
@@ -278,7 +263,6 @@ export type Database = {
           id: string
           user_id: string
           subscription_id: string | null
-          stripe_invoice_id: string | null
           amount_due: number
           amount_paid: number
           currency: string
@@ -295,9 +279,6 @@ export type Database = {
         }
         Insert: {
           user_id: string
-          subscription_id?: string | null
-          stripe_invoice_id?: string | null
-          amount_due: number
           amount_paid?: number
           currency?: string
           status: "draft" | "open" | "paid" | "void" | "uncollectible"
@@ -311,7 +292,6 @@ export type Database = {
         }
         Update: {
           subscription_id?: string | null
-          stripe_invoice_id?: string | null
           amount_due?: number
           amount_paid?: number
           currency?: string
@@ -327,9 +307,7 @@ export type Database = {
       }
       payment_methods: {
         Row: {
-          id: string
           user_id: string
-          stripe_payment_method_id: string
           type: string
           card_brand: string | null
           card_last4: string | null
@@ -339,9 +317,7 @@ export type Database = {
           created_at: string
           updated_at: string
         }
-        Insert: {
           user_id: string
-          stripe_payment_method_id: string
           type: string
           card_brand?: string | null
           card_last4?: string | null
@@ -350,7 +326,6 @@ export type Database = {
           is_default?: boolean
         }
         Update: {
-          stripe_payment_method_id?: string
           type?: string
           card_brand?: string | null
           card_last4?: string | null

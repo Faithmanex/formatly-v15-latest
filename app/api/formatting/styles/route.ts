@@ -39,7 +39,6 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    console.log("[v0] Fetching formatting styles from FastAPI")
 
     const fastApiResponse = await fetch(`${FASTAPI_BASE_URL}/api/formatting/styles`, {
       method: "GET",
@@ -50,20 +49,19 @@ export async function GET(request: NextRequest) {
     })
 
     if (!fastApiResponse.ok) {
-      console.error("[v0] FastAPI styles fetch failed:", fastApiResponse.status, fastApiResponse.statusText)
+      console.error("FastAPI styles fetch failed:", fastApiResponse.status, fastApiResponse.statusText)
       const response = NextResponse.json(defaultStyles)
       response.headers.set("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400")
       return response
     }
 
     const result = await fastApiResponse.json()
-    console.log("[v0] FastAPI styles fetched successfully")
 
     const response = NextResponse.json(result)
     response.headers.set("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400")
     return response
   } catch (error) {
-    console.error("[v0] Styles endpoint error:", error)
+    console.error("Styles endpoint error:", error)
     const response = NextResponse.json(defaultStyles)
     response.headers.set("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400")
     return response

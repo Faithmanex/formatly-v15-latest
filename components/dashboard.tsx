@@ -92,7 +92,6 @@ export function Dashboard() {
 
     // Only redirect if auth is fully initialized and user is not authenticated
     if (isInitialized && !authLoading && !user) {
-      console.log("Unauthorized access to dashboard, redirecting to homepage")
       router.push("/")
       return
     }

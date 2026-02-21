@@ -37,8 +37,6 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.log("[v0] Listing jobs for user:", user.id)
-
     const {
       data: { session },
     } = await supabase.auth.getSession()
@@ -54,7 +52,7 @@ export async function GET(request: NextRequest) {
     })
 
     if (!fastApiResponse.ok) {
-      console.error("[v0] FastAPI list jobs failed:", fastApiResponse.status, fastApiResponse.statusText)
+      console.error("FastAPI list jobs failed:", fastApiResponse.status, fastApiResponse.statusText)
       return NextResponse.json(
         { success: false, error: `Jobs service unavailable: ${fastApiResponse.statusText}` },
         { status: fastApiResponse.status },
@@ -62,14 +60,13 @@ export async function GET(request: NextRequest) {
     }
 
     const result = await fastApiResponse.json()
-    console.log("[v0] FastAPI list jobs successful")
 
     const response = NextResponse.json(result)
     response.headers.set("Cache-Control", "no-store, must-revalidate")
 
     return response
   } catch (error) {
-    console.error("[v0] Jobs endpoint error:", error)
+    console.error("Jobs endpoint error:", error)
 
     if (error instanceof Error && error.name === "TimeoutError") {
       return NextResponse.json({ success: false, error: "Jobs service timeout" }, { status: 504 })

@@ -37,7 +37,7 @@ export async function POST(request: Request) {
         await handlePaymentCompleted(supabase, body.resource)
         break
       default:
-        console.log("[PAYPAL WEBHOOK] Unhandled event type:", body.event_type)
+        break
     }
 
     return Response.json({ success: true })
@@ -48,7 +48,6 @@ export async function POST(request: Request) {
 }
 
 async function handleSubscriptionCreated(supabase: any, resource: any) {
-  console.log("[PAYPAL WEBHOOK] Subscription created:", resource.id)
 
   // Update subscription with PayPal subscription ID
   const { error } = await supabase
@@ -66,7 +65,6 @@ async function handleSubscriptionCreated(supabase: any, resource: any) {
 }
 
 async function handleSubscriptionUpdated(supabase: any, resource: any) {
-  console.log("[PAYPAL WEBHOOK] Subscription updated:", resource.id)
 
   const statusMap: Record<string, string> = {
     APPROVAL_PENDING: "trialing",
@@ -91,7 +89,6 @@ async function handleSubscriptionUpdated(supabase: any, resource: any) {
 }
 
 async function handleSubscriptionCancelled(supabase: any, resource: any) {
-  console.log("[PAYPAL WEBHOOK] Subscription cancelled:", resource.id)
 
   const { error } = await supabase
     .from("subscriptions")
@@ -108,7 +105,6 @@ async function handleSubscriptionCancelled(supabase: any, resource: any) {
 }
 
 async function handleSubscriptionSuspended(supabase: any, resource: any) {
-  console.log("[PAYPAL WEBHOOK] Subscription suspended:", resource.id)
 
   const { error } = await supabase
     .from("subscriptions")
@@ -124,7 +120,6 @@ async function handleSubscriptionSuspended(supabase: any, resource: any) {
 }
 
 async function handlePaymentCompleted(supabase: any, resource: any) {
-  console.log("[PAYPAL WEBHOOK] Payment completed:", resource.id)
 
   // Create invoice record for payment
   const { error } = await supabase.from("invoices").insert({

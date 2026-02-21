@@ -8,8 +8,6 @@ const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT || "30000")
 
 export async function POST(request: NextRequest) {
   try {
-    console.log("[v0] Document upload request received")
-
     const supabase = createSupabaseServerClient()
     const {
       data: { user },
@@ -68,14 +66,6 @@ export async function POST(request: NextRequest) {
 
     const validatedData = validation.data as FileUploadData
 
-    console.log("[v0] Forwarding upload request to FastAPI:", {
-      filename: validatedData.filename,
-      fileSize: validatedData.file_size,
-      style: validatedData.style,
-      userId: user.id,
-      fastApiUrl: FASTAPI_BASE_URL,
-    })
-
     const fastApiFormData = new FormData()
     fastApiFormData.append("filename", validatedData.filename)
     fastApiFormData.append("style", validatedData.style)
@@ -109,14 +99,13 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await fastApiResponse.json()
-    console.log("[v0] FastAPI upload successful:", result)
 
     const response = NextResponse.json(result)
     response.headers.set("Cache-Control", "no-store, must-revalidate")
 
     return response
   } catch (error) {
-    console.error("[v0] Upload endpoint error:", error)
+    console.error("Upload endpoint error:", error)
 
     if (error instanceof Error && error.name === "TimeoutError") {
       return NextResponse.json({ success: false, error: "Upload service timeout" }, { status: 504 })

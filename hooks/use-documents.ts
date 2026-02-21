@@ -44,9 +44,7 @@ export function useDocuments() {
     onError: (error) => {
       console.error("[v0] Documents fetch error:", error)
     },
-    onSuccess: (data) => {
-      console.log("[v0] Documents loaded successfully:", data?.length || 0)
-    },
+    onSuccess: (data) => {},
   })
 
   const uploadDocument = useCallback(
@@ -54,7 +52,6 @@ export function useDocuments() {
       if (!user?.id) throw new Error("User not authenticated")
 
       try {
-        console.log("[v0] Uploading document:", file.name)
 
         const optimisticDoc: Document = {
           id: `temp_${Date.now()}`,
@@ -96,7 +93,6 @@ export function useDocuments() {
       if (!user?.id) throw new Error("User not authenticated")
 
       try {
-        console.log("[v0] Deleting document:", documentId)
 
         const currentDocs = documents || []
         const optimisticDocs = currentDocs.filter((doc) => doc.id !== documentId)

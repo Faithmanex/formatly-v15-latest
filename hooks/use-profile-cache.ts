@@ -49,14 +49,12 @@ export function useProfileCache() {
   }, [user, updateCacheStatus])
 
   const forceRefresh = useCallback(async () => {
-    console.log("Force refreshing profile cache")
     ProfileCacheService.forceRefresh()
     await refreshProfile(true)
     updateCacheStatus()
   }, [refreshProfile, updateCacheStatus])
 
   const clearCache = useCallback(() => {
-    console.log("Manually clearing profile cache")
     ProfileCacheService.clearProfileCache()
     updateCacheStatus()
   }, [updateCacheStatus])

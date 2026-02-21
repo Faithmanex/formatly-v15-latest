@@ -34,9 +34,7 @@ export function useSubscriptionData() {
     onError: (error) => {
       console.error("[v0] Subscription fetch error:", error)
     },
-    onSuccess: (data) => {
-      console.log("[v0] Subscription data loaded successfully")
-    },
+    onSuccess: (data) => {},
   })
 
   const loadFullSubscriptionData = useCallback(async () => {
@@ -46,12 +44,10 @@ export function useSubscriptionData() {
     const cached = getCache<SubscriptionData>(cacheKey)
 
     if (cached) {
-      console.log("[v0] Using cached full subscription data")
       return cached
     }
 
     try {
-      console.log("[v0] Loading full subscription data from API")
 
       const [subscription, usage, limits] = await Promise.allSettled([
         getUserSubscription(user.id),
@@ -76,8 +72,6 @@ export function useSubscriptionData() {
 
   const refreshAll = useCallback(async () => {
     if (!user?.id) return
-
-    console.log("[v0] Refreshing all subscription data")
 
     // Clear all subscription caches
     clearCache(`subscription_${user.id}`)

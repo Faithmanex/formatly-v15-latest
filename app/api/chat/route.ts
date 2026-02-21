@@ -52,11 +52,6 @@ export async function POST(request: NextRequest) {
             }
           }
           
-          // Log completion (optional, harder to get full text in stream without buffering)
-          console.log("AI Stream completed", {
-            userId: user.id,
-            timestamp: new Date().toISOString()
-          })
           
           controller.close()
         } catch (error) {

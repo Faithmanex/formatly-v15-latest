@@ -33,7 +33,6 @@ export function useNotifications() {
 
   const addNotification = (notification: any) => {
     // This is now handled automatically by real-time subscriptions
-    console.log("New notification will be added automatically via real-time subscription")
   }
 
   const retry = () => {

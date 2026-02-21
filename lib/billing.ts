@@ -212,7 +212,7 @@ export async function createSubscription(
   userId: string,
   planId: string,
   billingCycle: "monthly" | "yearly" = "monthly",
-  stripeSubscriptionId?: string,
+  paypalSubscriptionId?: string,
 ): Promise<Subscription> {
   const supabase = getSupabase()
   const now = new Date()
@@ -236,7 +236,7 @@ export async function createSubscription(
   const subscriptionData = {
     user_id: userId,
     plan_id: planId,
-    paypal_subscription_id: stripeSubscriptionId,
+    paypal_subscription_id: paypalSubscriptionId,
     status: "active" as const,
     billing_cycle: billingCycle,
     current_period_start: now.toISOString(),
@@ -371,7 +371,6 @@ export async function addPaymentMethod(
   },
 ): Promise<PaymentMethod> {
   const supabase = getSupabase()
-  // In a real app, this would create the payment method with Stripe first
   const last4 = paymentMethod.number.slice(-4)
   const brand = "visa" // This would be determined by the card number
 
@@ -600,64 +599,6 @@ export async function checkUsageLimits(
   }
 }
 
-export async function simulatePayPalCheckout(params: {
-  planId: string
-  userId: string
-  billingCycle: "monthly" | "yearly"
-}): Promise<{ success: boolean; subscriptionId?: string; error?: string }> {
-  try {
-    const currentSubscription = await getUserSubscription(params.userId)
-    const newPlan = await getSubscriptionPlan(params.planId)
-
-    if (!newPlan) {
-      return { success: false, error: "Invalid plan selected" }
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    let result: SubscriptionChangeResult
-
-    if (!currentSubscription || currentSubscription.plan?.name === "Free") {
-      result = await handleSubscriptionUpgrade(params.userId, params.planId, params.billingCycle)
-    } else {
-      const currentPlan = currentSubscription.plan
-      const isUpgrade = newPlan.price_monthly > (currentPlan?.price_monthly || 0)
-
-      if (isUpgrade) {
-        result = await handleSubscriptionUpgrade(params.userId, params.planId, params.billingCycle)
-      } else {
-        result = await handleSubscriptionDowngrade(params.userId, params.planId)
-      }
-    }
-
-    if (result.success && result.effective_immediately) {
-      const amount = params.billingCycle === "yearly" ? newPlan.price_yearly : newPlan.price_monthly
-      await createInvoice({
-        user_id: params.userId,
-        subscription_id: result.subscription_id!,
-        invoice_number: `INV-${Date.now()}`,
-        amount_due: amount,
-        amount_paid: amount,
-        currency: newPlan.currency,
-        status: "paid",
-        description: `${newPlan.name} - ${params.billingCycle} subscription`,
-        due_date: new Date().toISOString(),
-        paid_at: new Date().toISOString(),
-      })
-    }
-
-    return {
-      success: result.success,
-      subscriptionId: result.subscription_id,
-      error: result.error,
-    }
-  } catch (error) {
-    console.error("Error in PayPal checkout:", error)
-    return { success: false, error: "Payment processing failed" }
-  }
-}
-
-export const simulateStripeCheckout = simulatePayPalCheckout
 
 // Handle subscription upgrades
 export async function handleSubscriptionUpgrade(
@@ -847,7 +788,6 @@ export const subscriptionService = {
   createSubscription,
   updateSubscription,
   cancelSubscription,
-  simulateStripeCheckout,
   handleSubscriptionUpgrade,
   handleSubscriptionDowngrade,
   getSubscriptionStatusWithPending,

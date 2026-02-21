@@ -20,20 +20,8 @@ export async function POST(request: NextRequest) {
       formData.set("style", style.toLowerCase())
     }
 
-    console.log("[v0] Create upload route - received request with formData keys:", Array.from(formData.keys()))
-
     const fastApiUrl = process.env.FASTAPI_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
-
-    console.log("[v0] FastAPI Configuration Check:", {
-      FASTAPI_BASE_URL: process.env.FASTAPI_BASE_URL || "not set",
-      NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || "not set",
-      resolvedUrl: fastApiUrl,
-      nodeEnv: process.env.NODE_ENV,
-      userId: user.id,
-    })
-
     const fullUrl = `${fastApiUrl}/api/documents/create-upload`
-    console.log("[v0] Attempting to connect to FastAPI:", fullUrl)
 
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 10000)
@@ -54,11 +42,10 @@ export async function POST(request: NextRequest) {
       })
 
       clearTimeout(timeoutId)
-      console.log("[v0] FastAPI response received:", response.status, response.statusText)
 
       if (!response.ok) {
         const errorText = await response.text()
-        console.error("[v0] FastAPI create-upload error:", response.status, errorText)
+        console.error("FastAPI create-upload error:", response.status, errorText)
         return NextResponse.json(
           {
             error: "Failed to create upload URL",
@@ -71,18 +58,13 @@ export async function POST(request: NextRequest) {
       }
 
       const data = await response.json()
-      console.log("[v0] FastAPI response success:", {
-        success: data.success,
-        hasJobId: !!data.job_id,
-        hasUploadUrl: !!data.upload_url,
-      })
       return NextResponse.json(data)
     } catch (fetchError) {
       clearTimeout(timeoutId)
 
       if (fetchError instanceof Error) {
         if (fetchError.name === "AbortError") {
-          console.error("[v0] FastAPI connection timeout after 10 seconds")
+          console.error("FastAPI connection timeout after 10 seconds")
           return NextResponse.json(
             {
               error: "FastAPI backend connection timeout",
@@ -103,7 +85,7 @@ export async function POST(request: NextRequest) {
         }
 
         if (fetchError.message.includes("ECONNREFUSED") || fetchError.message.includes("fetch")) {
-          console.error("[v0] FastAPI connection refused:", fetchError.message)
+          console.error("FastAPI connection refused:", fetchError.message)
           return NextResponse.json(
             {
               error: "Cannot connect to FastAPI backend",
@@ -127,7 +109,7 @@ export async function POST(request: NextRequest) {
       throw fetchError
     }
   } catch (error) {
-    console.error("[v0] Create upload route error:", error)
+    console.error("Create upload route error:", error)
     return NextResponse.json(
       {
         error: "Internal server error",

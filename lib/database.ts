@@ -169,7 +169,7 @@ export const profileService = {
 
   async incrementDocumentUsage(userId: string): Promise<boolean> {
     try {
-      console.log(`📊 Incrementing document usage for user: ${userId}`)
+      console.log(`Incrementing document usage for user: ${userId}`)
 
       const { data, error } = await withTimeout(
         supabase.rpc("increment_document_usage", {
@@ -193,7 +193,6 @@ export const profileService = {
             return false
           }
 
-          console.log(`✅ Document usage incremented via fallback method`)
           return true
         } catch (fallbackError) {
           console.error("Fallback increment error:", fallbackError)
@@ -201,7 +200,7 @@ export const profileService = {
         }
       }
 
-      console.log(`✅ Document usage incremented successfully`)
+      console.log(`Document usage incremented successfully`)
       return true
     } catch (error) {
       console.error("Error in incrementDocumentUsage:", error)
@@ -221,7 +220,7 @@ export const profileService = {
     days_until_reset: number
   } | null> {
     try {
-      console.log(`[v0] Getting current plan usage for user: ${userId}`)
+      console.log(`Getting current plan usage for user: ${userId}`)
 
       const { data, error } = await withTimeout(
         supabase.rpc("get_user_usage_stats", {
@@ -233,13 +232,13 @@ export const profileService = {
 
       if (error) {
         console.error("Error fetching current usage stats:", error)
-        console.log(`[v0] Attempting fallback query for usage stats`)
+        console.log(`Attempting fallback query for usage stats`)
         return await this.getCurrentPlanUsageFallback(userId)
       }
 
       if (data && data.length > 0) {
         const stats = data[0]
-        console.log(`[v0] Usage stats retrieved successfully`)
+        console.log(`Usage stats retrieved successfully`)
 
         const remainingDocuments =
           stats.documents_limit === -1 ? -1 : Math.max(0, stats.documents_limit - stats.documents_used)
@@ -272,7 +271,7 @@ export const profileService = {
         }
       }
 
-      console.log(`[v0] No usage stats found, using fallback`)
+      console.log(`No usage stats found, using fallback`)
       return await this.getCurrentPlanUsageFallback(userId)
     } catch (error) {
       console.error("Error in getCurrentPlanUsage:", error)
@@ -292,7 +291,7 @@ export const profileService = {
     days_until_reset: number
   } | null> {
     try {
-      console.log(`[v0] Using fallback method for usage stats`)
+      console.log(`Using fallback method for usage stats`)
 
       const { data: subscription, error: subError } = await withTimeout(
         supabase
@@ -316,7 +315,7 @@ export const profileService = {
       )
 
       if (subError || !subscription) {
-        console.log(`[v0] No active subscription found in fallback`)
+        console.log(`No active subscription found in fallback`)
         return null
       }
 
@@ -332,7 +331,7 @@ export const profileService = {
       const today = new Date()
       const daysUntilReset = Math.max(0, Math.ceil((periodEnd.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)))
 
-      console.log(`[v0] Fallback usage stats calculated successfully`)
+      console.log(`Fallback usage stats calculated successfully`)
 
       return {
         plan_id: subscription.plan_id,

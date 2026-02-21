@@ -53,7 +53,6 @@ export function useRealtimeData<T>(options: RealtimeDataOptions<T>) {
   useEffect(() => {
     const cachedData = getCache<T>(cacheKey, { ttl: cacheTTL })
     if (cachedData) {
-      console.log(`[v0] Loaded cached data for ${cacheKey}`)
       setState((prev) => ({
         ...prev,
         data: cachedData,
@@ -98,7 +97,6 @@ export function useRealtimeData<T>(options: RealtimeDataOptions<T>) {
 
         retryCountRef.current = 0
         onSuccess?.(data as T)
-        console.log(`[v0] Successfully fetched data for ${cacheKey}`)
       } catch (error) {
         if (!mountedRef.current) return
 
@@ -136,8 +134,6 @@ export function useRealtimeData<T>(options: RealtimeDataOptions<T>) {
   useEffect(() => {
     if (!table) return
 
-    console.log(`[v0] Setting up realtime subscription for ${table}`)
-
     const subscription = supabase
       .channel(`${table}_changes`)
       .on(
@@ -149,7 +145,6 @@ export function useRealtimeData<T>(options: RealtimeDataOptions<T>) {
           ...(filter && { filter: `${filter.column}=eq.${filter.value}` }),
         },
         (payload) => {
-          console.log(`[v0] Realtime update for ${table}:`, payload)
 
           clearCache(cacheKey)
           fetchData()
@@ -161,7 +156,6 @@ export function useRealtimeData<T>(options: RealtimeDataOptions<T>) {
 
     return () => {
       if (subscriptionRef.current) {
-        console.log(`[v0] Cleaning up realtime subscription for ${table}`)
         supabase.removeChannel(subscriptionRef.current)
       }
     }

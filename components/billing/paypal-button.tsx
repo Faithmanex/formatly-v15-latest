@@ -48,7 +48,6 @@ export function PayPalButton({ planId, planName, billingCycle, disabled = false 
         const paypalPlanId = paypalPlanIds[planKey]?.[billingCycle]
 
         if (!paypalPlanId) {
-          console.error("[v0] Invalid plan configuration:", planName, billingCycle)
           toast({
             title: "Configuration Error",
             description: "This plan is not available for PayPal subscription.",
@@ -66,14 +65,12 @@ export function PayPalButton({ planId, planName, billingCycle, disabled = false 
               label: "subscribe",
             },
             createSubscription: (data: any, actions: any) => {
-              console.log("[v0] Creating PayPal subscription:", paypalPlanId)
               return actions.subscription.create({
                 plan_id: paypalPlanId,
                 custom_id: profile.id,
               })
             },
             onApprove: async (data: any, actions: any) => {
-              console.log("[v0] PayPal subscription approved:", data.subscriptionID)
               toast({
                 title: "Subscription Successful",
                 description: `Your ${planName} subscription has been activated.`,
@@ -83,7 +80,6 @@ export function PayPalButton({ planId, planName, billingCycle, disabled = false 
               window.dispatchEvent(new Event("subscription-changed"))
             },
             onError: (err: any) => {
-              console.error("[v0] PayPal subscription error:", err)
               toast({
                 title: "Subscription Failed",
                 description: "There was an error processing your subscription. Please try again.",
@@ -96,7 +92,6 @@ export function PayPalButton({ planId, planName, billingCycle, disabled = false 
     }
 
     script.onerror = () => {
-      console.error("[v0] Failed to load PayPal script")
       toast({
         title: "Payment Error",
         description: "Failed to load PayPal. Please refresh and try again.",

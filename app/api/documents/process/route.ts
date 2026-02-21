@@ -9,8 +9,6 @@ const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT || "30000")
 
 export async function POST(request: NextRequest) {
   try {
-    console.log("[v0] Document processing request received")
-
     const supabase = createSupabaseServerClient()
     const {
       data: { user },
@@ -65,14 +63,6 @@ export async function POST(request: NextRequest) {
 
     const validatedData = validation.data as DocumentProcessData
 
-    console.log("[v0] Processing document with FastAPI:", {
-      filename: validatedData.filename,
-      style: validatedData.style,
-      englishVariant: validatedData.englishVariant,
-      userId: user.id,
-      fastApiUrl: FASTAPI_BASE_URL,
-    })
-
     const {
       data: { session },
     } = await supabase.auth.getSession()
@@ -100,14 +90,13 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await fastApiResponse.json()
-    console.log("[v0] FastAPI processing initiated:", result)
 
     const response = NextResponse.json(result)
     response.headers.set("Cache-Control", "no-store, must-revalidate")
 
     return response
   } catch (error) {
-    console.error("[v0] Processing endpoint error:", error)
+    console.error("Processing endpoint error:", error)
 
     if (error instanceof Error && error.name === "TimeoutError") {
       return NextResponse.json({ success: false, error: "Processing service timeout" }, { status: 504 })

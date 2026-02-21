@@ -43,8 +43,6 @@ export async function DELETE(request: NextRequest, { params }: { params: { jobId
       )
     }
 
-    console.log("[v0] Deleting job:", jobId, "for user:", user.id)
-
     const {
       data: { session },
     } = await supabase.auth.getSession()
@@ -59,7 +57,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { jobId
     })
 
     if (!fastApiResponse.ok) {
-      console.error("[v0] FastAPI delete job failed:", fastApiResponse.status, fastApiResponse.statusText)
+      console.error("FastAPI delete job failed:", fastApiResponse.status, fastApiResponse.statusText)
       return NextResponse.json(
         { success: false, error: `Jobs service unavailable: ${fastApiResponse.statusText}` },
         { status: fastApiResponse.status },
@@ -67,11 +65,10 @@ export async function DELETE(request: NextRequest, { params }: { params: { jobId
     }
 
     const result = await fastApiResponse.json()
-    console.log("[v0] FastAPI delete job successful")
 
     return NextResponse.json(result)
   } catch (error) {
-    console.error("[v0] Delete job endpoint error:", error)
+    console.error("Delete job endpoint error:", error)
 
     if (error instanceof Error && error.name === "TimeoutError") {
       return NextResponse.json({ success: false, error: "Jobs service timeout" }, { status: 504 })

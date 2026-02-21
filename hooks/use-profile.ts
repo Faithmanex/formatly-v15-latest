@@ -40,9 +40,7 @@ export function useProfile() {
     onError: (error) => {
       console.error("[v0] Profile fetch error:", error)
     },
-    onSuccess: (data) => {
-      console.log("[v0] Profile loaded successfully:", data?.id)
-    },
+    onSuccess: (data) => {},
   })
 
   const updateProfile = useCallback(
@@ -50,7 +48,6 @@ export function useProfile() {
       if (!user?.id || !profile) return null
 
       try {
-        console.log("[v0] Updating profile:", updates)
 
         const optimisticProfile = { ...profile, ...updates }
 

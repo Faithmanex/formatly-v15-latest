@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    console.log("[v0] Fetching English variants from FastAPI")
 
     // Forward the request to FastAPI
     const fastApiResponse = await fetch(`${FASTAPI_BASE_URL}/api/formatting/variants`, {
@@ -28,16 +27,15 @@ export async function GET(request: NextRequest) {
     })
 
     if (!fastApiResponse.ok) {
-      console.error("[v0] FastAPI variants fetch failed:", fastApiResponse.status, fastApiResponse.statusText)
+      console.error("FastAPI variants fetch failed:", fastApiResponse.status, fastApiResponse.statusText)
       return NextResponse.json(defaultVariants)
     }
 
     const result = await fastApiResponse.json()
-    console.log("[v0] FastAPI variants fetched successfully")
 
     return NextResponse.json(result)
   } catch (error) {
-    console.error("[v0] Variants endpoint error:", error)
+    console.error("Variants endpoint error:", error)
     return NextResponse.json(defaultVariants)
   }
 }
