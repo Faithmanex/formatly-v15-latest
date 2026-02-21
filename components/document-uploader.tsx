@@ -252,7 +252,7 @@ export function DocumentUploader({
         throw new Error(errorMessage)
       }
 
-      const { success, job_id, upload_url, upload_headers } = await createUploadResponse.json()
+      const { success, job_id, upload_url, upload_headers, file_path } = await createUploadResponse.json()
 
       if (!success || !upload_url) {
         throw new Error("Invalid response from create-upload endpoint")
@@ -293,7 +293,7 @@ export function DocumentUploader({
         },
         body: JSON.stringify({
           job_id: job_id,
-          file_path: upload_url,
+          file_path: file_path,
           success: true,
         }),
       })
