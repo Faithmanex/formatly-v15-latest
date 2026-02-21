@@ -29,6 +29,7 @@ import { useAuth } from "@/components/auth-provider"
 import { useSubscription, useSubscriptionStatus, useUsageLimits } from "@/contexts/subscription-context"
 import { formatDistanceToNow } from "date-fns"
 import { useRealtime } from "@/contexts/realtime-context"
+import { JobHistory } from "@/components/job-history"
 
 interface DashboardStats {
   totalDocuments: number
@@ -605,86 +606,7 @@ export function Dashboard() {
                 </Button>
               </div>
 
-              <Card className="border-border bg-card">
-                <CardHeader className="p-3 sm:p-4 pb-2 sm:pb-3">
-                  <CardTitle className="text-sm sm:text-base font-medium text-foreground">Recent Documents</CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  {documentsLoading ? (
-                    <div className="p-4 space-y-4">
-                      {[...Array(3)].map((_, i) => (
-                        <div key={i} className="flex items-center gap-3">
-                          <Skeleton className="h-10 w-10 rounded" />
-                          <div className="space-y-2 flex-1">
-                            <Skeleton className="h-4 w-3/4" />
-                            <Skeleton className="h-3 w-1/2" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : recentDocuments.length > 0 ? (
-                    <div className="divide-y divide-border">
-                      {recentDocuments.map((doc) => (
-                        <div
-                          key={doc.id}
-                          className="flex items-center justify-between p-3 sm:p-4 hover:bg-accent/50 transition-colors"
-                        >
-                          <div className="flex items-center gap-3 min-w-0 flex-1">
-                            <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-2">
-                                <p className="font-medium text-sm text-foreground truncate">{doc.original_filename}</p>
-                                {doc.tracked_changes && (
-                                  <Badge variant="outline" className="text-[10px] h-4 px-1 py-0 flex-shrink-0 border-primary/30 text-primary bg-primary/5">
-                                    Tracked
-                                  </Badge>
-                                )}
-                              </div>
-                              <p className="text-xs text-muted-foreground">
-                                {formatDistanceToNow(new Date(doc.created_at), { addSuffix: true })}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2 flex-shrink-0">
-                            <Badge className={`${getStatusColor(doc.status)} text-xs px-2 py-0.5`}>
-                              {getStatusIcon(doc.status)}
-                              <span className="ml-1 capitalize hidden sm:inline">{doc.status}</span>
-                            </Badge>
-                            {doc.status === "formatted" && (
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-8 w-8 p-0 text-primary hover:bg-primary/10"
-                                onClick={() => handleDownloadDocument(doc)}
-                                disabled={downloadingDocs.has(doc.id)}
-                              >
-                                {downloadingDocs.has(doc.id) ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <Download className="h-4 w-4" />
-                                )}
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 sm:py-12 px-4">
-                      <FileText className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
-                      <p className="text-sm text-muted-foreground">No documents yet</p>
-                      <Button
-                        size="sm"
-                        className="mt-3 bg-primary text-primary-foreground hover:bg-primary/90"
-                        onClick={() => navigateTo("/dashboard/upload")}
-                      >
-                        <Upload className="h-4 w-4 mr-2" />
-                        Upload First Document
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+              <JobHistory />
             </div>
           </div>
 
