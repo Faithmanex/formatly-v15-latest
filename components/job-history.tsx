@@ -26,6 +26,7 @@ export function JobHistory() {
   const { getToken } = useAuth()
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [downloadingId, setDownloadingId] = useState<string | null>(null)
+  const [retryingId, setRetryingId] = useState<string | null>(null)
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -104,6 +105,34 @@ export function JobHistory() {
     }
   }
 
+  const handleRetry = async (job: any) => {
+    try {
+      setRetryingId(job.id)
+      const token = await getToken()
+      const response = await fetch("/api/documents/upload-complete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: JSON.stringify({
+          job_id: job.id,
+          file_path: job.storage_location,
+          success: true,
+        }),
+      })
+
+      if (!response.ok) throw new Error("Retry failed")
+      
+      toast({ title: "Retrying", description: "Processing task restarted" })
+      refreshJobs()
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to restart process", variant: "destructive" })
+    } finally {
+      setRetryingId(null)
+    }
+  }
+
   return (
     <Card className="border-border bg-card">
       <CardHeader className="flex flex-row items-center justify-between p-4 pb-2">
@@ -179,6 +208,18 @@ export function JobHistory() {
                       disabled={downloadingId === job.id}
                     >
                       {downloadingId === job.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Download className="h-3 w-3" />}
+                    </Button>
+                  )}
+                  
+                  {job.status === "failed" && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-8 w-8 p-0 text-amber-500 hover:bg-amber-500/10"
+                      onClick={() => handleRetry(job)}
+                      disabled={retryingId === job.id}
+                    >
+                      {retryingId === job.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
                     </Button>
                   )}
                   

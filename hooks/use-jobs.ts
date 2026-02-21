@@ -15,6 +15,7 @@ export interface Job {
   tracked_changes: boolean
   formatting_time: number | null
   language_variant: string | null
+  storage_location: string | null
 }
 
 export function useJobs() {

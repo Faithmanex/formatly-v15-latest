@@ -45,8 +45,6 @@ export async function GET(request: NextRequest, { params }: { params: { jobId: s
       return NextResponse.json({ success: false, error: "Invalid job ID format" }, { status: 400 })
     }
 
-    console.log("[v0] Checking document status for job:", jobId, "user:", user.id)
-
     const {
       data: { session },
     } = await supabase.auth.getSession()
@@ -70,7 +68,6 @@ export async function GET(request: NextRequest, { params }: { params: { jobId: s
     }
 
     const result = await fastApiResponse.json()
-    console.log("[v0] FastAPI status result:", result)
 
     if (result.status === "formatted") {
       const { data: docData } = await supabase

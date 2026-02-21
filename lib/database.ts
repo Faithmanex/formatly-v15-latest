@@ -104,7 +104,6 @@ export const documentService = {
 export const profileService = {
   async getProfile(userId: string): Promise<Profile | null> {
     try {
-      console.log(`[v0] Getting profile for user: ${userId}`)
 
       const { data, error } = await withTimeout(
         supabase.from("profiles").select("*").eq("id", userId).single(),
@@ -117,7 +116,6 @@ export const profileService = {
         return null
       }
 
-      console.log(`[v0] Profile retrieved successfully`)
       return data
     } catch (error) {
       console.error("Error in getProfile:", error)
@@ -128,7 +126,6 @@ export const profileService = {
   // NEW METHOD: Added specifically for auth operations (no timeout)
   async getProfileForAuth(userId: string): Promise<Profile | null> {
     try {
-      console.log(`[AUTH] Getting profile for user: ${userId}`)
 
       // No timeout wrapper - let auth operations take as long as they need
       const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single()
@@ -138,7 +135,6 @@ export const profileService = {
         return null
       }
 
-      console.log(`[AUTH] Profile retrieved successfully`)
       return data
     } catch (error) {
       console.error("Error in getProfileForAuth:", error)

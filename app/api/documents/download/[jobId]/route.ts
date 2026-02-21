@@ -45,8 +45,6 @@ export async function GET(request: NextRequest, { params }: { params: { jobId: s
       return NextResponse.json({ success: false, error: "Invalid job ID format" }, { status: 400 })
     }
 
-    console.log("[v0] Downloading document for job:", jobId, "user:", user.id)
-
     const {
       data: { session },
     } = await supabase.auth.getSession()
@@ -70,7 +68,6 @@ export async function GET(request: NextRequest, { params }: { params: { jobId: s
     }
 
     const result = await fastApiResponse.json()
-    console.log("[v0] FastAPI download successful for job:", jobId)
 
     const response = NextResponse.json(result)
     response.headers.set("Cache-Control", "no-store, must-revalidate")
@@ -78,7 +75,7 @@ export async function GET(request: NextRequest, { params }: { params: { jobId: s
 
     return response
   } catch (error) {
-    console.error("[v0] Download endpoint error:", error)
+    console.error("Download endpoint error:", error)
 
     if (error instanceof Error && error.name === "TimeoutError") {
       return NextResponse.json({ success: false, error: "Download service timeout" }, { status: 504 })

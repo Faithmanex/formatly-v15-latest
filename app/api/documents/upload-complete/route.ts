@@ -31,11 +31,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const { job_id } = body
-
-    console.log("[v0] Upload complete webhook received for job:", job_id, "user:", user.id)
-
     const fullUrl = `${FASTAPI_BASE_URL}/api/documents/upload-complete`
-    console.log("[v0] Forwarding to FastAPI:", fullUrl)
 
     const {
       data: { session },
@@ -53,11 +49,9 @@ export async function POST(request: NextRequest) {
         signal: AbortSignal.timeout(FASTAPI_TIMEOUT),
       })
 
-      console.log("[v0] FastAPI response received:", response.status, response.statusText)
-
       if (!response.ok) {
         const errorText = await response.text()
-        console.error("[v0] FastAPI upload-complete error:", response.status, errorText)
+        console.error("FastAPI upload-complete error:", response.status, errorText)
 
         let errorMessage = "Failed to confirm upload completion"
         const details = errorText
@@ -70,7 +64,6 @@ export async function POST(request: NextRequest) {
           errorMessage = "FastAPI backend service error"
         }
 
-        console.error("[v0] Error details:", { status: response.status, details })
         return NextResponse.json(
           {
             success: false,
@@ -83,11 +76,6 @@ export async function POST(request: NextRequest) {
       }
 
       const data = await response.json()
-      console.log("[v0] Upload complete success:", {
-        success: data.success,
-        message: data.message,
-        jobId: data.job_id,
-      })
       return NextResponse.json(data)
     } catch (fetchError) {
       if (fetchError instanceof Error) {

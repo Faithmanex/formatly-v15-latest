@@ -185,11 +185,7 @@ export function DocumentUploader({
     if (!profile?.id) return
 
     try {
-      console.log("[v0] Checking document processing eligibility for user:", profile.id.slice(-8))
       const canProcessResult = await profileService.canProcessDocument(profile.id)
-      console.log("[v0] Processing eligibility result:", {
-        canProcess: canProcessResult.canProcess,
-      })
 
       if (!canProcessResult.canProcess) {
         throw new Error(canProcessResult.reason || "Document processing not allowed")
@@ -200,17 +196,6 @@ export function DocumentUploader({
       )
 
       const token = await getToken()
-
-      if (!token) {
-        throw new Error("Authentication token not available")
-      }
-
-      console.log(
-        "[v0] Requesting signed upload URL for file:",
-        uploadFileItem.file.name,
-        "size:",
-        uploadFileItem.file.size,
-      )
 
       const formData = new FormData()
       formData.append("filename", uploadFileItem.file.name)
@@ -229,8 +214,6 @@ export function DocumentUploader({
         },
         body: formData,
       })
-
-      console.log("[v0] Create upload response status:", createUploadResponse.status, createUploadResponse.statusText)
 
       if (!createUploadResponse.ok) {
         const errorData = await createUploadResponse.json().catch(() => ({ error: "Unknown error" }))

@@ -167,27 +167,33 @@ export function MyDocuments() {
 
   const handleRetryProcessing = async (document: Document) => {
     try {
-      await documentService.updateDocument(document.id, {
-        status: "processing",
+      const token = await getToken()
+      const response = await fetch("/api/documents/upload-complete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: JSON.stringify({
+          job_id: document.id,
+          file_path: document.storage_location,
+          success: true,
+        }),
       })
 
-      await notificationService.createNotification({
-        user_id: document.user_id,
-        type: "info",
-        title: "Processing Restarted",
-        message: `Reprocessing "${document.filename}" with ${document.style_applied} style.`,
-        action_url: "/dashboard/documents",
-        action_text: "View Progress",
-      })
+      if (!response.ok) {
+        throw new Error("Failed to restart processing")
+      }
 
       toast({
         title: "Success",
         description: "Document processing restarted",
       })
+      refreshAll()
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to restart processing",
+        description: error instanceof Error ? error.message : "Failed to restart processing",
         variant: "destructive",
       })
     }

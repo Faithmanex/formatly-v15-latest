@@ -121,16 +121,16 @@ export class ProfileCacheService {
       }
 
       const expiryDate = new Date(cachedData.expiresAt)
-      const cookieString = `${PROFILE_CACHE_KEY}=${cookieValue}; expires=${expiryDate.toUTCString()}; path=/; secure; samesite=strict; httponly=false`
+      const isLocal = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.protocol === "http:")
+      const cookieString = `${PROFILE_CACHE_KEY}=${cookieValue}; expires=${expiryDate.toUTCString()}; path=/; ${isLocal ? "" : "secure;"} samesite=strict; httponly=false`
 
       // Validate cookie string length
       if (cookieString.length > 4000) {
-        logger.warn("Cookie string too long", { length: cookieString.length })
         return
       }
 
       document.cookie = cookieString
-      logger.cache("Profile cached successfully", { profileId: profile.id })
+      logger.cache("Profile cached", { profileId: profile.id })
     } catch (error) {
       logger.error("Failed to cache profile", error)
     }
