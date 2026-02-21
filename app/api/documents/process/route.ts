@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { validateInput, documentProcessSchema } from "@/lib/validation"
+import { validateInput, documentProcessSchema, type DocumentProcessData } from "@/lib/validation"
 import { rateLimit, getRateLimitIdentifier, RATE_LIMITS } from "@/lib/rate-limit"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { checkUsageLimits } from "@/lib/billing"
@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
+    if (body.style) body.style = body.style.toLowerCase()
 
     const validation = validateInput(documentProcessSchema, body)
 
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Invalid input", details: validation.error }, { status: 400 })
     }
 
-    const validatedData = validation.data
+    const validatedData = validation.data as DocumentProcessData
 
     console.log("[v0] Processing document with FastAPI:", {
       filename: validatedData.filename,

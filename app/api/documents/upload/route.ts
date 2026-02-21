@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { validateInput, fileUploadSchema } from "@/lib/validation"
+import { validateInput, fileUploadSchema, type FileUploadData } from "@/lib/validation"
 import { rateLimit, getRateLimitIdentifier, RATE_LIMITS } from "@/lib/rate-limit"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData()
     const filename = formData.get("filename") as string
     const fileSize = formData.get("file_size") as string
-    const style = formData.get("style") as string
+    const style = (formData.get("style") as string || "APA").toLowerCase()
     const englishVariant = formData.get("englishVariant") as string
     const reportOnly = formData.get("reportOnly") as string
     const includeComments = formData.get("includeComments") as string
@@ -59,13 +59,14 @@ export async function POST(request: NextRequest) {
       reportOnly: reportOnly === "true",
       includeComments: includeComments !== "false",
       preserveFormatting: preserveFormatting !== "false",
+      trackedChanges: formData.get("trackedChanges") === "true",
     })
 
     if (!validation.success) {
       return NextResponse.json({ success: false, error: "Invalid input", details: validation.error }, { status: 400 })
     }
 
-    const validatedData = validation.data
+    const validatedData = validation.data as FileUploadData
 
     console.log("[v0] Forwarding upload request to FastAPI:", {
       filename: validatedData.filename,
@@ -82,6 +83,7 @@ export async function POST(request: NextRequest) {
     fastApiFormData.append("reportOnly", validatedData.reportOnly.toString())
     fastApiFormData.append("includeComments", validatedData.includeComments.toString())
     fastApiFormData.append("preserveFormatting", validatedData.preserveFormatting.toString())
+    fastApiFormData.append("trackedChanges", (validatedData.trackedChanges || false).toString())
     fastApiFormData.append("user_id", user.id)
 
     const {

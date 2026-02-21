@@ -102,8 +102,13 @@ export function MyDocuments() {
 
   const handleDeleteDocument = async (documentId: string) => {
     try {
-      const success = await documentService.deleteDocument(documentId)
-      if (success) {
+      const token = await getToken()
+      const response = await fetch(`/api/jobs/${documentId}`, {
+        method: "DELETE",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
+
+      if (response.ok) {
         setSelectedDocs((prev) => prev.filter((id) => id !== documentId))
         refreshAll()
         toast({
@@ -111,12 +116,13 @@ export function MyDocuments() {
           description: "Document deleted successfully",
         })
       } else {
-        throw new Error("Failed to delete document")
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || "Failed to delete document")
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete document",
+        description: error instanceof Error ? error.message : "Failed to delete document",
         variant: "destructive",
       })
     }
@@ -124,16 +130,32 @@ export function MyDocuments() {
 
   const handleBulkDelete = async () => {
     try {
-      const deletePromises = selectedDocs.map((id) => documentService.deleteDocument(id))
-      await Promise.all(deletePromises)
+      const token = await getToken()
+      const deletePromises = selectedDocs.map((id) =>
+        fetch(`/api/jobs/${id}`, {
+          method: "DELETE",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }),
+      )
+      
+      const results = await Promise.all(deletePromises)
+      const allSuccessful = results.every((r) => r.ok)
 
       setSelectedDocs([])
       refreshAll()
 
-      toast({
-        title: "Success",
-        description: `${selectedDocs.length} documents deleted successfully`,
-      })
+      if (allSuccessful) {
+        toast({
+          title: "Success",
+          description: `${selectedDocs.length} documents deleted successfully`,
+        })
+      } else {
+        toast({
+          title: "Partial Success",
+          description: "Some documents could not be deleted.",
+          variant: "destructive",
+        })
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -279,33 +301,50 @@ export function MyDocuments() {
           throw new Error(errorData.error || "Failed to download document")
         }
 
-        const { success, filename, content } = await response.json()
+        const { success, filename, content, tracked_changes_content } = await response.json()
 
         if (!success || !content) {
           throw new Error("Invalid download response")
         }
 
-        const binaryString = atob(content)
-        const bytes = new Uint8Array(binaryString.length)
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i)
+        const downloadBlob = (b64Content: string, fileName: string) => {
+          const binaryString = atob(b64Content)
+          const bytes = new Uint8Array(binaryString.length)
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i)
+          }
+          const blob = new Blob([bytes], {
+            type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          })
+          const url = window.URL.createObjectURL(blob)
+          const a = document.createElement("a")
+          a.href = url
+          a.download = fileName
+          document.body.appendChild(a)
+          a.click()
+          window.URL.revokeObjectURL(url)
+          document.body.removeChild(a)
         }
-        const blob = new Blob([bytes], {
-          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        })
 
-        const url = window.URL.createObjectURL(blob)
-        const a = document.createElement("a")
-        a.href = url
-        a.download = filename || `formatted_${doc.original_filename || doc.filename}`
-        document.body.appendChild(a)
-        a.click()
-        window.URL.revokeObjectURL(url)
-        document.body.removeChild(a)
+        // Download main formatted file
+        downloadBlob(content, filename || `formatted_${doc.original_filename || doc.filename}`)
+
+        // Download tracked changes if available
+        if (tracked_changes_content) {
+          const trackedFilename = filename
+            ? filename.replace(/\.(docx|doc)$/i, "_tracked.$1")
+            : `tracked_${doc.original_filename || doc.filename}`
+          
+          setTimeout(() => {
+            downloadBlob(tracked_changes_content, trackedFilename)
+          }, 500)
+        }
 
         toast({
           title: "Download Started",
-          description: `Downloading ${filename || doc.filename}`,
+          description: tracked_changes_content
+            ? "Downloading formatted and tracked changes documents"
+            : `Downloading ${filename || doc.filename}`,
         })
       } catch (error) {
         console.error("[v0] Download error:", error)
@@ -610,7 +649,14 @@ export function MyDocuments() {
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           {getFileIcon(doc.format || "")}
-                          <span className="font-medium text-sm">{doc.original_filename}</span>
+                          <div className="flex flex-col">
+                            <span className="font-medium text-sm">{doc.original_filename}</span>
+                            {doc.tracked_changes && (
+                              <Badge variant="outline" className="w-fit text-[10px] h-4 px-1 py-0 mt-0.5 border-primary/30 text-primary bg-primary/5">
+                                Tracked
+                              </Badge>
+                            )}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell className="hidden sm:table-cell">{doc.style_applied || "-"}</TableCell>

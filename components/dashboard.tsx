@@ -349,29 +349,44 @@ export function Dashboard() {
           throw new Error("Failed to download document")
         }
 
-        const { success, filename, content } = await response.json()
+        const { success, filename, content, tracked_changes_content } = await response.json()
 
         if (!success || !content) {
           throw new Error("Invalid download response")
         }
 
-        const binaryString = atob(content)
-        const bytes = new Uint8Array(binaryString.length)
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i)
+        const downloadBlob = (b64Content: string, fileName: string) => {
+          const binaryString = atob(b64Content)
+          const bytes = new Uint8Array(binaryString.length)
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i)
+          }
+          const blob = new Blob([bytes], {
+            type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          })
+          const url = window.URL.createObjectURL(blob)
+          const a = document.createElement("a")
+          a.href = url
+          a.download = fileName
+          document.body.appendChild(a)
+          a.click()
+          window.URL.revokeObjectURL(url)
+          document.body.removeChild(a)
         }
-        const blob = new Blob([bytes], {
-          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        })
 
-        const url = window.URL.createObjectURL(blob)
-        const a = document.createElement("a")
-        a.href = url
-        a.download = filename || `formatted_${doc.original_filename || doc.filename}`
-        document.body.appendChild(a)
-        a.click()
-        window.URL.revokeObjectURL(url)
-        document.body.removeChild(a)
+        // Download main formatted file
+        downloadBlob(content, filename || `formatted_${doc.original_filename || doc.filename}`)
+
+        // Download tracked changes if available
+        if (tracked_changes_content) {
+          const trackedFilename = filename
+            ? filename.replace(/\.(docx|doc)$/i, "_tracked.$1")
+            : `tracked_${doc.original_filename || doc.filename}`
+          
+          setTimeout(() => {
+            downloadBlob(tracked_changes_content, trackedFilename)
+          }, 500)
+        }
       } catch (error) {
         console.error("[v0] Download error:", error)
       } finally {
@@ -617,7 +632,14 @@ export function Dashboard() {
                           <div className="flex items-center gap-3 min-w-0 flex-1">
                             <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                             <div className="min-w-0 flex-1">
-                              <p className="font-medium text-sm text-foreground truncate">{doc.original_filename}</p>
+                              <div className="flex items-center gap-2">
+                                <p className="font-medium text-sm text-foreground truncate">{doc.original_filename}</p>
+                                {doc.tracked_changes && (
+                                  <Badge variant="outline" className="text-[10px] h-4 px-1 py-0 flex-shrink-0 border-primary/30 text-primary bg-primary/5">
+                                    Tracked
+                                  </Badge>
+                                )}
+                              </div>
                               <p className="text-xs text-muted-foreground">
                                 {formatDistanceToNow(new Date(doc.created_at), { addSuffix: true })}
                               </p>

@@ -15,6 +15,11 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData()
 
+    const style = formData.get("style") as string
+    if (style) {
+      formData.set("style", style.toLowerCase())
+    }
+
     console.log("[v0] Create upload route - received request with formData keys:", Array.from(formData.keys()))
 
     const fastApiUrl = process.env.FASTAPI_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"

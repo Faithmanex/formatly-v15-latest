@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 
 interface ImageModalProps {
@@ -90,11 +91,12 @@ export function ImageModal({
                   </div>
                 )}
 
-                <img
+                <Image
                   src={imageUrl || "/placeholder.svg"}
                   alt={title}
                   onLoad={() => setIsLoading(false)}
-                  className="w-full h-auto max-h-[70vh] object-contain"
+                  fill
+                  className="object-contain"
                 />
               </div>
 

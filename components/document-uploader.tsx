@@ -219,6 +219,7 @@ export function DocumentUploader({
       formData.append("reportOnly", (formattingOptions?.reportOnly || false).toString())
       formData.append("includeComments", (formattingOptions?.includeComments || true).toString())
       formData.append("preserveFormatting", (formattingOptions?.preserveFormatting || true).toString())
+      formData.append("trackedChanges", (formattingOptions?.trackedChanges || false).toString())
       formData.append("file_size", uploadFileItem.file.size.toString())
 
       const createUploadResponse = await fetch("/api/documents/create-upload", {
@@ -539,32 +540,51 @@ export function DocumentUploader({
         throw new Error("Failed to download file")
       }
 
-      const { success, filename, content } = await response.json()
+      const { success, filename, content, tracked_changes_content } = await response.json()
 
       if (!success || !content) {
         throw new Error("Invalid download response")
       }
 
-      const binaryString = atob(content)
-      const bytes = new Uint8Array(binaryString.length)
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i)
+      const downloadBlob = (b64Content: string, fileName: string) => {
+        const binaryString = atob(b64Content)
+        const bytes = new Uint8Array(binaryString.length)
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i)
+        }
+        const blob = new Blob([bytes], { type: "application/octet-stream" })
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement("a")
+        a.href = url
+        a.download = fileName
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
       }
-      const blob = new Blob([bytes], { type: "application/octet-stream" })
 
-      console.log("[v0] Download successful, blob size:", blob.size, "job ID:", file.jobId)
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = filename || `formatted_${file.file.name}`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
+      console.log("[v0] Download successful, job ID:", file.jobId)
+      
+      // Download main formatted file
+      downloadBlob(content, filename || `formatted_${file.file.name}`)
+
+      // Download tracked changes if available
+      if (tracked_changes_content) {
+        const trackedFilename = filename
+          ? filename.replace(/\.(docx|doc)$/i, "_tracked.$1")
+          : `tracked_${file.file.name}`
+        
+        // Small delay to ensure browser doesn't block consecutive downloads
+        setTimeout(() => {
+          downloadBlob(tracked_changes_content, trackedFilename)
+        }, 500)
+      }
 
       toast({
         title: "Download Started",
-        description: `Downloading ${filename || file.file.name}`,
+        description: tracked_changes_content
+          ? "Downloading formatted and tracked changes documents"
+          : `Downloading ${filename || file.file.name}`,
       })
     } catch (error) {
       console.error("[v0] Download error for job ID:", file.jobId, error)

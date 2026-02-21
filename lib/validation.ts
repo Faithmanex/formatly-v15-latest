@@ -7,24 +7,29 @@ export const fileUploadSchema = z.object({
     .number()
     .positive()
     .max(10 * 1024 * 1024), // 10MB max
-  style: z.enum(["APA", "MLA", "Chicago", "Harvard", "IEEE", "Vancouver", "Custom"]),
+  style: z.enum(["apa", "mla", "chicago", "harvard", "ieee", "vancouver", "custom"]),
   englishVariant: z.enum(["us", "uk", "au", "ca"]),
   reportOnly: z.boolean().optional().default(false),
   includeComments: z.boolean().optional().default(true),
-  preserveFormatting: z.boolean().optional().default(true),
+  trackedChanges: z.boolean().optional().default(false),
 })
+
+export type FileUploadData = z.infer<typeof fileUploadSchema>
 
 // Document processing validation
 export const documentProcessSchema = z.object({
   filename: z.string().min(1).max(255),
-  style: z.string().min(1).max(50),
-  englishVariant: z.string().min(2).max(10),
+  content: z.string().optional(), // Required in FastAPI but could be sent via other means or optional in some flows
+  style: z.enum(["apa", "mla", "chicago", "harvard", "ieee", "vancouver", "custom"]),
+  englishVariant: z.enum(["us", "uk", "au", "ca"]),
+  trackedChanges: z.boolean().optional().default(false),
+  options: z.record(z.any()).optional(),
   reportOnly: z.boolean().optional(),
   includeComments: z.boolean().optional(),
   preserveFormatting: z.boolean().optional(),
 })
 
-// Job ID validation
+export type DocumentProcessData = z.infer<typeof documentProcessSchema>
 export const jobIdSchema = z.string().uuid()
 
 // Auth validation
@@ -68,8 +73,8 @@ export function validateInput<T>(
     return { success: true, data: validated }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ") }
+      return { success: false, error: error.errors.map((e: z.ZodIssue) => `${e.path.join(".")}: ${e.message}`).join(", ") }
     }
-    return { success: false, error: "Validation failed" }
+    return { success: false, error: error instanceof Error ? error.message : "Validation failed" }
   }
 }

@@ -2,8 +2,9 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
@@ -32,11 +33,33 @@ import {
   Menu,
 } from "lucide-react"
 import Link from "next/link"
+import dynamic from "next/dynamic"
 import { useAuth } from "@/components/auth-provider"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 import { ImageModal } from "@/components/image-modal"
-import { Features } from "@/components/features"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { features, stats, testimonials, pricingPlans, useCases, faqs } from "@/lib/landing-data"
+
+const Features = dynamic(() => import("@/components/features").then((mod) => mod.Features), {
+  loading: () => <div className="h-96 animate-pulse bg-muted/20 rounded-xl" />,
+})
+
+const Testimonials = dynamic(() => import("@/components/testimonials").then((mod) => mod.Testimonials), {
+  loading: () => <div className="h-96 animate-pulse bg-muted/20 rounded-xl" />,
+})
+
+const Pricing = dynamic(() => import("@/components/pricing").then((mod) => mod.Pricing), {
+  loading: () => <div className="h-96 animate-pulse bg-muted/20 rounded-xl" />,
+})
+
+const FAQ = dynamic(() => import("@/components/faq").then((mod) => mod.FAQ), {
+  loading: () => <div className="h-96 animate-pulse bg-muted/20 rounded-xl" />,
+})
+
+// 3D Tilt Card Component
+function TiltCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <div className={`transition-base hover-lift ${className}`}>{children}</div>
+}
 
 function Navigation() {
   const { user, isLoading, isInitialized } = useAuth()
@@ -242,49 +265,6 @@ function Navigation() {
   )
 }
 
-// 3D Tilt Card Component
-function TiltCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-
-  const mouseXSpring = useSpring(x)
-  const mouseYSpring = useSpring(y)
-
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["17.5deg", "-17.5deg"])
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-17.5deg", "17.5deg"])
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const width = rect.width
-    const height = rect.height
-    const mouseX = e.clientX - rect.left
-    const mouseY = e.clientY - rect.top
-    const xPct = mouseX / width - 0.5
-    const yPct = mouseY / height - 0.5
-    x.set(xPct)
-    y.set(yPct)
-  }
-
-  const handleMouseLeave = () => {
-    x.set(0)
-    y.set(0)
-  }
-
-  return (
-    <motion.div
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        rotateX,
-        rotateY,
-        transformStyle: "preserve-3d",
-      }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  )
-}
 
 // Flip Card Carousel Component - Enhanced with Momentum Scrolling, Keyboard Nav, Auto-Pause
 function FlipCardCarousel() {
@@ -483,12 +463,11 @@ function FlipCardCarousel() {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
         onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
+        onMouseLeave={() => {
+          handleMouseUp()
+          setIsHovering(false)
+        }}
       >
         <div className="relative w-full h-80 sm:h-96 md:h-[420px] flex items-center justify-center">
           {cards.map((card, index) => {
@@ -521,11 +500,13 @@ function FlipCardCarousel() {
                         <div className="absolute top-2 left-3 sm:top-3 sm:left-4 md:top-4 md:left-6 text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white/20 z-10">
                           {card.number}
                         </div>
-                        <img
+                        <Image
                           src={card.imageUrl || "/placeholder.svg"}
                           alt={card.title}
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
                           draggable={false}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                         <div className="absolute inset-0 bg-black/30 hover:bg-black/10 transition-colors shadow-none opacity-50" />
                         <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 md:p-6 text-white z-20">
@@ -652,193 +633,8 @@ function AnimatedCounter({ value, label }: { value: string; label: string }) {
 }
 
 export function LandingPage() {
-  const [hoveredFeature, setHoveredFeature] = useState<number | null>(null)
   const { user, isLoading, isInitialized } = useAuth()
   const { usage } = useSubscription()
-
-  const features = [
-    {
-      icon: Zap,
-      title: "Lightning Fast",
-      description: "Format in under 60 seconds.",
-      color: "text-yellow-600 dark:text-yellow-400",
-      bgColor: "bg-yellow-50 dark:bg-yellow-950/50",
-    },
-    {
-      icon: FileText,
-      title: "All Citation Styles",
-      description: "APA, MLA, Chicago, Harvard, IEEE, and 50+ more academic formats",
-      color: "text-blue-600 dark:text-blue-400",
-      bgColor: "bg-blue-50 dark:bg-blue-950/50",
-    },
-    {
-      icon: Shield,
-      title: "Enterprise-Grade Security",
-      description: "Your documents are secure with end-to-end encryption",
-      color: "text-green-600 dark:text-green-400",
-      bgColor: "bg-green-50 dark:bg-green-950/50",
-    },
-    {
-      icon: BookOpen,
-      title: "Smart AI Assistant",
-      description: "Get intelligent suggestions and guidance on all formatting styles",
-      color: "text-purple-600 dark:text-purple-400",
-      bgColor: "bg-purple-50 dark:bg-purple-950/50",
-    },
-    {
-      icon: Users,
-      title: "Collaborative Workspace",
-      description: "Work with co-authors and editors in real time",
-      color: "text-indigo-600 dark:text-indigo-400",
-      bgColor: "bg-indigo-50 dark:bg-indigo-950/50",
-    },
-    {
-      icon: Award,
-      title: "Publisher-Ready Output",
-      description: "Meets strict journal and institutions requirements.",
-      color: "text-red-600 dark:text-red-400",
-      bgColor: "bg-red-50 dark:bg-red-950/50",
-    },
-  ]
-
-  const stats = [
-    { icon: TrendingUp, value: "25x", label: "Faster formatting" },
-    { icon: Users, value: "42x", label: "More accuracy" },
-    { icon: Target, value: "300%", label: "Productivity boost" },
-  ]
-
-  const testimonials = [
-    {
-      name: "Dr. Sarah Mitchell",
-      role: "Stanford Research Professor",
-      content:
-        "Formatly saved me over 15 hours on my last paper. The APA 7th edition formatting is absolutely perfect!",
-      rating: 5,
-      avatar: "SM",
-    },
-    {
-      name: "James Rodriguez",
-      role: "PhD Candidate, MIT",
-      content:
-        "This tool is a game-changer for graduate students. I can focus on research instead of formatting headaches.",
-      rating: 5,
-      avatar: "JR",
-    },
-    {
-      name: "Dr. Emily Chen",
-      role: "Medical Journal Editor",
-      content: "We recommend Formatly to all our authors. The consistency and quality are unmatched in the industry.",
-      rating: 5,
-      avatar: "EC",
-    },
-  ]
-
-  const pricingPlans = [
-    {
-      name: "Starter",
-      price: "$0",
-      period: "forever",
-      description: "Perfect for trying Formatly",
-      features: ["3 documents per month", "Basic citation styles", "Standard processing", "Email support"],
-      buttonText: "Get Started Free",
-      buttonVariant: "outline" as const,
-      popular: false,
-    },
-    {
-      name: "Professional",
-      price: "$12",
-      period: "month",
-      description: "For serious researchers",
-      features: [
-        "Unlimited documents",
-        "All citation styles",
-        "Tracked Changes",
-        "Get formatting report",
-        "AI assistant",
-        "24/7 priority support",
-      ],
-      buttonText: "Get Started",
-      buttonVariant: "default" as const,
-      popular: true,
-    },
-    {
-      name: "Team",
-      price: "$29",
-      period: "month",
-      description: "For research teams",
-      features: [
-        "Everything in Professional",
-        "Unlimited team members",
-        "Team collaboration",
-        "Admin dashboard",
-        "Dedicated support",
-        "API access",
-      ],
-      buttonText: "Get Started",
-      buttonVariant: "outline" as const,
-      popular: false,
-    },
-  ]
-
-  const useCases = [
-    {
-      icon: GraduationCap,
-      title: "Thesis & Dissertations",
-      description:
-        "Perfect for lengthy academic works. Formatly handles complex formatting requirements for theses across all major citation styles.",
-      color: "text-blue-600 dark:text-blue-400",
-      bgColor: "bg-blue-50 dark:bg-blue-950/50",
-    },
-    {
-      icon: FileCheck,
-      title: "Journal Submissions",
-      description:
-        "Meet strict journal guidelines instantly. Ensure your manuscript meets every formatting requirement before submission.",
-      color: "text-green-600 dark:text-green-400",
-      bgColor: "bg-green-50 dark:bg-green-950/50",
-    },
-    {
-      icon: BookMarked,
-      title: "Research Papers",
-      description:
-        "Format research papers with precision. Support for all academic styles ensures your work looks professional and polished.",
-      color: "text-purple-600 dark:text-purple-400",
-      bgColor: "bg-purple-50 dark:bg-purple-950/50",
-    },
-  ]
-
-  const faqs = [
-    {
-      question: "Which citation styles are supported?",
-      answer:
-        "Formatly supports 50+ citation styles including APA 7th edition, MLA 9th edition, Chicago Manual of Style (16th edition), Harvard, IEEE, and many more. We continuously add new styles based on user requests.",
-    },
-    {
-      question: "Is my data secure?",
-      answer:
-        "Yes, absolutely. We use enterprise-grade end-to-end encryption for all documents. Your files are never stored on our servers longer than necessary, and we comply with GDPR, CCPA, and other data protection regulations.",
-    },
-    {
-      question: "Can I use Formatly offline?",
-      answer:
-        "Currently, Formatly requires an internet connection. However, we're working on an offline mode for our Professional and Team plans. You can download your formatted documents and work with them offline.",
-    },
-    {
-      question: "How long does formatting take?",
-      answer:
-        "Most documents are formatted in under 60 seconds. The time depends on document size and length, but our AI-powered engine is optimized for speed without sacrificing accuracy.",
-    },
-    {
-      question: "Can I collaborate with my team?",
-      answer:
-        "Yes! Our Team plan includes real-time collaboration features. You can invite team members, share documents, and track changes together. Perfect for research groups and co-authored papers.",
-    },
-    {
-      question: "What file formats do you support?",
-      answer:
-        "We supports only Word (.docx) files. You can upload your document in this format and download the formatted version in Word (.docx) format.",
-    },
-  ]
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -963,8 +759,8 @@ export function LandingPage() {
                   </Button>
                 </motion.div>
               </>
-            ) : isInitialized && !user ? (
-              // Guest user hero - only show when auth is fully initialized
+            ) : (
+              // Guest hero - shown immediately on load, no waiting for auth
               <>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -1018,12 +814,6 @@ export function LandingPage() {
                   </Button>
                 </motion.div>
               </>
-            ) : (
-              // Loading state - show neutral skeleton while auth initializes
-              <div className="space-y-6 mb-12">
-                <div className="h-10 w-48 bg-muted rounded-lg mx-auto animate-pulse" />
-                <div className="h-16 w-96 bg-muted rounded-lg mx-auto animate-pulse" />
-              </div>
             )}
           </div>
 
@@ -1108,168 +898,12 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 bg-muted/20 backdrop-blur-sm relative">
-        <div className="absolute inset-0 bg-dot-pattern dark:opacity-[0.04] opacity-30" />
-        <div className="max-w-7xl mx-auto relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12 sm:mb-16 px-4"
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
-              Trusted by Researchers Worldwide
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground">See what our users have to say</p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <TiltCard>
-                  <Card className="h-full hover:shadow-xl transition-shadow border-2">
-                    <CardContent className="p-4 sm:p-6">
-                      <div className="flex mb-3 sm:mb-4">
-                        {[...Array(testimonial.rating)].map((_, i) => (
-                          <Star key={i} className="h-4 w-4 sm:h-5 sm:w-5 fill-yellow-400 text-yellow-400" />
-                        ))}
-                      </div>
-                      <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
-                        "{testimonial.content}"
-                      </p>
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm sm:text-base">
-                          {testimonial.avatar}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-sm sm:text-base">{testimonial.name}</p>
-                          <p className="text-xs sm:text-sm text-muted-foreground">{testimonial.role}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TiltCard>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Testimonials />
 
       {/* Pricing Section - only show for non-authenticated users */}
-      {isInitialized && (!user || !isLoading) && (
-        <section id="pricing" className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 relative scroll-mt-20">
-          <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-12 sm:mb-16 px-4"
-            >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
-                Simple, Transparent Pricing
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
-                Choose the plan that fits your needs
-              </p>
-            </motion.div>
+      {isInitialized && (!user || !isLoading) && <Pricing />}
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {pricingPlans.map((plan, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <TiltCard>
-                    <Card
-                      className={`relative h-full hover:shadow-2xl transition-all bg-background ${
-                        plan.popular ? "border-primary border-2 sm:scale-105" : ""
-                      }`}
-                    >
-                      {plan.popular && (
-                        <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs sm:text-sm rounded-full">
-                          Most Popular
-                        </Badge>
-                      )}
-                      <CardHeader className="text-center pb-6 sm:pb-8 p-4 sm:p-6">
-                        <CardTitle className="text-xl sm:text-2xl mb-3 sm:mb-4">{plan.name}</CardTitle>
-                        <div className="mb-2">
-                          <span className="text-3xl sm:text-4xl md:text-5xl font-bold">{plan.price}</span>
-                          <span className="text-sm sm:text-base text-muted-foreground">/{plan.period}</span>
-                        </div>
-                        <CardDescription className="text-sm sm:text-base">{plan.description}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6 pt-0">
-                        <ul className="space-y-2 sm:space-y-3">
-                          {plan.features.map((feature, featureIndex) => (
-                            <li key={featureIndex} className="flex items-start gap-2 sm:gap-3">
-                              <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 shrink-0 mt-0.5" />
-                              <span className="text-xs sm:text-sm">{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                        <Button
-                          size="lg"
-                          variant={plan.buttonVariant}
-                          asChild
-                          className={`w-full text-sm sm:text-base rounded-full ${plan.popular ? "bg-primary hover:bg-primary/90" : ""}`}
-                        >
-                          <Link href={plan.name === "Team" ? "#" : "/auth/register"}>{plan.buttonText}</Link>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </TiltCard>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      <section
-        id="faq"
-        className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 bg-muted/20 backdrop-blur-sm relative scroll-mt-20"
-      >
-        <div className="absolute inset-0 bg-dot-pattern dark:opacity-[0.04] opacity-30" />
-        <div className="max-w-4xl mx-auto relative z-10">
-  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-center">Frequently Asked Questions</h2>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <Accordion type="single" collapsible className="w-full space-y-3 sm:space-y-4">
-              {faqs.map((faq, index) => (
-                <AccordionItem
-                  key={index}
-                  value={`item-${index}`}
-                  className="border rounded-lg px-4 sm:px-6 py-2 sm:py-3 bg-card hover:bg-muted/50 transition-colors"
-                >
-                  <AccordionTrigger className="text-left text-base sm:text-lg font-semibold hover:no-underline py-3 sm:py-4">
-                    <div className="flex items-center gap-2 sm:gap-3 flex-1">
-                      <ChevronDown className="h-5 w-5 sm:h-6 sm:w-6 shrink-0 transition-transform duration-200" />
-                      <span>{faq.question}</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="text-sm sm:text-base text-muted-foreground leading-relaxed pb-3 sm:pb-4 pl-7 sm:pl-9">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </motion.div>
-        </div>
-      </section>
+      <FAQ />
 
       {/* CTA Section */}
       <section className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 relative">
