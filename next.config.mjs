@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 import { fileURLToPath } from 'url';
+import path from 'path';
 const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const nextConfig = {
   eslint: {
@@ -27,13 +29,13 @@ const nextConfig = {
       buildDependencies: {
         config: [__filename],
       },
-      cacheDirectory: '.next/cache',
+      cacheDirectory: path.join(__dirname, '.next', 'cache'),
       compression: 'gzip',
       hashAlgorithm: 'sha512',
       name: `${isServer ? 'server' : 'client'}-cache`,
       store: 'pack',
       allowCollectingMemory: true,
-      managedPaths: ['node_modules'],
+      managedPaths: [path.join(__dirname, 'node_modules')],
       immutablePaths: [],
       version: '1.0.0',
     };
