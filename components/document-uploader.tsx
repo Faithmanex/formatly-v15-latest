@@ -101,7 +101,7 @@ export function DocumentUploader({
           const isFreePlan = !subscription || subscription.plan?.name?.toLowerCase().includes("free")
 
           setQuotaInfo({
-            isFreePlan: isFreePlan ?? false,
+            isFreePlan,
             currentPlan: canProcessResult.planName || "Free",
             documentsUsed: canProcessResult.currentUsage || 0,
             documentLimit: canProcessResult.limit || 5,
@@ -204,7 +204,7 @@ export function DocumentUploader({
       formData.append("reportOnly", (formattingOptions?.reportOnly || false).toString())
       formData.append("includeComments", (formattingOptions?.includeComments || true).toString())
       formData.append("preserveFormatting", (formattingOptions?.preserveFormatting || true).toString())
-      formData.append("trackedChanges", (formattingOptions && "trackedChanges" in formattingOptions ? formattingOptions.trackedChanges : false) as string)
+      formData.append("trackedChanges", (formattingOptions?.trackedChanges || false).toString())
       formData.append("file_size", uploadFileItem.file.size.toString())
 
       const createUploadResponse = await fetch("/api/documents/create-upload", {

@@ -4,6 +4,13 @@ import { rateLimit, getRateLimitIdentifier, RATE_LIMITS } from "@/lib/rate-limit
 const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
 const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT || "5000")
 
+const defaultStyles = [
+  { id: "apa", name: "APA Style", description: "American Psychological Association" },
+  { id: "mla", name: "MLA Style", description: "Modern Language Association" },
+  { id: "chicago", name: "Chicago Style", description: "Chicago Manual of Style" },
+  { id: "ieee", name: "IEEE Style", description: "Institute of Electrical and Electronics Engineers" },
+]
+
 export async function GET(request: NextRequest) {
   const rateLimitId = getRateLimitIdentifier(request)
   const rateLimitResult = await rateLimit(rateLimitId, RATE_LIMITS.API_DEFAULT)
@@ -25,7 +32,14 @@ export async function GET(request: NextRequest) {
     )
   }
 
+  if (process.env.NODE_ENV === "production" && !process.env.FASTAPI_BASE_URL) {
+    const response = NextResponse.json(defaultStyles)
+    response.headers.set("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400")
+    return response
+  }
+
   try {
+
     const fastApiResponse = await fetch(`${FASTAPI_BASE_URL}/api/formatting/styles`, {
       method: "GET",
       headers: {
@@ -36,10 +50,9 @@ export async function GET(request: NextRequest) {
 
     if (!fastApiResponse.ok) {
       console.error("FastAPI styles fetch failed:", fastApiResponse.status, fastApiResponse.statusText)
-      return NextResponse.json(
-        { error: "Failed to fetch formatting styles from the backend service." },
-        { status: fastApiResponse.status }
-      )
+      const response = NextResponse.json(defaultStyles)
+      response.headers.set("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400")
+      return response
     }
 
     const result = await fastApiResponse.json()
@@ -49,9 +62,8 @@ export async function GET(request: NextRequest) {
     return response
   } catch (error) {
     console.error("Styles endpoint error:", error)
-    return NextResponse.json(
-      { error: "Internal Server Error fetching formatting styles." },
-      { status: 500 }
-    )
+    const response = NextResponse.json(defaultStyles)
+    response.headers.set("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400")
+    return response
   }
 }
