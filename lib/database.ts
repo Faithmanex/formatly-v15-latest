@@ -182,22 +182,7 @@ export const profileService = {
 
       if (error) {
         console.error("Error incrementing document usage:", error)
-        try {
-          const { error: profileError } = await supabase
-            .from("profiles")
-            .update({ documents_used: supabase.raw("documents_used + 1") })
-            .eq("id", userId)
-
-          if (profileError) {
-            console.error("Fallback increment also failed:", profileError)
-            return false
-          }
-
-          return true
-        } catch (fallbackError) {
-          console.error("Fallback increment error:", fallbackError)
-          return false
-        }
+        return false
       }
 
       console.log(`Document usage incremented successfully`)
@@ -232,12 +217,13 @@ export const profileService = {
 
       if (error) {
         console.error("Error fetching current usage stats:", error)
-        console.log(`Attempting fallback query for usage stats`)
-        return await this.getCurrentPlanUsageFallback(userId)
+        return null
       }
 
-      if (data && data.length > 0) {
-        const stats = data[0]
+      const usageData = data as any[]
+
+      if (usageData && usageData.length > 0) {
+        const stats = usageData[0]
         console.log(`Usage stats retrieved successfully`)
 
         const remainingDocuments =
@@ -271,84 +257,14 @@ export const profileService = {
         }
       }
 
-      console.log(`No usage stats found, using fallback`)
-      return await this.getCurrentPlanUsageFallback(userId)
+      console.log(`No usage stats found`)
+      return null
     } catch (error) {
       console.error("Error in getCurrentPlanUsage:", error)
-      return await this.getCurrentPlanUsageFallback(userId)
-    }
-  },
-
-  async getCurrentPlanUsageFallback(userId: string): Promise<{
-    plan_id: string
-    plan_name: string
-    document_limit: number
-    documents_used: number
-    remaining_documents: number
-    usage_percentage: number
-    billing_period_start: string
-    billing_period_end: string
-    days_until_reset: number
-  } | null> {
-    try {
-      console.log(`Using fallback method for usage stats`)
-
-      const { data: subscription, error: subError } = await withTimeout(
-        supabase
-          .from("subscriptions")
-          .select(`
-            plan_id,
-            documents_used,
-            api_calls_used,
-            storage_used_gb,
-            current_period_start,
-            current_period_end,
-            subscription_plans!subscriptions_plan_id_fkey(name, document_limit)
-          `)
-          .eq("user_id", userId)
-          .eq("status", "active")
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .single(),
-        3000,
-        "Get subscription fallback",
-      )
-
-      if (subError || !subscription) {
-        console.log(`No active subscription found in fallback`)
-        return null
-      }
-
-      const documentsUsed = subscription.documents_used || 0
-      const documentLimit = subscription.subscription_plans?.document_limit || 0
-      const planName = subscription.subscription_plans?.name || "Unknown Plan"
-
-      const remainingDocuments = documentLimit === -1 ? -1 : Math.max(0, documentLimit - documentsUsed)
-      const usagePercentage =
-        documentLimit === -1 ? 0 : documentLimit === 0 ? 100 : Math.round((documentsUsed / documentLimit) * 100)
-
-      const periodEnd = new Date(subscription.current_period_end)
-      const today = new Date()
-      const daysUntilReset = Math.max(0, Math.ceil((periodEnd.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)))
-
-      console.log(`Fallback usage stats calculated successfully`)
-
-      return {
-        plan_id: subscription.plan_id,
-        plan_name: planName,
-        document_limit: documentLimit,
-        documents_used: documentsUsed,
-        remaining_documents: remainingDocuments,
-        usage_percentage: usagePercentage,
-        billing_period_start: subscription.current_period_start,
-        billing_period_end: subscription.current_period_end,
-        days_until_reset: daysUntilReset,
-      }
-    } catch (error) {
-      console.error("Error in getCurrentPlanUsageFallback:", error)
       return null
     }
   },
+
 
   async updateProfile(
     userId: string,
@@ -497,20 +413,20 @@ export const customStyleService = {
 export const formattingStyleService = {
   async getFormattingStyles(): Promise<Array<{ id: string; name: string; code: string; description?: string }>> {
     try {
-      // For now, return static styles - can be moved to database later
-      return [
-        { id: "1", name: "APA (7th Edition)", code: "APA", description: "American Psychological Association style" },
-        { id: "2", name: "MLA (9th Edition)", code: "MLA", description: "Modern Language Association style" },
-        { id: "3", name: "Chicago (17th Edition)", code: "Chicago", description: "Chicago Manual of Style" },
-        { id: "4", name: "Harvard", code: "Harvard", description: "Harvard referencing style" },
-        { id: "5", name: "IEEE", code: "IEEE", description: "Institute of Electrical and Electronics Engineers" },
-        { id: "6", name: "Vancouver", code: "Vancouver", description: "Vancouver citation style" },
-        { id: "7", name: "Oxford", code: "Oxford", description: "Oxford referencing style" },
-        { id: "8", name: "Turabian", code: "Turabian", description: "Turabian citation style" },
-      ]
+      const response = await fetch("/api/formatting/styles")
+      if (!response.ok) throw new Error("Failed to fetch styles")
+      const data = await response.json()
+      
+      // Map API response to expected interface type
+      return data.map((item: any) => ({
+        id: item.id || item.code,
+        name: item.name,
+        code: item.code,
+        description: item.description
+      }))
     } catch (error) {
       console.error("Error in getFormattingStyles:", error)
-      return []
+      throw error
     }
   },
 }
@@ -838,23 +754,19 @@ export const planUsageService = {
 export const englishVariantService = {
   async getEnglishVariants(): Promise<Array<{ id: string; name: string; code: string; description?: string }>> {
     try {
-      // For now, return static variants - can be moved to database later
-      return [
-        { id: "1", name: "US English", code: "US", description: "American English spelling and grammar" },
-        { id: "2", name: "UK English", code: "UK", description: "British English spelling and grammar" },
-        { id: "3", name: "Canadian English", code: "CA", description: "Canadian English spelling and grammar" },
-        { id: "4", name: "Australian English", code: "AU", description: "Australian English spelling and grammar" },
-        { id: "5", name: "New Zealand English", code: "NZ", description: "New Zealand English spelling and grammar" },
-        {
-          id: "6",
-          name: "South African English",
-          code: "ZA",
-          description: "South African English spelling and grammar",
-        },
-      ]
+      const response = await fetch("/api/formatting/variants")
+      if (!response.ok) throw new Error("Failed to fetch variants")
+      const data = await response.json()
+      
+      return data.map((item: any) => ({
+        id: item.id || item.code,
+        name: item.name,
+        code: item.code,
+        description: item.description
+      }))
     } catch (error) {
       console.error("Error in getEnglishVariants:", error)
-      return []
+      throw error
     }
   },
 }

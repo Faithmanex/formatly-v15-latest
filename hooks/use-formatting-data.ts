@@ -6,24 +6,20 @@ interface FormattingStyle {
   id: string
   name: string
   code: string
-  description: string
-  is_active: boolean
-  sort_order: number
+  description?: string
 }
 
 interface EnglishVariant {
   id: string
   name: string
   code: string
-  description: string
-  is_active: boolean
-  sort_order: number
+  description?: string
 }
 
 interface CustomStyle {
   id: string
   name: string
-  description: string
+  description: string | null
   settings: any
   is_default: boolean
   is_global: boolean
@@ -39,33 +35,7 @@ const fetchFormattingStyles = async (): Promise<FormattingStyle[]> => {
     return styles
   } catch (error) {
     logger.error("Failed to fetch formatting styles", error)
-    // Return fallback data instead of throwing
-    return [
-      {
-        id: "1",
-        name: "APA (7th Edition)",
-        code: "APA",
-        description: "American Psychological Association style",
-        is_active: true,
-        sort_order: 1,
-      },
-      {
-        id: "2",
-        name: "MLA (9th Edition)",
-        code: "MLA",
-        description: "Modern Language Association style",
-        is_active: true,
-        sort_order: 2,
-      },
-      {
-        id: "3",
-        name: "Chicago (17th Edition)",
-        code: "Chicago",
-        description: "Chicago Manual of Style",
-        is_active: true,
-        sort_order: 3,
-      },
-    ]
+    return []
   }
 }
 
@@ -76,41 +46,7 @@ const fetchEnglishVariants = async (): Promise<EnglishVariant[]> => {
     return variants
   } catch (error) {
     logger.error("Failed to fetch English variants", error)
-    // Return fallback data
-    return [
-      {
-        id: "1",
-        name: "US English",
-        code: "US",
-        description: "American English spelling and grammar",
-        is_active: true,
-        sort_order: 1,
-      },
-      {
-        id: "2",
-        name: "UK English",
-        code: "UK",
-        description: "British English spelling and grammar",
-        is_active: true,
-        sort_order: 2,
-      },
-      {
-        id: "3",
-        name: "Canadian English",
-        code: "CA",
-        description: "Canadian English spelling and grammar",
-        is_active: true,
-        sort_order: 3,
-      },
-      {
-        id: "4",
-        name: "Australian English",
-        code: "AU",
-        description: "Australian English spelling and grammar",
-        is_active: true,
-        sort_order: 4,
-      },
-    ]
+    return []
   }
 }
 
