@@ -44,6 +44,7 @@ export type Database = {
           style_applied: string
           word_count: number | null
           tracked_changes: boolean
+          tracked_changes_url: string | null
           processing_log: any | null
           storage_location: string | null
           file_size: number | null
@@ -62,6 +63,7 @@ export type Database = {
           style_applied: string
           word_count?: number | null
           tracked_changes?: boolean
+          tracked_changes_url?: string | null
           processing_log?: any | null
           storage_location?: string | null
           file_size?: number | null
@@ -76,6 +78,7 @@ export type Database = {
           style_applied?: string
           word_count?: number | null
           tracked_changes?: boolean
+          tracked_changes_url?: string | null
           processing_log?: any | null
           storage_location?: string | null
           file_size?: number | null
@@ -317,6 +320,7 @@ export type Database = {
           created_at: string
           updated_at: string
         }
+        Insert: {
           user_id: string
           type: string
           card_brand?: string | null
