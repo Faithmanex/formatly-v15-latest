@@ -38,7 +38,6 @@ interface DocumentUploaderProps {
     englishVariant: string
     reportOnly: boolean
     includeComments: boolean
-    preserveFormatting: boolean
   }
   onUploadComplete?: () => void
 }
@@ -203,7 +202,6 @@ export function DocumentUploader({
       formData.append("englishVariant", formattingOptions?.englishVariant || "us")
       formData.append("reportOnly", (formattingOptions?.reportOnly || false).toString())
       formData.append("includeComments", (formattingOptions?.includeComments || true).toString())
-      formData.append("preserveFormatting", (formattingOptions?.preserveFormatting || true).toString())
       formData.append("trackedChanges", (formattingOptions?.trackedChanges || false).toString())
       formData.append("file_size", uploadFileItem.file.size.toString())
 

@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       formData.set("style", style.toLowerCase())
     }
 
-    const fastApiUrl = process.env.FASTAPI_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+    const fastApiUrl = process.env.FASTAPI_BASE_URL
     const fullUrl = `${fastApiUrl}/api/documents/create-upload`
 
     const controller = new AbortController()

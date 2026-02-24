@@ -24,7 +24,7 @@ export function useSubscriptionData() {
     lastUpdated,
     refresh,
   } = useRealtimeData<SubscriptionData>({
-    table: "user_subscriptions",
+    table: "subscriptions",
     select: "*",
     filter: user?.id ? { column: "user_id", value: user.id } : undefined,
     cacheKey: `subscription_${user?.id || "anonymous"}`,
@@ -41,7 +41,7 @@ export function useSubscriptionData() {
     if (!user?.id) return null
 
     const cacheKey = `full_subscription_${user.id}`
-    const cached = getCache<SubscriptionData>(cacheKey)
+    const cached = getCache(cacheKey) as SubscriptionData | null
 
     if (cached) {
       return cached
@@ -83,7 +83,7 @@ export function useSubscriptionData() {
   }, [user?.id, clearCache, refresh, loadFullSubscriptionData])
 
   return {
-    subscriptionData: subscriptionData?.[0] || null,
+    subscriptionData: subscriptionData || null,
     isLoading: !user?.id ? false : isLoading,
     error,
     isStale,

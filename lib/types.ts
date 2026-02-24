@@ -32,6 +32,8 @@ export type Database = {
           document_limit?: number
           documents_used?: number
           subscription_id?: string | null
+          formatting_preferences?: any
+          updated_at?: string
         }
       }
       documents: {
@@ -47,12 +49,15 @@ export type Database = {
           processing_log: any | null
           storage_location: string | null
           file_size: number | null
+          result_url: string | null
+          tracked_changes_url: string | null
           created_at: string
           updated_at: string
           language_variant: string | null
           file_type: string | null
           processed_at: string | null
           formatting_options: any | null
+          formatting_time: number | null
         }
         Insert: {
           user_id: string
@@ -65,10 +70,13 @@ export type Database = {
           processing_log?: any | null
           storage_location?: string | null
           file_size?: number | null
+          result_url?: string | null
+          tracked_changes_url?: string | null
           language_variant?: string | null
           file_type?: string | null
           processed_at?: string | null
           formatting_options?: any | null
+          formatting_time?: number | null
         }
         Update: {
           filename?: string
@@ -79,10 +87,13 @@ export type Database = {
           processing_log?: any | null
           storage_location?: string | null
           file_size?: number | null
+          result_url?: string | null
+          tracked_changes_url?: string | null
           language_variant?: string | null
           file_type?: string | null
           processed_at?: string | null
           formatting_options?: any | null
+          formatting_time?: number | null
         }
       }
       custom_styles: {
@@ -307,6 +318,7 @@ export type Database = {
       }
       payment_methods: {
         Row: {
+          id: string
           user_id: string
           type: string
           card_brand: string | null
@@ -317,6 +329,7 @@ export type Database = {
           created_at: string
           updated_at: string
         }
+        Insert: {
           user_id: string
           type: string
           card_brand?: string | null

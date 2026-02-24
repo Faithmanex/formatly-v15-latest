@@ -147,7 +147,6 @@ export const profileService = {
     englishVariant?: string
     reportOnly?: boolean
     includeComments?: boolean
-    preserveFormatting?: boolean
   } | null> {
     try {
       const { data, error } = await withTimeout(
@@ -182,22 +181,7 @@ export const profileService = {
 
       if (error) {
         console.error("Error incrementing document usage:", error)
-        try {
-          const { error: profileError } = await supabase
-            .from("profiles")
-            .update({ documents_used: supabase.raw("documents_used + 1") })
-            .eq("id", userId)
-
-          if (profileError) {
-            console.error("Fallback increment also failed:", profileError)
-            return false
-          }
-
-          return true
-        } catch (fallbackError) {
-          console.error("Fallback increment error:", fallbackError)
-          return false
-        }
+        return false
       }
 
       console.log(`Document usage incremented successfully`)

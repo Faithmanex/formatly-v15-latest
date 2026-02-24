@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { rateLimit, getRateLimitIdentifier, RATE_LIMITS } from "@/lib/rate-limit"
 
-const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
-const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT || "5000")
+const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL
+const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT!)
 
 const defaultStyles = [
   { id: "apa", name: "APA Style", description: "American Psychological Association" },

@@ -3,8 +3,8 @@ import { validateInput, jobIdSchema } from "@/lib/validation"
 import { rateLimit, getRateLimitIdentifier, RATE_LIMITS } from "@/lib/rate-limit"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 
-const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
-const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT || "30000")
+const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL
+const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT!)
 
 export async function GET(request: NextRequest, { params }: { params: { jobId: string } }) {
   try {

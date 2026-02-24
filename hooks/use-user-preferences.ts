@@ -14,7 +14,6 @@ interface FormattingPreferences {
   englishVariant: string
   reportOnly: boolean
   includeComments: boolean
-  preserveFormatting: boolean
 }
 
 const DEFAULT_PREFERENCES: FormattingPreferences = {
@@ -29,7 +28,6 @@ const DEFAULT_PREFERENCES: FormattingPreferences = {
   englishVariant: "US",
   reportOnly: false,
   includeComments: true,
-  preserveFormatting: false,
 }
 
 const fetchUserPreferences = async (userId: string): Promise<FormattingPreferences> => {

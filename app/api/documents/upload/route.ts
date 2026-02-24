@@ -3,8 +3,8 @@ import { validateInput, fileUploadSchema, type FileUploadData } from "@/lib/vali
 import { rateLimit, getRateLimitIdentifier, RATE_LIMITS } from "@/lib/rate-limit"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 
-const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
-const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT || "30000")
+const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL
+const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT!)
 
 export async function POST(request: NextRequest) {
   try {
@@ -47,7 +47,6 @@ export async function POST(request: NextRequest) {
     const englishVariant = formData.get("englishVariant") as string
     const reportOnly = formData.get("reportOnly") as string
     const includeComments = formData.get("includeComments") as string
-    const preserveFormatting = formData.get("preserveFormatting") as string
 
     const validation = validateInput(fileUploadSchema, {
       filename,
@@ -56,7 +55,6 @@ export async function POST(request: NextRequest) {
       englishVariant: englishVariant || "us",
       reportOnly: reportOnly === "true",
       includeComments: includeComments !== "false",
-      preserveFormatting: preserveFormatting !== "false",
       trackedChanges: formData.get("trackedChanges") === "true",
     })
 
@@ -71,8 +69,6 @@ export async function POST(request: NextRequest) {
     fastApiFormData.append("style", validatedData.style)
     fastApiFormData.append("englishVariant", validatedData.englishVariant)
     fastApiFormData.append("reportOnly", validatedData.reportOnly.toString())
-    fastApiFormData.append("includeComments", validatedData.includeComments.toString())
-    fastApiFormData.append("preserveFormatting", validatedData.preserveFormatting.toString())
     fastApiFormData.append("trackedChanges", (validatedData.trackedChanges || false).toString())
     fastApiFormData.append("user_id", user.id)
 

@@ -26,7 +26,6 @@ export const documentProcessSchema = z.object({
   options: z.record(z.any()).optional(),
   reportOnly: z.boolean().optional(),
   includeComments: z.boolean().optional(),
-  preserveFormatting: z.boolean().optional(),
 })
 
 export type DocumentProcessData = z.infer<typeof documentProcessSchema>

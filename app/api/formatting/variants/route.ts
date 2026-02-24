@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
-const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT || "5000")
+const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL
+const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT!)
 
 const defaultVariants = [
   { id: "us", name: "US English", description: "American English" },

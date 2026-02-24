@@ -5,13 +5,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function withTimeout<T>(promise: Promise<T>, timeoutMs: number, operationName?: string): Promise<T> {
+export function withTimeout<T>(promise: PromiseLike<T>, timeoutMs: number, operationName?: string): Promise<T> {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
       reject(new Error(`${operationName || "Operation"} timed out after ${timeoutMs}ms`))
     }, timeoutMs)
 
-    promise
+    Promise.resolve(promise)
       .then((result) => {
         clearTimeout(timeout)
         resolve(result)

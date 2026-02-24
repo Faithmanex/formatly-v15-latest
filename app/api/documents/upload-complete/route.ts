@@ -2,8 +2,8 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { checkUsageLimits } from "@/lib/billing"
 
-const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
-const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT || "10000")
+const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL
+const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT!)
 
 export async function POST(request: NextRequest) {
   try {
