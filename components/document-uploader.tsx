@@ -36,8 +36,6 @@ interface DocumentUploaderProps {
   formattingOptions?: {
     style: string
     englishVariant: string
-    reportOnly: boolean
-    includeComments: boolean
     trackedChanges: boolean
   }
   onUploadComplete?: () => void
@@ -201,8 +199,6 @@ export function DocumentUploader({
       formData.append("filename", uploadFileItem.file.name)
       formData.append("style", formattingOptions?.style || selectedStyle)
       formData.append("englishVariant", formattingOptions?.englishVariant || "us")
-      formData.append("reportOnly", (formattingOptions?.reportOnly || false).toString())
-      formData.append("includeComments", (formattingOptions?.includeComments || true).toString())
       formData.append("trackedChanges", (formattingOptions?.trackedChanges || false).toString())
       formData.append("file_size", uploadFileItem.file.size.toString())
 
