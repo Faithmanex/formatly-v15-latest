@@ -38,6 +38,7 @@ interface DocumentUploaderProps {
     englishVariant: string
     reportOnly: boolean
     includeComments: boolean
+    trackedChanges: boolean
   }
   onUploadComplete?: () => void
 }
@@ -48,7 +49,7 @@ const MAX_FILES = 5
 
 const pollingBackoff = new ExponentialBackoff({
   initialDelay: 2000, // Start at 2 seconds
-  maxDelay: 10000, // Max 10 seconds
+  maxDelay: 5000, // Max 5 seconds
   maxRetries: 60, // Poll for up to ~10 minutes
   factor: 1.2, // Gradual increase
 })
