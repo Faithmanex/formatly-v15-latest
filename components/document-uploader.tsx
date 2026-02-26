@@ -765,19 +765,10 @@ export function DocumentUploader({
                       <div className="flex items-center gap-2 mb-1">
                         <p className="text-xs sm:text-sm font-medium truncate">{file.file.name}</p>
                         <Badge className={getStatusColor(file.status)}>{file.status}</Badge>
-                        {file.jobId && (
-                          <Badge variant="outline" className="text-xs">
-                            Job: {file.jobId.slice(-8)}
-                          </Badge>
-                        )}
                       </div>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span>{formatFileSize(file.file.size)}</span>
                         <span>{getFileExtension(file.file.name).toUpperCase()}</span>
-                        {file.processingStartedAt && (
-                          <span>Started: {new Date(file.processingStartedAt).toLocaleTimeString()}</span>
-                        )}
-                        {file.completedAt && <span>Completed: {new Date(file.completedAt).toLocaleTimeString()}</span>}
                         {file.formattingTime && (
                           <span className="flex items-center gap-1 text-green-600">
                             <Clock className="h-3 w-3" />
@@ -794,12 +785,7 @@ export function DocumentUploader({
                           <AlertDescription className="text-xs sm:text-sm">{file.error}</AlertDescription>
                         </Alert>
                       )}
-                      {file.status === "formatted" && (
-                        <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                          <CheckCircle className="h-3 w-3" />
-                          Ready for download
-                        </p>
-                      )}
+
                     </div>
                     <div className="flex items-center gap-2">
                       {file.status === "formatted" && file.downloadUrl && (
