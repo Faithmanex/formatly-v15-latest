@@ -3,6 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useEffect, useState, useCallback, useMemo, useRef } from "react"
 import { useAuth } from "@/components/auth-provider"
+import { withTimeout } from "@/lib/utils"
 import {
   getUserSubscription,
   getUserUsageStats,
@@ -115,18 +116,18 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
       // Optimization: Fetch usage stats first to avoid redundant call in checkUsageLimits
       let usageStats: UsageStats | undefined
       try {
-        usageStats = await getUserUsageStats(userId)
+        usageStats = await withTimeout(getUserUsageStats(userId), 7000, "Get usage stats direct")
       } catch (e) {
         console.error("Error fetching usage stats directly:", e)
       }
 
       const [subscriptionData, subscriptionWithPendingData, limitsData, plansData] =
-        await Promise.allSettled([
+        await withTimeout(Promise.allSettled([
           getUserSubscription(userId),
           getSubscriptionStatusWithPending(userId),
           checkUsageLimits(userId, usageStats),
           plans.length === 0 || forceRefresh ? getSubscriptionPlans(forceRefresh) : Promise.resolve(plans),
-        ])
+        ]), 10000, "Load all subscription data")
 
       setSubscription(subscriptionData.status === "fulfilled" ? subscriptionData.value : null)
       setSubscriptionWithPending(

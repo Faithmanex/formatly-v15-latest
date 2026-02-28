@@ -136,52 +136,69 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    // Prevent duplicate listener setup
-    if (authListenerSetup.current) return
+    let mounted = true;
 
-    if (DEBUG_AUTH) console.log("[SERVER] Setting up auth state change listener...")
-    authListenerSetup.current = true
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (mounted) {
+          if (session?.user) {
+            setUser(session.user);
+            const userProfile = await loadProfile(session.user.id);
+            setProfile(userProfile);
+          } else {
+            setUser(null);
+            setProfile(null);
+          }
+        }
+      } catch (err) {
+        console.error("Auth init error:", err);
+      } finally {
+        if (mounted) {
+          setIsInitialized(true);
+          setIsLoading(false);
+        }
+      }
+    };
+
+    initializeAuth();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (DEBUG_AUTH) console.log("[SERVER] Auth state changed:", event, session?.user?.id)
+      if (DEBUG_AUTH) console.log("[SERVER] Auth state changed:", event, session?.user?.id);
 
-      if (event === "INITIAL_SESSION" || event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+      if (event === "INITIAL_SESSION") {
+        // Skip INITIAL_SESSION because we manually load the session on mount
+        return;
+      }
+
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
         if (session?.user) {
-          setUser(session.user)
-
-          if (!profile || profile.id !== session.user.id) {
-            setIsLoading(true)
-            const userProfile = await loadProfile(session.user.id)
-            setProfile(userProfile)
-            setIsLoading(false)
-          } else {
-            setIsLoading(false)
+          setUser(session.user);
+          setIsLoading(true);
+          const userProfile = await loadProfile(session.user.id);
+          if (mounted) {
+            setProfile(userProfile);
+            setIsLoading(false);
           }
-        } else {
-          setUser(null)
-          setProfile(null)
-          setIsLoading(false)
         }
       } else if (event === "SIGNED_OUT") {
-        // Clear cache on logout
-        ProfileCacheService.clearProfileCache()
-        setUser(null)
-        setProfile(null)
-        setIsLoading(false)
+        ProfileCacheService.clearProfileCache();
+        if (mounted) {
+          setUser(null);
+          setProfile(null);
+          setIsLoading(false);
+        }
       }
-
-      if (!isInitialized) {
-        setIsInitialized(true)
-      }
-    })
+    });
 
     return () => {
-      subscription.unsubscribe()
-      authListenerSetup.current = false
-    }
-  }, [loadProfile, isInitialized, profile])
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [loadProfile]);
 
   const signIn = async (email: string, password: string) => {
     try {

@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/components/auth-provider"
 import { RealtimeProvider } from "@/contexts/realtime-context"
 import { SubscriptionProvider } from "@/contexts/subscription-context"
+import { SwrProvider } from "@/components/swr-provider"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -17,7 +18,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Formatly - Professional Document Formatting",
   description: "Transform your documents with professional academic formatting",
-  generator: 'v0.app'
 }
 
 export default function RootLayout({
@@ -29,14 +29,16 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <AuthProvider>
-            <SubscriptionProvider>
-              <RealtimeProvider>
-                {children}
-                <Toaster />
-              </RealtimeProvider>
-            </SubscriptionProvider>
-          </AuthProvider>
+          <SwrProvider>
+            <AuthProvider>
+              <SubscriptionProvider>
+                <RealtimeProvider>
+                  {children}
+                  <Toaster />
+                </RealtimeProvider>
+              </SubscriptionProvider>
+            </AuthProvider>
+          </SwrProvider>
         </ThemeProvider>
       </body>
     </html>
