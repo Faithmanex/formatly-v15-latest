@@ -458,61 +458,53 @@ export function Dashboard() {
               )}
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
-                <Card className="border-border/50 bg-background/60 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300">
+                <Card className="border-border bg-card hover:shadow-sm transition-shadow">
                   <CardContent className="p-3 sm:p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-muted-foreground font-medium">Documents</span>
-                      <div className="p-2 bg-primary/10 rounded-full">
-                        <FileText className="h-4 w-4 text-primary" />
-                      </div>
+                      <span className="text-xs text-muted-foreground">Documents</span>
+                      <FileText className="h-4 w-4 text-muted-foreground" />
                     </div>
                     {documentsLoading ? (
-                      <Skeleton className="h-8 w-16 bg-muted/50" />
+                      <Skeleton className="h-8 w-16" />
                     ) : (
                       <div className="text-xl sm:text-2xl font-semibold text-foreground">{stats.totalDocuments}</div>
                     )}
                   </CardContent>
                 </Card>
 
-                <Card className="border-border/50 bg-background/60 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300">
+                <Card className="border-border bg-card hover:shadow-sm transition-shadow">
                   <CardContent className="p-3 sm:p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-muted-foreground font-medium">Processing</span>
-                      <div className="p-2 bg-amber-500/10 rounded-full">
-                        <Clock className="h-4 w-4 text-amber-500" />
-                      </div>
+                      <span className="text-xs text-muted-foreground">Processing</span>
+                      <Clock className="h-4 w-4 text-amber-500" />
                     </div>
                     {documentsLoading ? (
-                      <Skeleton className="h-8 w-16 bg-muted/50" />
+                      <Skeleton className="h-8 w-16" />
                     ) : (
                       <div className="text-xl sm:text-2xl font-semibold text-foreground">{stats.processingDocuments}</div>
                     )}
                   </CardContent>
                 </Card>
 
-                <Card className="border-border/50 bg-background/60 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300">
+                <Card className="border-border bg-card hover:shadow-sm transition-shadow">
                   <CardContent className="p-3 sm:p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-muted-foreground font-medium">Formatted</span>
-                      <div className="p-2 bg-emerald-500/10 rounded-full">
-                        <CheckCircle className="h-4 w-4 text-emerald-500" />
-                      </div>
+                      <span className="text-xs text-muted-foreground">Formatted</span>
+                      <CheckCircle className="h-4 w-4 text-primary" />
                     </div>
                     {documentsLoading ? (
-                      <Skeleton className="h-8 w-16 bg-muted/50" />
+                      <Skeleton className="h-8 w-16" />
                     ) : (
                       <div className="text-xl sm:text-2xl font-semibold text-foreground">{stats.completedDocuments}</div>
                     )}
                   </CardContent>
                 </Card>
 
-                <Card className="border-border/50 bg-background/60 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300">
+                <Card className="border-border bg-card hover:shadow-sm transition-shadow">
                   <CardContent className="p-3 sm:p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-muted-foreground font-medium">Plan</span>
-                      <div className="p-2 bg-blue-500/10 rounded-full">
-                        <CreditCard className="h-4 w-4 text-blue-500" />
-                      </div>
+                      <span className="text-xs text-muted-foreground">Plan</span>
+                      <CreditCard className="h-4 w-4 text-primary" />
                     </div>
                     <div className="text-lg sm:text-xl font-semibold text-foreground truncate">{planInfo.name}</div>
                     <p className="text-xs text-muted-foreground mt-0.5">
@@ -527,12 +519,12 @@ export function Dashboard() {
               </div>
 
               {!planInfo.isPremium && usage && subscription?.plan && (
-                <Card className="border-border/50 bg-background/60 backdrop-blur-xl shadow-sm">
+                <Card className="border-border bg-card">
                   <CardContent className="p-3 sm:p-4 space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-foreground">Usage</span>
                       {subscription.current_period_end && (
-                        <span className="text-xs text-muted-foreground flex items-center gap-1 bg-muted/50 px-2 py-1 rounded-full">
+                        <span className="text-xs text-muted-foreground flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
                           Renews {formatDate(subscription.current_period_end)}
                         </span>
@@ -542,7 +534,7 @@ export function Dashboard() {
                     <div className="space-y-2">
                       <div className="flex justify-between text-xs text-muted-foreground">
                         <span>Documents</span>
-                        <span className="font-medium text-foreground">
+                        <span>
                           {usage.documents_processed}/
                           {subscription.plan.document_limit === -1 ? "∞" : subscription.plan.document_limit}
                         </span>
@@ -553,18 +545,18 @@ export function Dashboard() {
                             ? 0
                             : Math.min((usage.documents_processed / subscription.plan.document_limit) * 100, 100)
                         }
-                        className="h-1.5 bg-muted/50"
+                        className="h-1.5"
                       />
                     </div>
 
-                    <div className="flex justify-between items-center pt-1 border-t border-border/50 mt-2">
+                    <div className="flex justify-between items-center pt-1">
                       <span className="text-xs text-muted-foreground">
                         Style: <span className="font-medium text-foreground">{stats.mostUsedStyle}</span>
                       </span>
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="h-7 text-xs text-primary hover:bg-primary/10"
+                        className="h-7 text-xs text-primary"
                         onClick={() => navigateTo("/dashboard/upgrade")}
                       >
                         <Zap className="h-3 w-3 mr-1" />
@@ -578,46 +570,38 @@ export function Dashboard() {
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-4 sm:gap-3 scrollbar-sleek">
                 <Button
                   variant="outline"
-                  className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border/50 bg-background/60 backdrop-blur-xl hover:bg-primary/5 hover:border-primary/30 min-w-[100px] sm:min-w-0 transition-all duration-300"
+                  className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border bg-card hover:bg-accent hover:border-primary/20 min-w-[100px] sm:min-w-0"
                   onClick={() => navigateTo("/dashboard/upload")}
                 >
-                  <div className="p-2 bg-primary/10 rounded-full mb-1">
-                    <Upload className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-xs font-medium">Upload</span>
+                  <Upload className="h-5 w-5 text-primary" />
+                  <span className="text-xs">Upload</span>
                 </Button>
 
                 <Button
                   variant="outline"
-                  className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border/50 bg-background/60 backdrop-blur-xl hover:bg-primary/5 hover:border-primary/30 min-w-[100px] sm:min-w-0 transition-all duration-300"
+                  className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border bg-card hover:bg-accent hover:border-primary/20 min-w-[100px] sm:min-w-0"
                   onClick={() => navigateTo("/dashboard/documents")}
                 >
-                  <div className="p-2 bg-primary/10 rounded-full mb-1">
-                    <FileText className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-xs font-medium">Documents</span>
+                  <FileText className="h-5 w-5 text-primary" />
+                  <span className="text-xs">Documents</span>
                 </Button>
 
                 <Button
                   variant="outline"
-                  className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border/50 bg-background/60 backdrop-blur-xl hover:bg-primary/5 hover:border-primary/30 min-w-[100px] sm:min-w-0 transition-all duration-300"
+                  className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border bg-card hover:bg-accent hover:border-primary/20 min-w-[100px] sm:min-w-0"
                   onClick={() => navigateTo("/dashboard/ai")}
                 >
-                  <div className="p-2 bg-primary/10 rounded-full mb-1">
-                    <HelpCircle className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-xs font-medium">AI Help</span>
+                  <HelpCircle className="h-5 w-5 text-primary" />
+                  <span className="text-xs">AI Help</span>
                 </Button>
 
                 <Button
                   variant="outline"
-                  className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border/50 bg-background/60 backdrop-blur-xl hover:bg-primary/5 hover:border-primary/30 min-w-[100px] sm:min-w-0 transition-all duration-300"
+                  className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border bg-card hover:bg-accent hover:border-primary/20 min-w-[100px] sm:min-w-0"
                   onClick={() => navigateTo("/dashboard/preferences")}
                 >
-                  <div className="p-2 bg-primary/10 rounded-full mb-1">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-xs font-medium">Styles</span>
+                  <BookOpen className="h-5 w-5 text-primary" />
+                  <span className="text-xs">Styles</span>
                 </Button>
               </div>
 
