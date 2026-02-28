@@ -92,11 +92,9 @@ function Navigation() {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 sm:h-16">
           {/* Logo and Site Name - Left Aligned */}
-          <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-1.5 sm:gap-2">
-            <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg">
-              <span className="text-base sm:text-lg font-bold">F</span>
-            </div>
-            <span className="text-lg sm:text-xl font-bold text-foreground">Formatly</span>
+          <motion.div whileHover={{ scale: 1.05 }} className="flex items-center">
+            <img src="/logo-dark.svg" alt="Formatly Logo" className="h-8 sm:h-10 dark:hidden" />
+            <img src="/logo-white.svg" alt="Formatly Logo" className="h-8 sm:h-10 hidden dark:block" />
           </motion.div>
 
           {/* Navigation Links - Centered */}
@@ -163,11 +161,9 @@ function Navigation() {
               <SheetContent side="right" className="w-[90vw] max-w-sm sm:w-[400px] p-0 flex flex-col">
                 {/* Header with logo */}
                 <SheetHeader className="border-b bg-muted/30 px-6 py-5">
-                  <SheetTitle className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md">
-                      <span className="text-sm font-bold">F</span>
-                    </div>
-                    <span className="text-lg font-semibold">Formatly</span>
+                  <SheetTitle className="flex items-center justify-center py-2">
+                    <img src="/logo-dark.svg" alt="Formatly Logo" className="h-8 dark:hidden" />
+                    <img src="/logo-white.svg" alt="Formatly Logo" className="h-8 hidden dark:block" />
                   </SheetTitle>
                 </SheetHeader>
 

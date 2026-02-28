@@ -201,7 +201,11 @@ export function RegisterForm() {
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
           <CardHeader className="space-y-2 pb-4 pt-6 sm:pb-6">
-            <div className="space-y-1">
+            <div className="flex justify-center mb-4">
+              <img src="/logo-dark.svg" alt="Formatly Logo" className="h-10 dark:hidden" />
+              <img src="/logo-white.svg" alt="Formatly Logo" className="h-10 hidden dark:block" />
+            </div>
+            <div className="space-y-1 text-center">
               <CardTitle className="text-2xl sm:text-3xl font-bold tracking-tight">Create Account</CardTitle>
               <CardDescription className="text-sm sm:text-base">Start formatting your documents today</CardDescription>
             </div>
