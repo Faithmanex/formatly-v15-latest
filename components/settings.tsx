@@ -1,25 +1,26 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select-custom"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Separator } from "@/components/ui/separator"
-import { Moon, Sun, Globe, Bell, Code, Save } from "lucide-react"
+import { Moon, Sun, Globe, Bell, Save } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useToast } from "@/hooks/use-toast"
 
 export function Settings() {
   const { theme, setTheme } = useTheme()
   const { toast } = useToast()
-  const [sidebarDefault, setSidebarDefault] = useState(false)
   const [emailNotifications, setEmailNotifications] = useState(true)
   const [pushNotifications, setPushNotifications] = useState(false)
   const [language, setLanguage] = useState("en")
-  const [apiBaseUrl, setApiBaseUrl] = useState("")
+
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleSaveSettings = () => {
     toast({
@@ -51,7 +52,7 @@ export function Settings() {
                 <Label htmlFor="theme">Theme</Label>
                 <p className="text-sm text-muted-foreground">Choose your preferred color scheme</p>
               </div>
-              <Select value={theme} onValueChange={setTheme}>
+              <Select value={mounted ? theme : undefined} onValueChange={setTheme}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select theme" />
                 </SelectTrigger>
@@ -78,15 +79,7 @@ export function Settings() {
               </Select>
             </div>
 
-            <Separator />
 
-            <div className="flex items-center justify-between">
-              <div>
-                <Label htmlFor="sidebar">Sidebar Default State</Label>
-                <p className="text-sm text-muted-foreground">Show sidebar expanded by default</p>
-              </div>
-              <Switch id="sidebar" checked={sidebarDefault} onCheckedChange={setSidebarDefault} />
-            </div>
 
             <div className="flex items-center justify-between">
               <div>
@@ -132,40 +125,6 @@ export function Settings() {
                 <p className="text-sm text-muted-foreground">Receive browser notifications for important updates</p>
               </div>
               <Switch id="push-notifications" checked={pushNotifications} onCheckedChange={setPushNotifications} />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Developer Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Code className="h-5 w-5" />
-              Developer Settings
-            </CardTitle>
-            <CardDescription>Configure API endpoints and developer options</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="api-url">API Base URL</Label>
-              <p className="text-sm text-muted-foreground mb-2">
-                Custom API endpoint for document processing (leave empty for default)
-              </p>
-              <Input
-                id="api-url"
-                value={apiBaseUrl}
-                onChange={(e) => setApiBaseUrl(e.target.value)}
-                placeholder="https://api.your-backend.com/v1"
-              />
-            </div>
-            <div className="p-4 bg-muted rounded-lg">
-              <h4 className="font-medium mb-2">API Integration Status</h4>
-              <p className="text-sm text-muted-foreground">
-                Backend API: <span className="text-yellow-600">Not Connected</span>
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Configure your Python backend API URL above to enable document processing
-              </p>
             </div>
           </CardContent>
         </Card>

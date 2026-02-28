@@ -46,6 +46,7 @@ export function AccountSettings() {
   const [apiKey, setApiKey] = useState("sk-formatly-...")
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false)
   const [isChangingPassword, setIsChangingPassword] = useState(false)
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
 
   const formatCurrency = (amount: number, currency = "usd") => {
     return new Intl.NumberFormat("en-US", {
@@ -60,6 +61,67 @@ export function AccountSettings() {
       month: "short",
       day: "numeric",
     })
+  }
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!user?.id) return
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please select an image smaller than 2MB.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      setIsUploadingAvatar(true)
+
+      // Upload to Supabase Storage
+      const fileExt = file.name.split(".").pop()
+      const fileName = `${user.id}-${Math.random()}.${fileExt}`
+      const filePath = `avatars/${fileName}`
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars") // Ensure this bucket exists in Supabase
+        .upload(filePath, file)
+
+      if (uploadError) throw uploadError
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(filePath)
+
+      // Update Profile record
+      const updatedProfile = await profileService.updateProfile(user.id, {
+        avatar_url: publicUrl,
+        updated_at: new Date().toISOString(),
+      })
+
+      if (updatedProfile) {
+        ProfileCacheService.clearProfileCache()
+        await refreshProfile(true)
+        toast({ title: "Avatar Updated", description: "Your profile picture has been updated." })
+      } else {
+        throw new Error("Failed to update profile record")
+      }
+    } catch (error) {
+      console.error("Avatar upload error:", error)
+      toast({
+        title: "Upload Failed",
+        description: "Could not upload the image. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsUploadingAvatar(false)
+      // Reset input manually so the same file could be selected again if needed
+      e.target.value = ""
+    }
   }
 
   const handleUpdateProfile = async () => {
@@ -223,12 +285,11 @@ export function AccountSettings() {
           <TabsTrigger value="usage" className="text-xs sm:text-sm">
             Usage
           </TabsTrigger>
-          <TabsTrigger value="api" className="text-xs sm:text-sm">
-            API Keys
-          </TabsTrigger>
-          <TabsTrigger value="security" className="text-xs sm:text-sm">
-            Security
-          </TabsTrigger>
+          {planName === "Business" && (
+            <TabsTrigger value="api" className="text-xs sm:text-sm">
+              API Keys
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="profile" className="space-y-4 md:space-y-6">
@@ -245,16 +306,28 @@ export function AccountSettings() {
             <CardContent className="space-y-4 md:space-y-6 p-4 md:p-6">
               <div className="flex items-center gap-4 md:gap-6">
                 <Avatar className="h-16 w-16 md:h-20 md:w-20">
-                  <AvatarImage src={profile?.avatar_url || "/placeholder-user.jpg"} alt={profile?.full_name} />
+                  <AvatarImage src={profile?.avatar_url || "/placeholder-user.jpg"} alt={profile?.full_name || ""} />
                   <AvatarFallback className="text-base md:text-lg">
                     {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "U"}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <Button variant="outline" size="sm">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Change Photo
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" asChild disabled={isUploadingAvatar}>
+                      <Label htmlFor="avatar-upload" className="cursor-pointer">
+                        <Upload className="h-4 w-4 mr-2" />
+                        {isUploadingAvatar ? "Uploading..." : "Change Photo"}
+                      </Label>
+                    </Button>
+                    <Input
+                      id="avatar-upload"
+                      type="file"
+                      accept="image/jpeg, image/png, image/gif"
+                      className="hidden"
+                      onChange={handleAvatarUpload}
+                      disabled={isUploadingAvatar}
+                    />
+                  </div>
                   <p className="text-xs sm:text-sm text-muted-foreground mt-2">JPG, PNG or GIF. Max size 2MB.</p>
                 </div>
               </div>
@@ -279,16 +352,13 @@ export function AccountSettings() {
                     id="email"
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="text-sm md:text-base"
+                    readOnly
+                    className="text-sm md:text-base bg-muted cursor-not-allowed"
                   />
                 </div>
               </div>
 
               <div className="flex justify-between gap-2 flex-wrap">
-                <Button variant="outline" onClick={handleRefreshProfile} size="sm">
-                  Refresh Profile
-                </Button>
                 <Button onClick={handleUpdateProfile} disabled={isUpdatingProfile} size="sm">
                   <Save className="h-4 w-4 mr-2" />
                   {isUpdatingProfile ? "Saving..." : "Save Changes"}
@@ -488,129 +558,49 @@ export function AccountSettings() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="api" className="space-y-4 md:space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                <Key className="h-5 w-5" />
-                API Keys
-              </CardTitle>
-              <CardDescription className="text-sm sm:text-base md:text-base">
-                Generate and manage API keys for developer access
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 md:space-y-6 p-4 md:p-6">
-              <div className="p-3 md:p-4 bg-secondary/50 rounded-lg">
-                <h4 className="text-sm sm:text-base font-medium mb-2">Current API Key</h4>
-                <div className="flex items-center gap-2">
-                  <Input value={apiKey} readOnly className="font-mono text-xs sm:text-sm md:text-base" />
-                  <Button variant="outline" size="sm" onClick={handleCopyApiKey}>
-                    <Copy className="h-4 w-4" />
-                  </Button>
+        {planName === "Business" && (
+          <TabsContent value="api" className="space-y-4 md:space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                  <Key className="h-5 w-5" />
+                  API Keys
+                </CardTitle>
+                <CardDescription className="text-sm sm:text-base md:text-base">
+                  Generate and manage API keys for developer access
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 md:space-y-6 p-4 md:p-6">
+                <div className="p-3 md:p-4 bg-secondary/50 rounded-lg">
+                  <h4 className="text-sm sm:text-base font-medium mb-2">Current API Key</h4>
+                  <div className="flex items-center gap-2">
+                    <Input value={apiKey} readOnly className="font-mono text-xs sm:text-sm md:text-base" />
+                    <Button variant="outline" size="sm" onClick={handleCopyApiKey}>
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Keep your API key secure and do not share it publicly.
+                  </p>
                 </div>
-                <p className="text-xs text-muted-foreground mt-2">
-                  Keep your API key secure and do not share it publicly.
-                </p>
-              </div>
 
-              <div className="flex gap-2">
-                <Button onClick={handleGenerateApiKey}>Generate New Key</Button>
-                <Button variant="destructive">Revoke Key</Button>
-              </div>
+                <div className="flex gap-2">
+                  <Button onClick={handleGenerateApiKey}>Generate New Key</Button>
+                  <Button variant="destructive">Revoke Key</Button>
+                </div>
 
-              <div className="text-xs sm:text-sm md:text-base text-muted-foreground">
-                <h4 className="font-medium mb-2">API Usage</h4>
-                <p>Use your API key to integrate Formatly with your applications.</p>
-                <p className="mt-2">
-                  <strong>Endpoint:</strong> https://api.formatly.com/v1/
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                <div className="text-xs sm:text-sm md:text-base text-muted-foreground">
+                  <h4 className="font-medium mb-2">API Usage</h4>
+                  <p>Use your API key to integrate Formatly with your applications.</p>
+                  <p className="mt-2">
+                    <strong>Endpoint:</strong> https://api.formatly.com/v1/
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
 
-        <TabsContent value="security" className="space-y-4 md:space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base sm:text-lg">Change Password</CardTitle>
-              <CardDescription className="text-sm sm:text-base md:text-base">
-                Update your password to keep your account secure
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="currentPassword" className="text-sm sm:text-sm md:text-base">
-                  Current Password
-                </Label>
-                <Input
-                  id="currentPassword"
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="newPassword" className="text-sm sm:text-sm md:text-base">
-                  New Password
-                </Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="confirmPassword" className="text-sm sm:text-sm md:text-base">
-                  Confirm New Password
-                </Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </div>
-              <Button onClick={handleChangePassword} disabled={isChangingPassword}>
-                {isChangingPassword ? "Updating..." : "Update Password"}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base sm:text-lg text-destructive">Danger Zone</CardTitle>
-              <CardDescription className="text-sm sm:text-base md:text-base">
-                Irreversible actions that will affect your account
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="destructive">
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Account
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle className="text-base sm:text-lg">Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription className="text-sm sm:text-base md:text-base">
-                      This action cannot be undone. This will permanently delete your account and remove all your data
-                      from our servers.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                      Delete Account
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
     </div>
   )
