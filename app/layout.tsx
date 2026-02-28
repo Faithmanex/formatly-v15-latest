@@ -2,12 +2,12 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import { SWRConfig } from "swr"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/components/auth-provider"
 import { RealtimeProvider } from "@/contexts/realtime-context"
 import { SubscriptionProvider } from "@/contexts/subscription-context"
-import { SwrProvider } from "@/components/swr-provider"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,8 +28,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <SwrProvider>
+        <SWRConfig
+          value={{
+            revalidateOnFocus: true,
+            revalidateOnReconnect: true,
+            shouldRetryOnError: true,
+            errorRetryCount: 3,
+            dedupingInterval: 30_000,
+          }}
+        >
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <AuthProvider>
               <SubscriptionProvider>
                 <RealtimeProvider>
@@ -38,8 +46,8 @@ export default function RootLayout({
                 </RealtimeProvider>
               </SubscriptionProvider>
             </AuthProvider>
-          </SwrProvider>
-        </ThemeProvider>
+          </ThemeProvider>
+        </SWRConfig>
       </body>
     </html>
   )
