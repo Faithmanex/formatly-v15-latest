@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
-import { CheckCircle, Zap, Check, ArrowUp, ArrowDown, Star, HelpCircle, ChevronDown, ChevronUp, Shield } from "lucide-react"
+import { CheckCircle, Zap, Check, ArrowUp, ArrowDown, Star, HelpCircle, ChevronDown, ChevronUp, Shield, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -110,10 +110,10 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
   const getPlanButtonInfo = (plan: any) => {
     // Check if it's the current plan
     const isCurrentPlan = currentSubscription?.plan_id === plan.id
-    if (isCurrentPlan) {
+    if (isCurrentPlan || plan.name === "Business") {
       return {
-        text: "Current Plan",
-        icon: <Check className="h-4 w-4" />,
+        text: plan.name === "Business" ? "Coming soon..." : "Current Plan",
+        icon: plan.name === "Business" ? <Clock className="h-4 w-4" /> : <Check className="h-4 w-4" />,
         variant: "outline" as const,
         disabled: true
       }
@@ -214,9 +214,9 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                       </div>
                     )}
 
-                    <CardHeader className="text-center p-4 sm:p-6 pb-0 sm:pb-0">
-                        <CardTitle className="text-xl sm:text-2xl mb-2 sm:mb-2">{plan.name}</CardTitle>
-                        <div className="mb-1">
+                    <CardHeader className="text-center pb-2 sm:pb-3 p-4 sm:p-6">
+                      <CardTitle className="text-xl sm:text-2xl mb-2 sm:mb-3">{plan.name}</CardTitle>
+                      <div className="mb-2">
                         <span className="text-3xl sm:text-4xl md:text-5xl font-bold">{formatDisplayPrice(plan)}</span>
                         <span className="text-sm sm:text-base text-muted-foreground">/month</span>
                       </div>
@@ -230,11 +230,11 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                       </CardDescription>
                     </CardHeader>
                     
-                    <CardContent className="space-y-4 p-4 sm:p-6 pt-0 flex-1">
+                    <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6 pt-0 flex-1">
                       <ul className="space-y-3">
                         {features.map((feature: any, featureIndex: number) => {
                           const featureStr = typeof feature === 'string' ? feature : feature.text || ""
-                          const parts = featureStr.split(/[:|]/)
+                          const parts = featureStr.split(":")
                           const cleanFeature = parts[0].trim()
                           const tooltip = parts[1]?.trim()
                           
@@ -281,7 +281,7 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                         <Button
                           size="lg"
                           variant={buttonInfo?.variant as any}
-                          disabled={buttonInfo?.disabled || (plan as any).comingSoon}
+                          disabled={buttonInfo?.disabled || (plan as any).comingSoon || plan.name === "Business"}
                           className={cn(
                             "w-full text-sm sm:text-base rounded-full gap-2 transition-all",
                             isPopular && !buttonInfo?.disabled && "bg-primary hover:bg-primary/90 shadow-md"
@@ -296,15 +296,15 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                           size="lg"
                           variant={plan.buttonVariant || (isPopular ? "default" : "outline")}
                           asChild
-                          disabled={(plan as any).comingSoon}
+                          disabled={(plan as any).comingSoon || plan.name === "Business"}
                           className={cn(
                             "w-full text-sm sm:text-base rounded-full transition-all",
                             isPopular && "bg-primary hover:bg-primary/90 shadow-md",
-                            (plan as any).comingSoon && "opacity-50 cursor-not-allowed"
+                            ((plan as any).comingSoon || plan.name === "Business") && "opacity-50 cursor-not-allowed"
                           )}
                         >
-                          <Link href={user ? "/dashboard" : "/auth/register"}>
-                            {plan.buttonText || (plan.name === "Free" ? "Get Started" : "Buy Now")}
+                          <Link href={(user && plan.name !== "Business") ? "/dashboard" : (plan.name === "Business" ? "#" : "/auth/register")}>
+                            {plan.buttonText || (plan.name === "Business" ? "Coming soon..." : (plan.name === "Free" ? "Get Started" : "Buy Now"))}
                           </Link>
                         </Button>
                       )}
