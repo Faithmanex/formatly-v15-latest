@@ -18,7 +18,44 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
 function TiltCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`transition-base hover-lift ${className}`}>{children}</div>
+  return <div className={cn("transition-base hover-lift", className)}>{children}</div>
+}
+
+interface BillingToggleProps {
+  billingCycle: "monthly" | "yearly"
+  onChange: (cycle: "monthly" | "yearly") => void
+  showSavings?: boolean
+}
+
+function BillingToggle({ billingCycle, onChange, showSavings = true }: BillingToggleProps) {
+  return (
+    <div className="flex items-center justify-center gap-4">
+      <span className={cn("text-sm font-medium transition-colors", billingCycle === "monthly" ? "text-foreground" : "text-muted-foreground")}>
+        Monthly{showSavings && " billing"}
+      </span>
+      <button
+        onClick={() => onChange(billingCycle === "monthly" ? "yearly" : "monthly")}
+        className="relative w-12 h-6 rounded-full bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20"
+        aria-label="Toggle billing cycle"
+        type="button"
+      >
+        <div className={cn(
+          "absolute top-1 left-1 w-4 h-4 rounded-full bg-primary shadow-sm transition-transform duration-200 ease-in-out",
+          billingCycle === "yearly" ? "translate-x-6" : ""
+        )} />
+      </button>
+      <div className="flex items-center gap-2">
+        <span className={cn("text-sm font-medium transition-colors", billingCycle === "yearly" ? "text-foreground" : "text-muted-foreground")}>
+          Yearly{showSavings && " billing"}
+        </span>
+        {showSavings && (
+          <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 border-none font-bold text-[10px] sm:text-xs">
+            {billingCycle === "yearly" ? "2 MONTHS FREE" : "SAVE 20%"}
+          </Badge>
+        )}
+      </div>
+    </div>
+  )
 }
 
 export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }) {
@@ -27,14 +64,18 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
   const { subscription: currentSubscription, plans: dbPlans } = useSubscription()
   const { isSubscribed, planName } = useSubscriptionStatus()
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly")
   const [isComparisonOpen, setIsComparisonOpen] = useState(false)
   
   const isDashboard = mode === "dashboard"
 
   // Use DB plans if available, otherwise fallback to static pricingPlans
-  const displayPlans = dbPlans && dbPlans.length > 0 
-    ? dbPlans.sort((a, b) => (a.price_monthly || 0) - (b.price_monthly || 0))
-    : pricingPlans
+  const displayPlans = useMemo(() => {
+    const plans = dbPlans && dbPlans.length > 0 
+      ? [...dbPlans].sort((a, b) => (a.price_monthly || 0) - (b.price_monthly || 0))
+      : pricingPlans
+    return plans
+  }, [dbPlans])
 
   const handlePlanSelect = async (planId: string) => {
     if (!profile?.id) return
@@ -98,9 +139,9 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
   }
 
   const formatDisplayPrice = (plan: any) => {
-    if (plan.price !== undefined) return plan.price // Use string from pricingPlans if available
-    const price = plan.price_monthly || 0
-    return price === 0 ? "$0" : `$${Math.floor(price)}`
+    const price = billingCycle === "monthly" ? (plan.price_monthly ?? 0) : (plan.price_yearly ?? 0)
+    const displayPrice = billingCycle === "monthly" ? price : Math.floor(price / 12)
+    return price === 0 ? "$0" : `$${displayPrice}`
   }
 
   return (
@@ -119,8 +160,15 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
               Simple, Transparent Pricing
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground">Choose the plan that fits your needs</p>
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8">Choose the plan that fits your needs</p>
+            <BillingToggle billingCycle={billingCycle} onChange={setBillingCycle} />
           </motion.div>
+        )}
+
+        {isDashboard && (
+          <div className="mb-10">
+            <BillingToggle billingCycle={billingCycle} onChange={setBillingCycle} />
+          </div>
         )}
 
         <div className={cn(
@@ -170,8 +218,13 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                       <CardTitle className="text-xl sm:text-2xl mb-2 sm:mb-3">{plan.name}</CardTitle>
                       <div className="mb-2">
                         <span className="text-3xl sm:text-4xl md:text-5xl font-bold">{formatDisplayPrice(plan)}</span>
-                        <span className="text-sm sm:text-base text-muted-foreground">/{plan.period || "month"}</span>
+                        <span className="text-sm sm:text-base text-muted-foreground">/month</span>
                       </div>
+                      {billingCycle === "yearly" && plan.price_yearly > 0 && (
+                        <div className="text-xs text-green-600 dark:text-green-400 font-medium mb-3">
+                          Billed as ${plan.price_yearly}/year
+                        </div>
+                      )}
                       <CardDescription className="text-sm sm:text-base min-h-[40px] px-2 leading-relaxed">
                         {plan.description}
                       </CardDescription>
@@ -217,7 +270,7 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                           <PayPalButton
                             planId={plan.id!}
                             planName={plan.name}
-                            billingCycle="monthly"
+                            billingCycle={billingCycle}
                             disabled={isCurrentPlan}
                           />
                           <Button variant="ghost" size="sm" className="w-full text-muted-foreground h-8 text-xs" onClick={() => setSelectedPlan(null)}>

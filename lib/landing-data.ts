@@ -91,7 +91,8 @@ export const pricingPlans = [
   {
     id: "free",
     name: "Free",
-    price: "$0",
+    price_monthly: 0,
+    price_yearly: 0,
     period: "month",
     description: "Get started with Formatly",
     features: [
@@ -106,16 +107,17 @@ export const pricingPlans = [
   {
     id: "pro",
     name: "Pro",
-    price: "$12",
+    price_monthly: 12,
+    price_yearly: 120, // $10/mo if billed yearly
     period: "month",
     description: "Great for students and professionals",
     features: [
       "Everything in Free, plus:",
       "50 documents per month",
       "All formatting styles (MLA, Chicago, Harvard, AMA, IEEE)",
-      "Tracked Changes: Full transparency on every structural adjustment in an (i)",
-      "Custom styles: Tailor formatting to specific journal or institutional requirements in an (i).",
-      "AI Assistant: Real-time intelligence to refine your document’s flow",
+      "Tracked Changes | Full transparency on every structural adjustment.",
+      "Custom styles | Tailor formatting to specific journal or institutional requirements.",
+      "AI Assistant | Real-time intelligence to refine your document’s flow",
       "Priority email support",
     ],
     buttonText: "Get Started",
@@ -125,7 +127,8 @@ export const pricingPlans = [
   {
     id: "business",
     name: "Business",
-    price: "$39",
+    price_monthly: 39,
+    price_yearly: 390, // $32.5/mo if billed yearly
     period: "month",
     description: "For research teams and organisations",
     features: [

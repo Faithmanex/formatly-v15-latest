@@ -62,7 +62,7 @@ function TiltCard({ children, className = "" }: { children: React.ReactNode; cla
 }
 
 function Navigation() {
-  const { user, isLoading, isInitialized } = useAuth()
+  const { user, profile, isLoading, isInitialized } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
 
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>, href: string) => {
@@ -136,6 +136,14 @@ function Navigation() {
                     Dashboard
                   </Link>
                 </Button>
+                {profile?.role === "admin" && (
+                  <Button variant="outline" size="sm" className="hidden sm:flex rounded-full border-primary/50 text-primary hover:bg-primary/10" asChild>
+                    <Link href="/dashboard/admin">
+                      <Shield className="mr-2 h-4 w-4" />
+                      Admin
+                    </Link>
+                  </Button>
+                )}
               </div>
             ) : (
               <>
@@ -214,14 +222,28 @@ function Navigation() {
                           </div>
                           <Button
                             asChild
-                            className="w-full h-11 bg-primary hover:bg-primary/90 transition-all"
+                            variant="ghost"
+                            className="w-full h-11 mb-2 justify-start px-4"
                             size="lg"
                           >
-                            <Link href="/dashboard" className="flex items-center justify-center gap-2">
+                            <Link href="/dashboard" className="flex items-center gap-2">
                               <LayoutDashboard className="h-5 w-5" />
-                              Go to Dashboard
+                              Dashboard
                             </Link>
                           </Button>
+                          {profile?.role === "admin" && (
+                            <Button
+                              asChild
+                              variant="outline"
+                              className="w-full h-11 border-primary/30 text-primary hover:bg-primary/5 justify-start px-4"
+                              size="lg"
+                            >
+                              <Link href="/dashboard/admin" className="flex items-center gap-2">
+                                <Shield className="h-5 w-5" />
+                                Admin Dashboard
+                              </Link>
+                            </Button>
+                          )}
                         </>
                       ) : (
                         <>
