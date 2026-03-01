@@ -25,7 +25,6 @@ import {
   Calendar,
   Crown,
   Plus,
-  Shield,
 } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { useSubscription, useSubscriptionStatus, useUsageLimits } from "@/contexts/subscription-context"
@@ -467,17 +466,6 @@ export function Dashboard() {
                     <Upload className="h-4 w-4 mr-2" />
                     Upload
                   </Button>
-                  {profile?.role === "admin" && (
-                    <Button
-                      variant="outline"
-                      onClick={() => navigateTo("/dashboard/admin")}
-                      className="hidden sm:flex border-primary/20 hover:bg-primary/5"
-                      size="sm"
-                    >
-                      <Shield className="h-4 w-4 mr-2 text-primary" />
-                      Admin Panel
-                    </Button>
-                  )}
                 </div>
               </div>
 

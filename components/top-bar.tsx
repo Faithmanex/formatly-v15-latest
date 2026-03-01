@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Upload, User, Settings, LogOut, CreditCard, Shield } from "lucide-react"
+import { Bell, Upload, User, Settings, LogOut, CreditCard } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { SidebarTrigger } from "@/components/ui/sidebar"
@@ -161,15 +161,6 @@ export function TopBar() {
                 <span>My Account</span>
               </Link>
             </DropdownMenuItem>
-
-            {profile?.role === "admin" && (
-              <DropdownMenuItem asChild className="focus:bg-muted/50 transition-colors duration-150">
-                <Link href="/dashboard/admin" className="flex items-center gap-3 w-full py-2">
-                  <Shield className="h-4 w-4 text-muted-foreground text-primary" />
-                  <span className="font-medium text-primary">Admin Panel</span>
-                </Link>
-              </DropdownMenuItem>
-            )}
 
             <DropdownMenuItem asChild className="focus:bg-muted/50 transition-colors duration-150">
               <Link href="/dashboard/billing" className="flex items-center gap-3 w-full py-2">
