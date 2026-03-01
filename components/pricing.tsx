@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { CheckCircle, Zap, Check, ArrowUp, ArrowDown, Star, HelpCircle } from "lucide-react"
+import { CheckCircle, Zap, Check, ArrowUp, ArrowDown, Star, HelpCircle, ChevronDown, ChevronUp, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils"
 import { isPlanUpgrade, getPlanChangePreview } from "@/lib/billing"
 import { useToast } from "@/hooks/use-toast"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
 function TiltCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`transition-base hover-lift ${className}`}>{children}</div>
@@ -26,6 +27,7 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
   const { subscription: currentSubscription, plans: dbPlans } = useSubscription()
   const { isSubscribed, planName } = useSubscriptionStatus()
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
+  const [isComparisonOpen, setIsComparisonOpen] = useState(false)
   
   const isDashboard = mode === "dashboard"
 
@@ -103,8 +105,8 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
 
   return (
     <section id="pricing" className={cn(
-      "relative scroll-mt-20",
-      isDashboard ? "py-6" : "py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8"
+      "relative scroll-mt-20 px-3 sm:px-4 md:px-6 lg:px-8",
+      isDashboard ? "py-8" : "py-12 sm:py-16 md:py-20"
     )}>
       <div className="max-w-7xl mx-auto">
         {!isDashboard && (
@@ -123,7 +125,7 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
 
         <div className={cn(
           "grid gap-6 sm:gap-8",
-          isDashboard ? "grid-cols-1 md:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-3"
+          isDashboard ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-3"
         )}>
           {displayPlans.map((plan, index) => {
             const isCurrentPlan = isDashboard && currentSubscription?.plan_id === plan.id
@@ -259,6 +261,89 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
               </motion.div>
             )
           })}
+        </div>
+
+        {/* Comparison Table */}
+        <div className="mt-12 sm:mt-16 pt-4 flex justify-center">
+          <Collapsible
+            open={isComparisonOpen}
+            onOpenChange={setIsComparisonOpen}
+            className="w-full space-y-4"
+          >
+            <div className="flex justify-center">
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-primary transition-colors">
+                  {isComparisonOpen ? "Hide Feature Comparison" : "Compare All Features"}
+                  {isComparisonOpen ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </CollapsibleTrigger>
+            </div>
+            <CollapsibleContent>
+              <Card className="overflow-hidden border-border/50 bg-muted/5 backdrop-blur-sm animate-in slide-in-from-top-2 fade-in duration-300">
+                <CardHeader className="pb-4 border-b border-border/50">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Shield className="h-5 w-5 text-primary" />
+                    Feature Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border/50 bg-muted/20">
+                          <th className="text-left py-4 px-6 font-medium text-muted-foreground">Feature</th>
+                          {displayPlans.map((plan: any) => (
+                            <th key={plan.id || plan.name} className={cn(
+                              "text-center py-4 px-6 font-semibold min-w-[120px]",
+                              (plan.is_popular || plan.popular) ? "text-primary" : ""
+                            )}>
+                              {plan.name}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { label: "Documents", key: "document_limit", format: (v: any) => v === -1 || v === 0 ? "Unlimited" : v.toLocaleString() },
+                          { label: "API Calls", key: "api_calls_limit", format: (v: any) => v === -1 || v === 0 ? "Unlimited" : v.toLocaleString() },
+                          { label: "Storage", key: "storage_limit_gb", format: (v: any) => v === -1 || v === 999999 ? "Unlimited" : `${v} GB` },
+                          { label: "Priority Support", key: "priority_support", type: "boolean" },
+                          { label: "Custom Styles", key: "custom_styles", type: "boolean" },
+                          { label: "Team Collab", key: "team_collaboration", type: "boolean" },
+                        ].map((row, idx) => (
+                          <tr key={idx} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                            <td className="py-4 px-6 font-medium">{row.label}</td>
+                            {displayPlans.map((plan: any) => {
+                              const val = plan[row.key];
+                              return (
+                                <td key={plan.id || plan.name} className="text-center py-4 px-6">
+                                  {row.type === "boolean" ? (
+                                    val ? (
+                                      <div className="flex justify-center">
+                                        <Check className="h-4 w-4 text-green-500" />
+                                      </div>
+                                    ) : (
+                                      <span className="text-muted-foreground/30">•</span>
+                                    )
+                                  ) : (
+                                    <span className="text-muted-foreground">{row.format ? row.format(val) : val}</span>
+                                  )}
+                                </td>
+                              )
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
       </div>
     </section>
