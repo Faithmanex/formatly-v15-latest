@@ -98,37 +98,45 @@ export const pricingPlans = [
     features: [
       "3 documents per month",
       "APA Style formatting only",
-      "Standard Email Support"
+      "Standard Email Support",
     ],
     buttonText: "Get Started",
     buttonVariant: "outline" as const,
     popular: false,
+    document_limit: 3,
+    priority_support: false,
+    custom_styles: false,
+    team_collaboration: false,
   },
   {
     id: "pro",
     name: "Pro",
     price_monthly: 12,
-    price_yearly: 120, // $10/mo if billed yearly
+    price_yearly: 120,
     period: "month",
     description: "Great for students and professionals",
     features: [
       "Everything in Free, plus:",
       "50 documents per month",
-      "All formatting styles (MLA, Chicago, Harvard, AMA, IEEE)",
-      "Tracked Changes | Full transparency on every structural adjustment.",
-      "Custom styles | Tailor formatting to specific journal or institutional requirements.",
-      "AI Assistant | Real-time intelligence to refine your document’s flow",
+      "All formatting styles: MLA, Chicago, Harvard, AMA, IEEE",
+      "Tracked Changes: Full transparency on every structural adjustment",
+      "Custom styles: Tailor formatting to specific journal or institutional requirements",
+      "AI Assistant: Real-time intelligence to refine your document’s flow",
       "Priority email support",
     ],
     buttonText: "Get Started",
     buttonVariant: "default" as const,
     popular: true,
+    document_limit: 50,
+    priority_support: true,
+    custom_styles: true,
+    team_collaboration: false,
   },
   {
     id: "business",
     name: "Business",
     price_monthly: 39,
-    price_yearly: 390, // $32.5/mo if billed yearly
+    price_yearly: 390,
     period: "month",
     description: "For research teams and organisations",
     features: [
@@ -142,6 +150,10 @@ export const pricingPlans = [
     buttonVariant: "outline" as const,
     popular: false,
     comingSoon: true,
+    document_limit: -1,
+    priority_support: true,
+    custom_styles: true,
+    team_collaboration: true,
   },
 ]
 

@@ -11,8 +11,6 @@ export interface SubscriptionPlan {
   currency: string
   features: string[]
   document_limit: number
-  api_calls_limit: number
-  storage_limit_gb: number
   priority_support: boolean
   custom_styles: boolean
   team_collaboration: boolean
@@ -76,11 +74,7 @@ export interface PaymentMethod {
 
 export interface UsageStats {
   documents_processed: number
-  api_calls_made: number
-  storage_used_gb: number
   document_limit: number
-  api_calls_limit: number
-  storage_limit_gb: number
   plan_name: string
   current_period_start: string
   current_period_end: string
@@ -436,11 +430,7 @@ export async function getUserUsageStats(userId: string): Promise<UsageStats> {
       // Return default stats on error
       return {
         documents_processed: 0,
-        api_calls_made: 0,
-        storage_used_gb: 0,
         document_limit: 0,
-        api_calls_limit: 0,
-        storage_limit_gb: 0,
         plan_name: "No Plan",
         current_period_start: new Date().toISOString(),
         current_period_end: new Date().toISOString(),
@@ -452,30 +442,18 @@ export async function getUserUsageStats(userId: string): Promise<UsageStats> {
       const stats = data[0]
       return {
         documents_processed: stats.documents_used || 0,
-        api_calls_made: stats.api_calls_used || 0,
-        storage_used_gb: Number.parseFloat(stats.storage_used_gb) || 0,
-        document_limit: stats.documents_limit || 0,
-        api_calls_limit: stats.api_calls_limit || 0,
-        storage_limit_gb: stats.storage_limit_gb || 0,
-        plan_name: stats.plan_name || "No Plan",
-        current_period_start:
-          stats.billing_cycle === "yearly"
-            ? new Date(new Date(stats.next_reset_date).getTime() - 365 * 24 * 60 * 60 * 1000).toISOString()
-            : new Date(new Date(stats.next_reset_date).getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-        current_period_end: stats.next_reset_date,
-        usage_percentage:
-          stats.documents_limit > 0 ? Math.round((stats.documents_used / stats.documents_limit) * 100) : 0,
+        document_limit: stats.document_limit || 0,
+        plan_name: stats.plan_name || "Free",
+        current_period_start: stats.period_start || new Date().toISOString(),
+        current_period_end: stats.period_end || new Date().toISOString(),
+        usage_percentage: stats.usage_percentage || 0,
       }
     }
 
     // Return default stats if no data
     return {
       documents_processed: 0,
-      api_calls_made: 0,
-      storage_used_gb: 0,
       document_limit: 0,
-      api_calls_limit: 0,
-      storage_limit_gb: 0,
       plan_name: "No Plan",
       current_period_start: new Date().toISOString(),
       current_period_end: new Date().toISOString(),
@@ -485,11 +463,7 @@ export async function getUserUsageStats(userId: string): Promise<UsageStats> {
     console.error("Error in getUserUsageStats:", error)
     return {
       documents_processed: 0,
-      api_calls_made: 0,
-      storage_used_gb: 0,
       document_limit: 0,
-      api_calls_limit: 0,
-      storage_limit_gb: 0,
       plan_name: "No Plan",
       current_period_start: new Date().toISOString(),
       current_period_end: new Date().toISOString(),
@@ -514,38 +488,14 @@ export async function incrementDocumentUsage(userId: string, increment = 1): Pro
   }
 }
 
-// Update storage usage - updated function name
+// Update storage usage - empty now
 export async function updateStorageUsage(userId: string, storageGb: number): Promise<void> {
-  try {
-    const supabase = getSupabase()
-    const { error } = await supabase.rpc("track_storage_usage", {
-      user_uuid: userId,
-      storage_gb: storageGb,
-    })
-
-    if (error) {
-      console.error("Error updating storage usage:", error)
-    }
-  } catch (error) {
-    console.error("Error in updateStorageUsage:", error)
-  }
+  // Storage limit removed
 }
 
-// Increment API usage
+// Increment API usage - empty now
 export async function incrementApiUsage(userId: string, increment = 1): Promise<void> {
-  try {
-    const supabase = getSupabase()
-    const { error } = await supabase.rpc("track_api_usage", {
-      user_uuid: userId,
-      calls_count: increment,
-    })
-
-    if (error) {
-      console.error("Error incrementing API usage:", error)
-    }
-  } catch (error) {
-    console.error("Error in incrementApiUsage:", error)
-  }
+  // API limit removed
 }
 
 // Check if user has reached limits
@@ -554,16 +504,10 @@ export async function checkUsageLimits(
   preFetchedStats?: UsageStats,
 ): Promise<{
   documentsAtLimit: boolean
-  apiCallsAtLimit: boolean
-  storageAtLimit: boolean
   currentUsage?: {
     documents_used: number
     document_limit: number
     plan_name: string
-    api_calls_made: number
-    api_calls_limit: number
-    storage_used_gb: number
-    storage_limit_gb: number
     usage_percentage: number
   }
 }> {
@@ -571,21 +515,13 @@ export async function checkUsageLimits(
     const stats = preFetchedStats || (await getUserUsageStats(userId))
 
     const documentsAtLimit = stats.document_limit > 0 && stats.documents_processed >= stats.document_limit
-    const apiCallsAtLimit = stats.api_calls_limit > 0 && stats.api_calls_made >= stats.api_calls_limit
-    const storageAtLimit = stats.storage_limit_gb > 0 && stats.storage_used_gb >= stats.storage_limit_gb
 
     return {
       documentsAtLimit,
-      apiCallsAtLimit,
-      storageAtLimit,
       currentUsage: {
         documents_used: stats.documents_processed,
         document_limit: stats.document_limit,
         plan_name: stats.plan_name,
-        api_calls_made: stats.api_calls_made,
-        api_calls_limit: stats.api_calls_limit,
-        storage_used_gb: stats.storage_used_gb,
-        storage_limit_gb: stats.storage_limit_gb,
         usage_percentage: stats.usage_percentage,
       },
     }
@@ -593,8 +529,6 @@ export async function checkUsageLimits(
     console.error("Error in checkUsageLimits:", error)
     return {
       documentsAtLimit: false,
-      apiCallsAtLimit: false,
-      storageAtLimit: false,
     }
   }
 }

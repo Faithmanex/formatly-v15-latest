@@ -129,17 +129,11 @@ export function SubscriptionSummary({
                   showRemaining
                 />
                 <UsageProgress
-                  label="API Calls"
-                  used={usage.api_calls_made}
-                  limit={subscription.plan.api_calls_limit}
+                  label="Documents"
+                  used={usage.documents_processed}
+                  limit={subscription.plan.document_limit}
                   variant="detailed"
-                />
-                <UsageProgress
-                  label="Storage"
-                  used={usage.storage_used_gb}
-                  limit={subscription.plan.storage_limit_gb}
-                  unit="GB"
-                  variant="detailed"
+                  showRemaining
                 />
               </div>
             </div>
@@ -196,10 +190,9 @@ export function SubscriptionSummary({
               limit={subscription.plan.document_limit}
             />
             <UsageProgress
-              label="Storage"
-              used={usage.storage_used_gb}
-              limit={subscription.plan.storage_limit_gb}
-              unit="GB"
+              label="Documents"
+              used={usage.documents_processed}
+              limit={subscription.plan.document_limit}
             />
           </div>
         )}

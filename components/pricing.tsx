@@ -234,7 +234,7 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                       <ul className="space-y-3">
                         {features.map((feature: any, featureIndex: number) => {
                           const featureStr = typeof feature === 'string' ? feature : feature.text || ""
-                          const parts = featureStr.split("|")
+                          const parts = featureStr.split(":")
                           const cleanFeature = parts[0].trim()
                           const tooltip = parts[1]?.trim()
                           
@@ -361,9 +361,7 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                       </thead>
                       <tbody>
                         {[
-                          { label: "Documents", key: "document_limit", format: (v: any) => v === -1 || v === 0 ? "Unlimited" : v.toLocaleString() },
-                          { label: "API Calls", key: "api_calls_limit", format: (v: any) => v === -1 || v === 0 ? "Unlimited" : v.toLocaleString() },
-                          { label: "Storage", key: "storage_limit_gb", format: (v: any) => v === -1 || v === 999999 ? "Unlimited" : `${v} GB` },
+                          { label: "Documents", key: "document_limit", format: (v: any) => v == null ? "—" : (v === -1 || v === 0 ? "Unlimited" : v.toLocaleString()) },
                           { label: "Priority Support", key: "priority_support", type: "boolean" },
                           { label: "Custom Styles", key: "custom_styles", type: "boolean" },
                           { label: "Team Collab", key: "team_collaboration", type: "boolean" },
@@ -383,22 +381,22 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                                       <span className="text-muted-foreground/30">•</span>
                                     )
                                   ) : (
-                                    <span className="text-muted-foreground">{row.format ? row.format(val) : val}</span>
+                                    <span className="text-muted-foreground">{row.format ? row.format(val) : (val ?? "—")}</span>
                                   )}
                                 </td>
                               )
                             })}
                           </tr>
                         ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-            </CollapsibleContent>
-          </Collapsible>
-        </div>
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
-    </section>
-  )
+    </div>
+  </section>
+)
 }

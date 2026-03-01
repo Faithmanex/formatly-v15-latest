@@ -14,11 +14,7 @@ import type { Subscription, UsageStats, SubscriptionPlan, SubscriptionStatusWith
 
 interface PlanSpecificUsage {
   documents_processed: number
-  api_calls_made: number
-  storage_used_gb: number
   document_limit: number
-  api_calls_limit: number
-  storage_limit_gb: number
   plan_name: string
   current_period_start: string
   current_period_end: string
@@ -33,16 +29,10 @@ interface SubscriptionContextType {
   plans: SubscriptionPlan[]
   limits: {
     documentsAtLimit: boolean
-    apiCallsAtLimit: boolean
-    storageAtLimit: boolean
     currentUsage?: {
       documents_used: number
       document_limit: number
       plan_name: string
-      api_calls_made: number
-      api_calls_limit: number
-      storage_used_gb: number
-      storage_limit_gb: number
       usage_percentage: number
     }
   } | null
@@ -111,11 +101,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   const planUsage: PlanSpecificUsage | null = usage
     ? {
         documents_processed: usage.documents_processed,
-        api_calls_made: usage.api_calls_made,
-        storage_used_gb: usage.storage_used_gb,
         document_limit: usage.document_limit,
-        api_calls_limit: usage.api_calls_limit,
-        storage_limit_gb: usage.storage_limit_gb,
         plan_name: usage.plan_name,
         current_period_start: usage.current_period_start,
         current_period_end: usage.current_period_end,
@@ -126,16 +112,10 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   const limits = usage
     ? {
         documentsAtLimit: usage.documents_processed >= usage.document_limit,
-        apiCallsAtLimit: usage.api_calls_made >= usage.api_calls_limit,
-        storageAtLimit: usage.storage_used_gb >= usage.storage_limit_gb,
         currentUsage: {
           documents_used: usage.documents_processed,
           document_limit: usage.document_limit,
           plan_name: usage.plan_name,
-          api_calls_made: usage.api_calls_made,
-          api_calls_limit: usage.api_calls_limit,
-          storage_used_gb: usage.storage_used_gb,
-          storage_limit_gb: usage.storage_limit_gb,
           usage_percentage: usage.usage_percentage,
         },
       }

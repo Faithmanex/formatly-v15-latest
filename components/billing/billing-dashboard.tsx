@@ -204,42 +204,20 @@ export function BillingDashboard() {
 
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs sm:text-sm font-medium">API Calls</span>
+                  <span className="text-xs sm:text-sm font-medium">Documents Processed</span>
                   <span className="text-xs sm:text-sm text-muted-foreground">
-                    {usage.api_calls_made.toLocaleString()} /{" "}
-                    {subscription?.plan?.api_calls_limit === -1
-                      ? "∞"
-                      : subscription?.plan?.api_calls_limit?.toLocaleString() || "100"}
+                    {usage.documents_processed} /{" "}
+                    {subscription?.plan?.document_limit === -1 ? "∞" : subscription?.plan?.document_limit || 5}
                   </span>
                 </div>
                 <Progress
-                  value={calculateUsagePercentage(usage.api_calls_made, subscription?.plan?.api_calls_limit || 100)}
+                  value={calculateUsagePercentage(usage.documents_processed, subscription?.plan?.document_limit || 5)}
                   className="h-2"
                 />
-                {limits?.apiCallsAtLimit && (
+                {limits?.documentsAtLimit && (
                   <div className="flex items-center gap-2 mt-2 text-xs sm:text-sm text-orange-600">
                     <AlertCircle className="h-4 w-4" />
-                    You've reached your API call limit
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs sm:text-sm font-medium">Storage Used</span>
-                  <span className="text-xs sm:text-sm text-muted-foreground">
-                    {usage.storage_used_gb.toFixed(1)} GB /{" "}
-                    {subscription?.plan?.storage_limit_gb === -1 ? "∞" : subscription?.plan?.storage_limit_gb || 1} GB
-                  </span>
-                </div>
-                <Progress
-                  value={calculateUsagePercentage(usage.storage_used_gb, subscription?.plan?.storage_limit_gb || 1)}
-                  className="h-2"
-                />
-                {limits?.storageAtLimit && (
-                  <div className="flex items-center gap-2 mt-2 text-xs sm:text-sm text-orange-600">
-                    <AlertCircle className="h-4 w-4" />
-                    You've reached your storage limit
+                    You've reached your document limit
                   </div>
                 )}
               </div>
