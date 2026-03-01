@@ -108,9 +108,12 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
   }
 
   const getPlanButtonInfo = (plan: any) => {
-    // Check if it's the current plan
-    const isCurrentPlan = currentSubscription?.plan_id === plan.id
-    if (isCurrentPlan || plan.name === "Business") {
+    // For paid plans, check both ID and cycle. For free plans, just ID.
+    const isPlanMatch = currentSubscription?.plan_id === plan.id
+    const isCycleMatch = currentSubscription?.billing_cycle === billingCycle
+    const isActuallyCurrent = plan.price_monthly === 0 ? isPlanMatch : (isPlanMatch && isCycleMatch)
+
+    if (isActuallyCurrent || plan.name === "Business") {
       return {
         text: plan.name === "Business" ? "Coming soon..." : "Current Plan",
         icon: plan.name === "Business" ? <Clock className="h-4 w-4" /> : <Check className="h-4 w-4" />,
@@ -176,7 +179,11 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
           isDashboard ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-3"
         )}>
           {displayPlans.map((plan, index) => {
-            const isCurrentPlan = isDashboard && currentSubscription?.plan_id === plan.id
+            const isPlanMatch = isDashboard && currentSubscription?.plan_id === plan.id
+            const isCycleMatch = currentSubscription?.billing_cycle === billingCycle
+            const isActuallyFree = isDashboard && !currentSubscription && plan.price_monthly === 0
+            const isCurrentPlan = isActuallyFree || (plan.price_monthly === 0 ? isPlanMatch : (isPlanMatch && isCycleMatch))
+            
             const buttonInfo = isDashboard ? getPlanButtonInfo(plan) : null
             const isShowingPayPal = isDashboard && selectedPlan === plan.id && !isCurrentPlan && profile?.id
             const isPopular = plan.is_popular || plan.popular
