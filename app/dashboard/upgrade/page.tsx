@@ -1,4 +1,4 @@
-import { SubscriptionPlans } from "@/components/billing/subscription-plans"
+import { Pricing } from "@/components/pricing"
 
 export default function UpgradePage() {
   return (
@@ -15,7 +15,7 @@ export default function UpgradePage() {
             Unlock the full potential of Formatly with our premium plans. No hidden fees, cancel anytime.
           </p>
         </div>
-        <SubscriptionPlans />
+        <Pricing mode="dashboard" />
       </div>
     </div>
   )

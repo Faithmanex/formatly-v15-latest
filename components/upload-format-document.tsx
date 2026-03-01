@@ -12,8 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
-import { DocumentUploader } from "@/components/document-uploader"
-import { Upload, Settings, Palette, Globe, AlertCircle, RefreshCw, ChevronDown } from "lucide-react"
+import { Upload, Settings, Palette, Globe, AlertCircle, RefreshCw, ChevronDown, Lock } from "lucide-react"
 import {
   Accordion,
   AccordionContent,
@@ -22,6 +21,7 @@ import {
 } from "@/components/ui/accordion"
 import { useFormattingData } from "@/hooks/use-formatting-data"
 import { useUserPreferences } from "@/hooks/use-user-preferences"
+import { useSubscription, useSubscriptionStatus } from "@/contexts/subscription-context"
 
 interface FormattingOptions {
   style: string
@@ -38,6 +38,12 @@ const DEFAULT_OPTIONS: FormattingOptions = {
 export function UploadFormatDocument() {
   const { user } = useAuth()
   const { toast } = useToast()
+  
+  const { subscription } = useSubscription()
+  const { isPremium } = useSubscriptionStatus()
+  
+  const hasCustomStyles = subscription?.plan?.custom_styles ?? false
+  const isFreePlan = !isPremium
 
   const {
     styles: formattingStyles,
@@ -173,16 +179,24 @@ export function UploadFormatDocument() {
                     </SelectTrigger>
                     <SelectContent>
                       {formattingStyles.map((style) => (
-                        <SelectItem key={style.id} value={style.code}>
-                          <div className="flex flex-col">
-                            <span className="text-sm md:text-base">{style.name}</span>
-                            {style.description && (
-                              <span className="text-xs text-muted-foreground">{style.description}</span>
+                        <SelectItem key={style.id} value={style.code} disabled={isFreePlan && style.code !== "APA"}>
+                          <div className="flex items-center gap-2 w-full">
+                            <div className="flex flex-col">
+                              <span className="text-sm md:text-base">{style.name}</span>
+                              {style.description && (
+                                <span className="text-xs text-muted-foreground">{style.description}</span>
+                              )}
+                            </div>
+                            {isFreePlan && style.code !== "APA" && (
+                              <Badge variant="secondary" className="ml-auto text-[10px] px-1.5 py-0 h-4 bg-muted text-muted-foreground flex items-center gap-1">
+                                <Lock className="h-2.5 w-2.5" />
+                                Pro
+                              </Badge>
                             )}
                           </div>
                         </SelectItem>
                       ))}
-                      {customStyles.length > 0 && (
+                      {customStyles.length > 0 && hasCustomStyles && (
                         <>
                           <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-t">
                             Custom Styles
@@ -244,17 +258,26 @@ export function UploadFormatDocument() {
                 {/* Tracked Changes */}
                 <div className="flex items-center justify-between p-3 md:p-4 border rounded-lg">
                   <div className="space-y-0.5">
-                    <Label htmlFor="trackedChanges" className="text-xs md:text-sm">
-                      Tracked Changes
-                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="trackedChanges" className="text-xs md:text-sm">
+                        Tracked Changes
+                      </Label>
+                      {!isPremium && (
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-muted text-muted-foreground flex items-center gap-1">
+                          <Lock className="h-2.5 w-2.5" />
+                          Pro
+                        </Badge>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       Receive both a neat copy and a version showing all formatting changes
                     </p>
                   </div>
                   <Switch
                     id="trackedChanges"
-                    checked={formattingOptions.trackedChanges}
+                    checked={isPremium ? formattingOptions.trackedChanges : false}
                     onCheckedChange={(checked) => updateFormattingOption("trackedChanges", checked)}
+                    disabled={!isPremium}
                   />
                 </div>
               </TabsContent>

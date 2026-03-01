@@ -12,6 +12,7 @@ export type Database = {
           document_limit: number
           documents_used: number
           subscription_id: string | null
+          has_seen_walkthrough: boolean
           created_at: string
           updated_at: string
         }
@@ -24,6 +25,7 @@ export type Database = {
           document_limit?: number
           documents_used?: number
           subscription_id?: string | null
+          has_seen_walkthrough?: boolean
         }
         Update: {
           full_name?: string | null
@@ -32,6 +34,7 @@ export type Database = {
           document_limit?: number
           documents_used?: number
           subscription_id?: string | null
+          has_seen_walkthrough?: boolean
           formatting_preferences?: any
           updated_at?: string
         }

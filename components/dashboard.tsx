@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useCallback, useMemo, useEffect, useRef } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -24,12 +25,15 @@ import {
   Calendar,
   Crown,
   Plus,
+  Shield,
 } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 import { useSubscription, useSubscriptionStatus, useUsageLimits } from "@/contexts/subscription-context"
 import { formatDistanceToNow } from "date-fns"
 import { useRealtime } from "@/contexts/realtime-context"
 import { JobHistory } from "@/components/job-history"
+import { Walkthrough } from "@/components/walkthrough"
+import { profileService } from "@/lib/database"
 
 interface DashboardStats {
   totalDocuments: number
@@ -53,7 +57,7 @@ interface DashboardData {
 
 export function Dashboard() {
   const router = useRouter()
-  const { user, profile, isLoading: authLoading, isInitialized, getToken } = useAuth()
+  const { user, profile, isLoading: authLoading, isInitialized, getToken, refreshProfile } = useAuth()
   const { subscription, usage, isLoading: subscriptionLoading, refreshAll } = useSubscription()
   const { isSubscribed, isPremium, planName, subscriptionStatus } = useSubscriptionStatus()
   const { limits } = useUsageLimits()
@@ -62,6 +66,7 @@ export function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview")
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [downloadingDocs, setDownloadingDocs] = useState<Set<string>>(new Set())
+  const [showWalkthrough, setShowWalkthrough] = useState(false)
 
   // Component mount tracking
   const isMountedRef = useRef(true)
@@ -85,6 +90,33 @@ export function Dashboard() {
       setActiveTab(value)
     }
   }, [])
+
+  // Check for new user to show walkthrough
+  useEffect(() => {
+    if (isInitialized && user && !authLoading && profile) {
+      if (!profile.has_seen_walkthrough) {
+        // Delay slightly for smooth transition
+        const timer = setTimeout(() => {
+          if (isMountedRef.current) setShowWalkthrough(true)
+        }, 1500)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [isInitialized, user, authLoading, profile])
+
+  const handleWalkthroughComplete = useCallback(async () => {
+    if (user && profile) {
+      try {
+        await profileService.updateProfile(user.id, {
+          has_seen_walkthrough: true,
+        })
+        await refreshProfile()
+      } catch (error) {
+        console.error("Error updating walkthrough status:", error)
+      }
+    }
+    setShowWalkthrough(false)
+  }, [user, profile, refreshProfile])
 
   // Handle authorization redirect with cleanup
   useEffect(() => {
@@ -427,6 +459,7 @@ export function Dashboard() {
                     </Badge>
                   )}
                   <Button
+                    id="walkthrough-upload"
                     onClick={() => navigateTo("/dashboard/upload")}
                     className="hidden sm:flex bg-primary text-primary-foreground hover:bg-primary/90"
                     size="sm"
@@ -434,6 +467,17 @@ export function Dashboard() {
                     <Upload className="h-4 w-4 mr-2" />
                     Upload
                   </Button>
+                  {profile?.role === "admin" && (
+                    <Button
+                      variant="outline"
+                      onClick={() => navigateTo("/dashboard/admin")}
+                      className="hidden sm:flex border-primary/20 hover:bg-primary/5"
+                      size="sm"
+                    >
+                      <Shield className="h-4 w-4 mr-2 text-primary" />
+                      Admin Panel
+                    </Button>
+                  )}
                 </div>
               </div>
 
@@ -569,6 +613,7 @@ export function Dashboard() {
 
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-4 sm:gap-3 scrollbar-sleek">
                 <Button
+                  id="walkthrough-upload-mobile"
                   variant="outline"
                   className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border bg-card hover:bg-accent hover:border-primary/20 min-w-[100px] sm:min-w-0"
                   onClick={() => navigateTo("/dashboard/upload")}
@@ -578,6 +623,7 @@ export function Dashboard() {
                 </Button>
 
                 <Button
+                  id="walkthrough-documents"
                   variant="outline"
                   className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border bg-card hover:bg-accent hover:border-primary/20 min-w-[100px] sm:min-w-0"
                   onClick={() => navigateTo("/dashboard/documents")}
@@ -596,6 +642,7 @@ export function Dashboard() {
                 </Button>
 
                 <Button
+                  id="walkthrough-preferences"
                   variant="outline"
                   className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border bg-card hover:bg-accent hover:border-primary/20 min-w-[100px] sm:min-w-0"
                   onClick={() => navigateTo("/dashboard/preferences")}
@@ -619,6 +666,9 @@ export function Dashboard() {
               <span className="sr-only">Upload Document</span>
             </Button>
           </div>
+          <AnimatePresence>
+            {showWalkthrough && <Walkthrough onComplete={handleWalkthroughComplete} />}
+          </AnimatePresence>
         </div>
       )
     },

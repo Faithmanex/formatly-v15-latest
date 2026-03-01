@@ -15,6 +15,7 @@ import {
   Moon,
   Sun,
   Monitor,
+  Lock,
 } from "lucide-react"
 import {
   Sidebar,
@@ -131,6 +132,8 @@ export function AppSidebar() {
   const documentsUsed = planUsage?.documents_processed || 0
   const documentLimit = planUsage?.document_limit || 0
   const isAtLimit = documentsUsed >= documentLimit && documentLimit > 0
+  const hasCustomStyles = subscription?.plan?.custom_styles ?? false
+  const hasAICalls = subscription?.plan ? subscription.plan.api_calls_limit !== 0 : false
 
   return (
     <Sidebar
@@ -151,16 +154,25 @@ export function AppSidebar() {
           <SidebarGroupLabel className="text-xs sm:text-sm">Main</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainMenuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={pathname === item.url}>
-                    <Link href={item.url} className="flex items-center gap-2">
-                      <item.icon className="h-4 w-4" />
-                      <span className="text-xs sm:text-sm">{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {mainMenuItems.map((item) => {
+                const isLocked = (!loadingSubscription && subscription) && ((item.title === "Formatting Preferences" && !hasCustomStyles) || (item.title === "Ask Formatly AI" && !hasAICalls))
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={pathname === item.url}>
+                      <Link href={item.url} className="flex items-center gap-2">
+                        <item.icon className="h-4 w-4" />
+                        <span className="text-xs sm:text-sm">{item.title}</span>
+                        {isLocked && (
+                          <Badge variant="secondary" className="ml-auto text-[10px] px-1.5 py-0 h-4 bg-muted text-muted-foreground flex items-center gap-1">
+                            <Lock className="h-2.5 w-2.5" />
+                            Upgrade
+                          </Badge>
+                        )}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

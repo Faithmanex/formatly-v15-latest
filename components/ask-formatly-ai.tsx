@@ -4,8 +4,10 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Bot, Send, Plus, User, Copy, Check } from "lucide-react"
+import { Bot, Send, Plus, User, Copy, Check, Zap } from "lucide-react"
 import ReactMarkdown from "react-markdown"
+import { useSubscription, useUsageLimits, useSubscriptionStatus } from "@/contexts/subscription-context"
+import { useRouter } from "next/navigation"
 
 interface Message {
   id: string
@@ -98,6 +100,20 @@ export function AskFormatlyAI() {
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+  const { subscription } = useSubscription()
+  const { isPremium } = useSubscriptionStatus()
+  const { limits } = useUsageLimits()
+
+  const hasAICalls = subscription?.plan ? subscription.plan.api_calls_limit !== 0 : false
+  const isAtLimit = limits?.apiCallsAtLimit ?? false
+  const isLocked = !hasAICalls
+
+  const getPlaceholderText = () => {
+    if (isLocked) return "Upgrade to Pro to access Formatly AI"
+    if (isAtLimit) return "You have reached your AI chat limit"
+    return "Ask about formatting, citations, or academic writing..."
+  }
 
   const handleSendMessage = async (content: string) => {
     if (!content.trim()) return
@@ -268,18 +284,25 @@ export function AskFormatlyAI() {
       </div>
 
       <div className="border-t p-4 bg-background">
-        <div className="flex gap-3 max-w-4xl mx-auto">
+        <div className="flex gap-3 max-w-4xl mx-auto flex-col sm:flex-row">
           <Input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Ask about formatting, citations, or academic writing..."
+            placeholder={getPlaceholderText()}
             onKeyPress={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage(inputValue)}
-            disabled={isLoading}
+            disabled={isLoading || isLocked || isAtLimit}
             className="flex-1"
           />
-          <Button onClick={() => handleSendMessage(inputValue)} disabled={isLoading || !inputValue.trim()} size="sm">
-            <Send className="h-4 w-4" />
-          </Button>
+          {isLocked || (isAtLimit && !isPremium) ? (
+            <Button onClick={() => router.push("/dashboard/upgrade")} size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Zap className="h-4 w-4 mr-2" />
+              Upgrade
+            </Button>
+          ) : (
+            <Button onClick={() => handleSendMessage(inputValue)} disabled={isLoading || isLocked || isAtLimit || !inputValue.trim()} size="sm">
+              <Send className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
     </div>
