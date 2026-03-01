@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { CheckCircle, Zap, Check, ArrowUp, ArrowDown, RefreshCw, Star, Info } from "lucide-react"
+import { CheckCircle, Zap, Check, ArrowUp, ArrowDown, Star, HelpCircle, ChevronDown, ChevronUp, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils"
 import { isPlanUpgrade, getPlanChangePreview } from "@/lib/billing"
 import { useToast } from "@/hooks/use-toast"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
 function TiltCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`transition-base hover-lift ${className}`}>{children}</div>
@@ -23,11 +24,17 @@ function TiltCard({ children, className = "" }: { children: React.ReactNode; cla
 export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }) {
   const { user, profile } = useAuth()
   const { toast } = useToast()
-  const { subscription: currentSubscription, plans } = useSubscription()
+  const { subscription: currentSubscription, plans: dbPlans } = useSubscription()
   const { isSubscribed, planName } = useSubscriptionStatus()
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
+  const [isComparisonOpen, setIsComparisonOpen] = useState(false)
   
   const isDashboard = mode === "dashboard"
+
+  // Use DB plans if available, otherwise fallback to static pricingPlans
+  const displayPlans = dbPlans && dbPlans.length > 0 
+    ? dbPlans.sort((a, b) => (a.price_monthly || 0) - (b.price_monthly || 0))
+    : pricingPlans
 
   const handlePlanSelect = async (planId: string) => {
     if (!profile?.id) return
@@ -60,15 +67,7 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
   }
 
   const getPlanButtonInfo = (plan: any) => {
-    if (!currentSubscription?.plan) {
-      return {
-        text: plan.name === "Free" ? "Current Plan" : "Get Started",
-        icon: plan.name === "Free" ? <Check className="h-4 w-4" /> : <Zap className="h-4 w-4" />,
-        variant: plan.popular ? "default" : ("outline" as const),
-        disabled: plan.name === "Free"
-      }
-    }
-
+    // Check if it's the current plan
     const isCurrentPlan = currentSubscription?.plan_id === plan.id
     if (isCurrentPlan) {
       return {
@@ -79,31 +78,35 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
       }
     }
 
-    // Map landing-data plan IDs to DB plan objects for comparison if possible
-    // For now, simple upgrade logic based on price
-    const dbPlan = plans.find(p => p.id === plan.id)
-    if (dbPlan) {
-      const isUpgrade = isPlanUpgrade(currentSubscription.plan, dbPlan)
+    if (!currentSubscription?.plan) {
       return {
-        text: isUpgrade ? "Upgrade" : "Downgrade",
-        icon: isUpgrade ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />,
-        variant: isUpgrade ? "default" : ("outline" as const),
-        disabled: false
+        text: plan.name === "Free" ? "Current Plan" : "Get Started",
+        icon: plan.name === "Free" ? <Check className="h-4 w-4" /> : <Zap className="h-4 w-4" />,
+        variant: plan.is_popular || plan.popular ? "default" : ("outline" as const),
+        disabled: plan.name === "Free"
       }
     }
 
+    // Convert plan price to plan object if needed for isPlanUpgrade
+    const isUpgrade = isPlanUpgrade(currentSubscription.plan, plan as any)
     return {
-      text: "Get Started",
-      icon: <Zap className="h-4 w-4" />,
-      variant: plan.popular ? "default" : ("outline" as const),
+      text: isUpgrade ? "Upgrade" : "Downgrade",
+      icon: isUpgrade ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />,
+      variant: isUpgrade ? "default" : ("outline" as const),
       disabled: false
     }
   }
 
+  const formatDisplayPrice = (plan: any) => {
+    if (plan.price !== undefined) return plan.price // Use string from pricingPlans if available
+    const price = plan.price_monthly || 0
+    return price === 0 ? "$0" : `$${Math.floor(price)}`
+  }
+
   return (
     <section id="pricing" className={cn(
-      "relative scroll-mt-20",
-      isDashboard ? "py-6" : "py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8"
+      "relative scroll-mt-20 px-3 sm:px-4 md:px-6 lg:px-8",
+      isDashboard ? "py-8" : "py-12 sm:py-16 md:py-20"
     )}>
       <div className="max-w-7xl mx-auto">
         {!isDashboard && (
@@ -122,12 +125,14 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
 
         <div className={cn(
           "grid gap-6 sm:gap-8",
-          isDashboard ? "grid-cols-1 md:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-3"
+          isDashboard ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-3"
         )}>
-          {pricingPlans.map((plan, index) => {
+          {displayPlans.map((plan, index) => {
             const isCurrentPlan = isDashboard && currentSubscription?.plan_id === plan.id
             const buttonInfo = isDashboard ? getPlanButtonInfo(plan) : null
             const isShowingPayPal = isDashboard && selectedPlan === plan.id && !isCurrentPlan && profile?.id
+            const isPopular = plan.is_popular || plan.popular
+            const features = Array.isArray(plan.features) ? plan.features : []
 
             return (
               <motion.div
@@ -136,16 +141,17 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="flex flex-col h-full"
               >
                 <TiltCard className="h-full">
                   <Card
                     className={cn(
                       "relative h-full transition-all bg-background flex flex-col",
-                      plan.popular ? "border-primary shadow-xl" : "border-border hover:shadow-lg",
+                      isPopular ? "border-primary shadow-xl" : "border-border hover:shadow-lg",
                       isCurrentPlan && "ring-2 ring-emerald-500/50 dark:ring-emerald-400/50 bg-emerald-50/10"
                     )}
                   >
-                    {plan.popular && (
+                    {isPopular && (
                       <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground text-xs sm:text-sm rounded-full px-3 py-1">
                         Most Popular
                       </Badge>
@@ -161,35 +167,39 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                     )}
 
                     <CardHeader className="text-center pb-4 sm:pb-6 p-4 sm:p-6">
-                      <CardTitle className="text-xl sm:text-2xl mb-3 sm:mb-4">{plan.name}</CardTitle>
+                      <CardTitle className="text-xl sm:text-2xl mb-2 sm:mb-3">{plan.name}</CardTitle>
                       <div className="mb-2">
-                        <span className="text-3xl sm:text-4xl md:text-5xl font-bold">{plan.price}</span>
-                        <span className="text-sm sm:text-base text-muted-foreground">/{plan.period}</span>
+                        <span className="text-3xl sm:text-4xl md:text-5xl font-bold">{formatDisplayPrice(plan)}</span>
+                        <span className="text-sm sm:text-base text-muted-foreground">/{plan.period || "month"}</span>
                       </div>
-                      <CardDescription className="text-sm sm:text-base min-h-[40px]">{plan.description}</CardDescription>
+                      <CardDescription className="text-sm sm:text-base min-h-[40px] px-2 leading-relaxed">
+                        {plan.description}
+                      </CardDescription>
                     </CardHeader>
                     
                     <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6 pt-0 flex-1">
                       <ul className="space-y-3">
-                        {plan.features.map((feature, featureIndex) => {
-                          const hasInfo = feature.includes("(i)")
-                          const cleanFeature = feature.replace("(i)", "").trim()
+                        {features.map((feature: any, featureIndex: number) => {
+                          const featureStr = typeof feature === 'string' ? feature : feature.text || ""
+                          const parts = featureStr.split("|")
+                          const cleanFeature = parts[0].trim()
+                          const tooltip = parts[1]?.trim()
                           
                           return (
                             <li key={featureIndex} className="flex items-start gap-2 sm:gap-3">
                               <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 shrink-0 mt-0.5" />
-                              <span className="text-xs sm:text-sm flex items-center gap-1">
+                              <span className="text-xs sm:text-sm flex items-center gap-1.5 flex-wrap">
                                 {cleanFeature}
-                                {hasInfo && (
+                                {tooltip && (
                                   <TooltipProvider>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                                        <button className="inline-flex items-center justify-center rounded-full hover:bg-muted p-0.5 transition-colors" aria-label={`More information about ${cleanFeature}`}>
+                                          <HelpCircle className="h-3.5 w-3.5 text-muted-foreground transition-colors hover:text-primary" />
+                                        </button>
                                       </TooltipTrigger>
-                                      <TooltipContent className="max-w-[200px] text-xs">
-                                        {cleanFeature.includes("Tracked Changes") 
-                                          ? "Full history of all edits made to your document structure and content."
-                                          : "Create and save specialized formatting templates for specific requirements."}
+                                      <TooltipContent className="max-w-[220px] text-xs p-2.5 shadow-xl border-border/50 bg-popover/95 backdrop-blur-sm">
+                                        {tooltip}
                                       </TooltipContent>
                                     </Tooltip>
                                   </TooltipProvider>
@@ -220,8 +230,8 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                           variant={buttonInfo?.variant as any}
                           disabled={buttonInfo?.disabled || (plan as any).comingSoon}
                           className={cn(
-                            "w-full text-sm sm:text-base rounded-full gap-2",
-                            plan.popular && !buttonInfo?.disabled && "bg-primary hover:bg-primary/90"
+                            "w-full text-sm sm:text-base rounded-full gap-2 transition-all",
+                            isPopular && !buttonInfo?.disabled && "bg-primary hover:bg-primary/90 shadow-md"
                           )}
                           onClick={() => handlePlanSelect(plan.id!)}
                         >
@@ -231,15 +241,17 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                       ) : (
                         <Button
                           size="lg"
-                          variant={plan.buttonVariant}
+                          variant={plan.buttonVariant || (isPopular ? "default" : "outline")}
                           asChild
+                          disabled={(plan as any).comingSoon}
                           className={cn(
-                            "w-full text-sm sm:text-base rounded-full",
-                            plan.popular && "bg-primary hover:bg-primary/90"
+                            "w-full text-sm sm:text-base rounded-full transition-all",
+                            isPopular && "bg-primary hover:bg-primary/90 shadow-md",
+                            (plan as any).comingSoon && "opacity-50 cursor-not-allowed"
                           )}
                         >
-                          <Link href={user ? "/dashboard" : "/onboard"}>
-                            {plan.buttonText}
+                          <Link href={user ? "/dashboard" : "/auth/register"}>
+                            {plan.buttonText || (plan.name === "Free" ? "Get Started" : "Buy Now")}
                           </Link>
                         </Button>
                       )}
@@ -249,6 +261,89 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
               </motion.div>
             )
           })}
+        </div>
+
+        {/* Comparison Table */}
+        <div className="mt-12 sm:mt-16 pt-4 flex justify-center">
+          <Collapsible
+            open={isComparisonOpen}
+            onOpenChange={setIsComparisonOpen}
+            className="w-full space-y-4"
+          >
+            <div className="flex justify-center">
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-primary transition-colors">
+                  {isComparisonOpen ? "Hide Feature Comparison" : "Compare All Features"}
+                  {isComparisonOpen ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </CollapsibleTrigger>
+            </div>
+            <CollapsibleContent>
+              <Card className="overflow-hidden border-border/50 bg-muted/5 backdrop-blur-sm animate-in slide-in-from-top-2 fade-in duration-300">
+                <CardHeader className="pb-4 border-b border-border/50">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Shield className="h-5 w-5 text-primary" />
+                    Feature Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border/50 bg-muted/20">
+                          <th className="text-left py-4 px-6 font-medium text-muted-foreground">Feature</th>
+                          {displayPlans.map((plan: any) => (
+                            <th key={plan.id || plan.name} className={cn(
+                              "text-center py-4 px-6 font-semibold min-w-[120px]",
+                              (plan.is_popular || plan.popular) ? "text-primary" : ""
+                            )}>
+                              {plan.name}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { label: "Documents", key: "document_limit", format: (v: any) => v === -1 || v === 0 ? "Unlimited" : v.toLocaleString() },
+                          { label: "API Calls", key: "api_calls_limit", format: (v: any) => v === -1 || v === 0 ? "Unlimited" : v.toLocaleString() },
+                          { label: "Storage", key: "storage_limit_gb", format: (v: any) => v === -1 || v === 999999 ? "Unlimited" : `${v} GB` },
+                          { label: "Priority Support", key: "priority_support", type: "boolean" },
+                          { label: "Custom Styles", key: "custom_styles", type: "boolean" },
+                          { label: "Team Collab", key: "team_collaboration", type: "boolean" },
+                        ].map((row, idx) => (
+                          <tr key={idx} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                            <td className="py-4 px-6 font-medium">{row.label}</td>
+                            {displayPlans.map((plan: any) => {
+                              const val = plan[row.key];
+                              return (
+                                <td key={plan.id || plan.name} className="text-center py-4 px-6">
+                                  {row.type === "boolean" ? (
+                                    val ? (
+                                      <div className="flex justify-center">
+                                        <Check className="h-4 w-4 text-green-500" />
+                                      </div>
+                                    ) : (
+                                      <span className="text-muted-foreground/30">•</span>
+                                    )
+                                  ) : (
+                                    <span className="text-muted-foreground">{row.format ? row.format(val) : val}</span>
+                                  )}
+                                </td>
+                              )
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
       </div>
     </section>
