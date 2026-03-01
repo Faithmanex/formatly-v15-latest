@@ -214,9 +214,9 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                       </div>
                     )}
 
-                    <CardHeader className="text-center pb-4 sm:pb-6 p-4 sm:p-6">
-                      <CardTitle className="text-xl sm:text-2xl mb-2 sm:mb-3">{plan.name}</CardTitle>
-                      <div className="mb-2">
+                    <CardHeader className="text-center p-4 sm:p-6 pb-0 sm:pb-0">
+                        <CardTitle className="text-xl sm:text-2xl mb-2 sm:mb-2">{plan.name}</CardTitle>
+                        <div className="mb-1">
                         <span className="text-3xl sm:text-4xl md:text-5xl font-bold">{formatDisplayPrice(plan)}</span>
                         <span className="text-sm sm:text-base text-muted-foreground">/month</span>
                       </div>
@@ -225,16 +225,16 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                           Billed as ${plan.price_yearly}/year
                         </div>
                       )}
-                      <CardDescription className="text-sm sm:text-base min-h-[40px] px-2 leading-relaxed">
+                      <CardDescription className="text-sm sm:text-base px-2 leading-relaxed">
                         {plan.description}
                       </CardDescription>
                     </CardHeader>
                     
-                    <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6 pt-0 flex-1">
+                    <CardContent className="space-y-4 p-4 sm:p-6 pt-0 flex-1">
                       <ul className="space-y-3">
                         {features.map((feature: any, featureIndex: number) => {
                           const featureStr = typeof feature === 'string' ? feature : feature.text || ""
-                          const parts = featureStr.split(":")
+                          const parts = featureStr.split(/[:|]/)
                           const cleanFeature = parts[0].trim()
                           const tooltip = parts[1]?.trim()
                           
