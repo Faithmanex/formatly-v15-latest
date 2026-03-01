@@ -31,7 +31,6 @@ import { useSubscription, useSubscriptionStatus, useUsageLimits } from "@/contex
 import { formatDistanceToNow } from "date-fns"
 import { useRealtime } from "@/contexts/realtime-context"
 import { JobHistory } from "@/components/job-history"
-import { Walkthrough } from "@/components/walkthrough"
 import { profileService } from "@/lib/database"
 
 interface DashboardStats {
@@ -65,7 +64,6 @@ export function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview")
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [downloadingDocs, setDownloadingDocs] = useState<Set<string>>(new Set())
-  const [showWalkthrough, setShowWalkthrough] = useState(false)
 
   // Component mount tracking
   const isMountedRef = useRef(true)
@@ -89,33 +87,6 @@ export function Dashboard() {
       setActiveTab(value)
     }
   }, [])
-
-  // Check for new user to show walkthrough
-  useEffect(() => {
-    if (isInitialized && user && !authLoading && profile) {
-      if (!profile.has_seen_walkthrough) {
-        // Delay slightly for smooth transition
-        const timer = setTimeout(() => {
-          if (isMountedRef.current) setShowWalkthrough(true)
-        }, 1500)
-        return () => clearTimeout(timer)
-      }
-    }
-  }, [isInitialized, user, authLoading, profile])
-
-  const handleWalkthroughComplete = useCallback(async () => {
-    if (user && profile) {
-      try {
-        await profileService.updateProfile(user.id, {
-          has_seen_walkthrough: true,
-        })
-        await refreshProfile()
-      } catch (error) {
-        console.error("Error updating walkthrough status:", error)
-      }
-    }
-    setShowWalkthrough(false)
-  }, [user, profile, refreshProfile])
 
   // Handle authorization redirect with cleanup
   useEffect(() => {
@@ -458,7 +429,6 @@ export function Dashboard() {
                     </Badge>
                   )}
                   <Button
-                    id="walkthrough-upload"
                     onClick={() => navigateTo("/dashboard/upload")}
                     className="hidden sm:flex bg-primary text-primary-foreground hover:bg-primary/90"
                     size="sm"
@@ -601,7 +571,6 @@ export function Dashboard() {
 
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-4 sm:gap-3 scrollbar-sleek">
                 <Button
-                  id="walkthrough-upload-mobile"
                   variant="outline"
                   className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border bg-card hover:bg-accent hover:border-primary/20 min-w-[100px] sm:min-w-0"
                   onClick={() => navigateTo("/dashboard/upload")}
@@ -611,7 +580,6 @@ export function Dashboard() {
                 </Button>
 
                 <Button
-                  id="walkthrough-documents"
                   variant="outline"
                   className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border bg-card hover:bg-accent hover:border-primary/20 min-w-[100px] sm:min-w-0"
                   onClick={() => navigateTo("/dashboard/documents")}
@@ -630,7 +598,6 @@ export function Dashboard() {
                 </Button>
 
                 <Button
-                  id="walkthrough-preferences"
                   variant="outline"
                   className="flex-shrink-0 h-auto py-3 px-4 flex-col gap-1.5 border-border bg-card hover:bg-accent hover:border-primary/20 min-w-[100px] sm:min-w-0"
                   onClick={() => navigateTo("/dashboard/preferences")}
@@ -654,9 +621,6 @@ export function Dashboard() {
               <span className="sr-only">Upload Document</span>
             </Button>
           </div>
-          <AnimatePresence>
-            {showWalkthrough && <Walkthrough onComplete={handleWalkthroughComplete} />}
-          </AnimatePresence>
         </div>
       )
     },

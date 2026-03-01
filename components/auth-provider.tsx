@@ -15,7 +15,6 @@ export interface Profile {
   role: string
   document_limit: number
   documents_used: number
-  has_seen_walkthrough: boolean
   formatting_preferences?: any
   created_at: string
   updated_at: string
