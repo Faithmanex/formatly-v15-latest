@@ -2,6 +2,8 @@ import { type NextRequest, NextResponse } from "next/server"
 import { validateInput, documentProcessSchema, type DocumentProcessData } from "@/lib/validation"
 import { rateLimit, getRateLimitIdentifier, RATE_LIMITS } from "@/lib/rate-limit"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
+
+export const dynamic = "force-dynamic"
 import { checkUsageLimits } from "@/lib/billing"
 
 const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL

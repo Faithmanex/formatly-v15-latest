@@ -1,5 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
+
+export const dynamic = "force-dynamic"
 import { checkUsageLimits } from "@/lib/billing"
 
 const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL

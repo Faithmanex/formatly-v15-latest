@@ -2,6 +2,8 @@ import { type NextRequest, NextResponse } from "next/server"
 import { rateLimit, getRateLimitIdentifier, RATE_LIMITS } from "@/lib/rate-limit"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 
+export const dynamic = "force-dynamic"
+
 const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL
 const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT!)
 

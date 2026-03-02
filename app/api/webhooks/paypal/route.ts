@@ -2,6 +2,8 @@
 import { headers } from "next/headers"
 import { createServerClient } from "@supabase/ssr"
 
+export const dynamic = "force-dynamic"
+
 export async function POST(request: Request) {
   try {
     const body = await request.json()
