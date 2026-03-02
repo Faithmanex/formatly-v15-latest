@@ -151,7 +151,7 @@ function Navigation() {
                   <Link href="/auth/login">Sign In</Link>
                 </Button>
                 <Button size="sm" className="bg-primary hover:bg-primary/90 text-xs sm:text-sm rounded-full" asChild>
-                  <Link href="/onboard">Get Started</Link>
+                  <Link href="/auth/register">Get Started</Link>
                 </Button>
               </>
             )}
@@ -265,7 +265,7 @@ function Navigation() {
                             className="w-full h-11 bg-primary hover:bg-primary/90 transition-all"
                             size="lg"
                           >
-                            <Link href="/onboard" className="flex items-center justify-center">
+                            <Link href="/auth/register" className="flex items-center justify-center">
                               Create Account
                             </Link>
                           </Button>
@@ -825,7 +825,7 @@ export function LandingPage() {
                     className="text-base sm:text-lg px-6 py-5 sm:px-8 sm:py-6 bg-primary hover:bg-primary/90 shadow-xl rounded-full"
                     asChild
                   >
-                    <Link href="/onboard">
+                    <Link href="/auth/register">
                       Get Started
                       <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                     </Link>
