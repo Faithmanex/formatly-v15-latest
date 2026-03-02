@@ -380,8 +380,16 @@ export function LoginForm() {
             </form>
           </div>
 
-          <p className="text-center text-[10px] uppercase font-bold tracking-widest text-muted-foreground/50">
-            © 2026 Formatly Inc.
+          <p className="text-center text-xs text-muted-foreground leading-relaxed">
+            By signing in, you agree to our{" "}
+            <Link href="/terms" className="text-primary hover:underline font-medium">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" className="text-primary hover:underline font-medium">
+              Privacy Policy
+            </Link>
+            .
           </p>
         </div>
       </motion.div>
