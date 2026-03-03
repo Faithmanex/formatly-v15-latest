@@ -50,7 +50,6 @@ interface DashboardData {
     name: string
     isPremium: boolean
     status: string
-    documentLimit: number
   }
 }
 
@@ -146,7 +145,6 @@ export function Dashboard() {
       name: planName || "Free",
       isPremium: isPremium || false,
       status: subscriptionStatus || "active",
-      documentLimit: usage?.document_limit || 0,
     }
 
     return {
@@ -506,7 +504,7 @@ export function Dashboard() {
                     <div className="text-lg sm:text-xl font-semibold text-foreground truncate">{planInfo.name}</div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {usage
-                        ? `${usage.documents_processed}/${planInfo.documentLimit <= 0 ? "∞" : planInfo.documentLimit}`
+                        ? `${usage.documents_processed}/${usage.document_limit <= 0 ? "∞" : usage.document_limit}`
                         : ""}
                     </p>
                   </CardContent>
@@ -531,14 +529,14 @@ export function Dashboard() {
                         <span>Documents</span>
                         <span>
                           {usage.documents_processed}/
-                          {planInfo.documentLimit <= 0 ? "∞" : planInfo.documentLimit}
+                          {usage.document_limit <= 0 ? "∞" : usage.document_limit}
                         </span>
                       </div>
                       <Progress
                         value={
-                          planInfo.documentLimit <= 0
+                          usage.document_limit <= 0
                             ? 0
-                            : Math.min((usage.documents_processed / planInfo.documentLimit) * 100, 100)
+                            : Math.min((usage.documents_processed / usage.document_limit) * 100, 100)
                         }
                         className="h-1.5"
                       />
