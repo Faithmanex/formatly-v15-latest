@@ -50,13 +50,14 @@ interface DashboardData {
     name: string
     isPremium: boolean
     status: string
+    documentLimit: number
   }
 }
 
 export function Dashboard() {
   const router = useRouter()
   const { user, profile, isLoading: authLoading, isInitialized, getToken, refreshProfile } = useAuth()
-  const { subscription, usage, isLoading: subscriptionLoading, refreshAll } = useSubscription()
+  const { subscription, usage, isLoading: subscriptionLoading, refreshAll, plans } = useSubscription()
   const { isSubscribed, isPremium, planName, subscriptionStatus } = useSubscriptionStatus()
   const { limits } = useUsageLimits()
   const { documents, documentsLoading, documentsError, notifications, unreadCount } = useRealtime()
@@ -145,6 +146,7 @@ export function Dashboard() {
       name: planName || "Free",
       isPremium: isPremium || false,
       status: subscriptionStatus || "active",
+      documentLimit: usage?.document_limit || 0,
     }
 
     return {
@@ -160,7 +162,7 @@ export function Dashboard() {
       usagePercentage: Math.min(usagePercentage, 100),
       planInfo,
     }
-  }, [documents, usage, subscription, profile, planName, isPremium, subscriptionStatus])
+  }, [documents, usage, subscription, profile, planName, isPremium, subscriptionStatus, plans])
 
   // Centralized loading state - Decoupled documentsLoading for progressive rendering
   const isLoading = useMemo(() => {
@@ -504,7 +506,7 @@ export function Dashboard() {
                     <div className="text-lg sm:text-xl font-semibold text-foreground truncate">{planInfo.name}</div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {usage
-                        ? `${usage.documents_processed}/${usage.document_limit <= 0 ? "∞" : usage.document_limit}`
+                        ? `${usage.documents_processed}/${planInfo.documentLimit <= 0 ? "∞" : planInfo.documentLimit}`
                         : ""}
                     </p>
                   </CardContent>
@@ -529,14 +531,14 @@ export function Dashboard() {
                         <span>Documents</span>
                         <span>
                           {usage.documents_processed}/
-                          {usage.document_limit <= 0 ? "∞" : usage.document_limit}
+                          {planInfo.documentLimit <= 0 ? "∞" : planInfo.documentLimit}
                         </span>
                       </div>
                       <Progress
                         value={
-                          usage.document_limit <= 0
+                          planInfo.documentLimit <= 0
                             ? 0
-                            : Math.min((usage.documents_processed / usage.document_limit) * 100, 100)
+                            : Math.min((usage.documents_processed / planInfo.documentLimit) * 100, 100)
                         }
                         className="h-1.5"
                       />
