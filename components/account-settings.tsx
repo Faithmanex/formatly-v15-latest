@@ -34,7 +34,7 @@ export function AccountSettings() {
   const { user, profile, refreshProfile } = useAuth()
   const { toast } = useToast()
   const { forceRefresh } = useProfileCache()
-  const { subscription, usage, refreshAll, plans } = useSubscription()
+  const { subscription, usage, refreshAll } = useSubscription()
   const { isSubscribed, isPremium, planName, subscriptionStatus } = useSubscriptionStatus()
   const { limits } = useUsageLimits()
 
@@ -248,11 +248,14 @@ export function AccountSettings() {
     }
   }
 
-  const usagePercentage = usage
-    ? usage.document_limit <= 0
-      ? 0
-      : Math.min((usage.documents_processed / usage.document_limit) * 100, 100)
-    : 0
+  const usagePercentage =
+    usage && subscription?.plan
+      ? subscription.plan.document_limit === -1
+        ? 0
+        : Math.min((usage.documents_processed / subscription.plan.document_limit) * 100, 100)
+      : profile
+        ? Math.min((profile.documents_used / profile.document_limit) * 100, 100)
+        : 0
 
   return (
     <div className="space-y-6 p-4 md:p-6">
@@ -470,12 +473,12 @@ export function AccountSettings() {
                       <span>Documents Processed</span>
                       <span>
                         {usage.documents_processed.toLocaleString()} /{" "}
-                        {usage.document_limit <= 0 ? "∞" : usage.document_limit.toLocaleString()}
+                        {usage.document_limit === -1 ? "∞" : usage.document_limit.toLocaleString()}
                       </span>
                     </div>
-                    <Progress value={Math.min(usagePercentage, 100)} className="h-2" />
+                    <Progress value={Math.min(usage.usage_percentage, 100)} className="h-2" />
                     <p className="text-xs text-muted-foreground mt-1">
-                      {usage.document_limit <= 0
+                      {usage.document_limit === -1
                         ? "Unlimited documents remaining"
                         : `${Math.max(0, usage.document_limit - usage.documents_processed)} documents remaining`}
                     </p>
@@ -486,12 +489,12 @@ export function AccountSettings() {
                   <div className="flex justify-between text-xs sm:text-sm mb-2">
                     <span>Documents Processed</span>
                     <span>
-                      0 / 0
+                      {profile?.documents_used || 0} / {profile?.document_limit || 1}
                     </span>
                   </div>
-                  <Progress value={0} className="h-2" />
+                  <Progress value={Math.min(usagePercentage, 100)} className="h-2" />
                   <p className="text-xs text-muted-foreground mt-1">
-                    No active limits data
+                    {Math.max(0, (profile?.document_limit || 1) - (profile?.documents_used || 0))} documents remaining
                   </p>
                 </div>
               )}

@@ -111,7 +111,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
   const limits = usage
     ? {
-        documentsAtLimit: usage.document_limit > 0 && usage.documents_processed >= usage.document_limit,
+        documentsAtLimit: usage.documents_processed >= usage.document_limit,
         currentUsage: {
           documents_used: usage.documents_processed,
           document_limit: usage.document_limit,
