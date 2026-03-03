@@ -466,62 +466,22 @@ export function AccountSettings() {
                 <Badge variant={profile?.role === "guest" ? "secondary" : "default"}>{planName}</Badge>
               </div>
 
-              {usage && subscription?.plan ? (
+              {usage ? (
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between text-xs sm:text-sm mb-2">
                       <span>Documents Processed</span>
                       <span>
                         {usage.documents_processed.toLocaleString()} /{" "}
-                        {subscription.plan.document_limit === -1
-                          ? "∞"
-                          : subscription.plan.document_limit.toLocaleString()}
+                        {usage.document_limit === -1 ? "∞" : usage.document_limit.toLocaleString()}
                       </span>
                     </div>
-                    <Progress value={usagePercentage} className="h-2" />
+                    <Progress value={Math.min(usage.usage_percentage, 100)} className="h-2" />
                     <p className="text-xs text-muted-foreground mt-1">
-                      {subscription.plan.document_limit === -1
+                      {usage.document_limit === -1
                         ? "Unlimited documents remaining"
-                        : `${Math.max(0, subscription.plan.document_limit - usage.documents_processed)} documents remaining`}
+                        : `${Math.max(0, usage.document_limit - usage.documents_processed)} documents remaining`}
                     </p>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-xs sm:text-sm mb-2">
-                      <span>API Calls This Month</span>
-                      <span>
-                        {usage.api_calls_made.toLocaleString()} /{" "}
-                        {subscription.plan.api_calls_limit === -1
-                          ? "∞"
-                          : subscription.plan.api_calls_limit.toLocaleString()}
-                      </span>
-                    </div>
-                    <Progress
-                      value={
-                        subscription.plan.api_calls_limit === -1
-                          ? 0
-                          : Math.min((usage.api_calls_made / subscription.plan.api_calls_limit) * 100, 100)
-                      }
-                      className="h-2"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-xs sm:text-sm mb-2">
-                      <span>Storage Used</span>
-                      <span>
-                        {usage.storage_used_gb.toFixed(1)} GB /{" "}
-                        {subscription.plan.storage_limit_gb === -1 ? "∞" : subscription.plan.storage_limit_gb} GB
-                      </span>
-                    </div>
-                    <Progress
-                      value={
-                        subscription.plan.storage_limit_gb === -1
-                          ? 0
-                          : Math.min((usage.storage_used_gb / subscription.plan.storage_limit_gb) * 100, 100)
-                      }
-                      className="h-2"
-                    />
                   </div>
                 </div>
               ) : (
