@@ -159,7 +159,7 @@ export default function PrivacyPolicyPage() {
                <li><strong>The Right to Restrict Processing:</strong> You may halt active processing scenarios under certain dispute conditions.</li>
             </ul>
             <p className="text-muted-foreground leading-relaxed mt-4">
-              To trigger any of these formal actions beyond the capabilities of the automated user dashboard, email your request directly to privacy@formatly.com with the subject line "Formal Data Request." We process authenticated requests within 30 calendar days.
+              To trigger any of these formal actions beyond the capabilities of the automated user dashboard, email your request directly to formatlyapp@gmail.com with the subject line "Formal Data Request." We process authenticated requests within 30 calendar days.
             </p>
           </section>
 
@@ -182,10 +182,10 @@ export default function PrivacyPolicyPage() {
             <div className="mt-4 p-4 bg-muted/50 rounded-lg border border-border inline-block min-w-[300px]">
                <p className="font-medium text-foreground text-lg mb-1">Formatly Data Protection Officer</p>
                <p className="text-sm text-muted-foreground">C/O Legal & Compliance</p>
-               <p className="text-sm font-medium text-primary mt-2">privacy@formatly.com</p>
+               <p className="text-sm font-medium text-primary mt-2">formatlyapp@gmail.com</p>
             </div>
              <p className="text-muted-foreground leading-relaxed mt-4 text-xs uppercase font-bold tracking-wider">
-               If you suspect a zero-day vulnerability or security breach, do not use regular support channels. Email security@formatly.com directly.
+               If you suspect a zero-day vulnerability or security breach, do not use regular support channels. Email formatlyapp@gmail.com directly.
             </p>
           </section>
         </div>

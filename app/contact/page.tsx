@@ -70,7 +70,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-bold">Email us</h3>
-                  <p className="text-muted-foreground">hello@formatly.com</p>
+                  <p className="text-muted-foreground">formatlyapp@gmail.com</p>
                   <p className="text-sm text-primary font-medium mt-1">Response time: &lt; 24 hours</p>
                 </div>
               </div>

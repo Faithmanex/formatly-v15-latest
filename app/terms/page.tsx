@@ -63,7 +63,7 @@ export default function TermsOfServicePage() {
             </p>
             <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
               <li><strong>Account Security:</strong> You are strictly responsible for safeguarding your password, API keys, and any other authentication credentials used to access the Services. You agree not to disclose your password to any third party.</li>
-              <li><strong>Liability for Account Activity:</strong> You assume sole responsibility for any and all activities or actions that occur under your account, whether or not you have authorized such activities. You must notify us immediately at support@formatly.com upon becoming aware of any breach of security or unauthorized use of your account.</li>
+              <li><strong>Liability for Account Activity:</strong> You assume sole responsibility for any and all activities or actions that occur under your account, whether or not you have authorized such activities. You must notify us immediately at formatlyapp@gmail.com upon becoming aware of any breach of security or unauthorized use of your account.</li>
               <li><strong>Account Transfer:</strong> You may not assign, sell, or otherwise transfer your account to another party without our prior written consent.</li>
             </ul>
           </section>
@@ -236,7 +236,7 @@ export default function TermsOfServicePage() {
             <div className="mt-4 p-4 bg-muted/50 rounded-lg border border-border inline-block min-w-[300px]">
               <p className="font-medium text-foreground">Formatly Legal Department</p>
               <p className="text-sm mt-1 text-muted-foreground">ATTN: General Counsel</p>
-              <p className="text-sm text-muted-foreground">Email: legal@formatly.com</p>
+              <p className="text-sm text-muted-foreground">Email: formatlyapp@gmail.com</p>
             </div>
           </section>
         </div>

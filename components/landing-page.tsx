@@ -989,7 +989,7 @@ export function LandingPage() {
                 </div>
               </Link>
 
-              <Link href="mailto:hello@formatly.com" className="group">
+              <Link href="mailto:formatlyapp@gmail.com" className="group">
                 <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-muted hover:bg-primary transition-colors">
                   <Mail className="h-5 w-5 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-primary-foreground transition-colors" />
                 </div>
