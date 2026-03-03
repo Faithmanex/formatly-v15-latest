@@ -136,15 +136,8 @@ export function Dashboard() {
 
     // Calculate usage percentage with consistent data hierarchy
     let usagePercentage = 0
-    if (usage && subscription?.plan) {
-      // Primary: subscription data
-      const limit = subscription.plan.document_limit
-      if (limit > 0) {
-        usagePercentage = Math.round((usage.documents_processed / limit) * 100)
-      }
-    } else if (profile) {
-      // Fallback: profile data
-      usagePercentage = Math.round((profile.documents_used / profile.document_limit) * 100)
+    if (usage && usage.document_limit > 0) {
+      usagePercentage = Math.round((usage.documents_processed / usage.document_limit) * 100)
     }
 
     // Plan info with consistent hierarchy
@@ -510,22 +503,20 @@ export function Dashboard() {
                     </div>
                     <div className="text-lg sm:text-xl font-semibold text-foreground truncate">{planInfo.name}</div>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {usage && subscription?.plan
-                        ? `${usage.documents_processed}/${subscription.plan.document_limit === -1 ? "∞" : subscription.plan.document_limit}`
-                        : profile
-                          ? `${profile.documents_used}/${profile.document_limit}`
-                          : ""}
+                      {usage
+                        ? `${usage.documents_processed}/${usage.document_limit <= 0 ? "∞" : usage.document_limit}`
+                        : ""}
                     </p>
                   </CardContent>
                 </Card>
               </div>
 
-              {!planInfo.isPremium && usage && subscription?.plan && (
+              {!planInfo.isPremium && usage && (
                 <Card className="border-border bg-card">
                   <CardContent className="p-3 sm:p-4 space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-foreground">Usage</span>
-                      {subscription.current_period_end && (
+                      {subscription?.current_period_end && (
                         <span className="text-xs text-muted-foreground flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
                           Renews {formatDate(subscription.current_period_end)}
@@ -538,14 +529,14 @@ export function Dashboard() {
                         <span>Documents</span>
                         <span>
                           {usage.documents_processed}/
-                          {subscription.plan.document_limit === -1 ? "∞" : subscription.plan.document_limit}
+                          {usage.document_limit <= 0 ? "∞" : usage.document_limit}
                         </span>
                       </div>
                       <Progress
                         value={
-                          subscription.plan.document_limit === -1
+                          usage.document_limit <= 0
                             ? 0
-                            : Math.min((usage.documents_processed / subscription.plan.document_limit) * 100, 100)
+                            : Math.min((usage.documents_processed / usage.document_limit) * 100, 100)
                         }
                         className="h-1.5"
                       />
