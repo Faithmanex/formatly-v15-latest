@@ -137,10 +137,14 @@ export function Dashboard() {
     // Calculate usage percentage with consistent data hierarchy
     let usagePercentage = 0
     if (usage && subscription?.plan) {
+      // Primary: subscription data
       const limit = subscription.plan.document_limit
       if (limit > 0) {
         usagePercentage = Math.round((usage.documents_processed / limit) * 100)
       }
+    } else if (profile) {
+      // Fallback: profile data
+      usagePercentage = Math.round((profile.documents_used / profile.document_limit) * 100)
     }
 
     // Plan info with consistent hierarchy
@@ -435,7 +439,7 @@ export function Dashboard() {
                 </div>
               </div>
 
-              {limits?.documentsAtLimit && (
+              {limits && (limits.documentsAtLimit || limits.apiCallsAtLimit || limits.storageAtLimit) && (
                 <Alert className="border-amber-500/20 bg-amber-500/10 py-2 sm:py-3">
                   <AlertCircle className="h-4 w-4 text-amber-600" />
                   <AlertDescription className="text-amber-700 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm">
@@ -508,7 +512,9 @@ export function Dashboard() {
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {usage && subscription?.plan
                         ? `${usage.documents_processed}/${subscription.plan.document_limit === -1 ? "∞" : subscription.plan.document_limit}`
-                        : ""}
+                        : profile
+                          ? `${profile.documents_used}/${profile.document_limit}`
+                          : ""}
                     </p>
                   </CardContent>
                 </Card>
