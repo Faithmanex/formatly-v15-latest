@@ -73,7 +73,7 @@ export function LoginForm() {
     setAuthError("")
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase!.auth.signInWithPassword({
         email,
         password,
       })
@@ -123,12 +123,7 @@ export function LoginForm() {
         setAuthError(errorMessage)
       }
 
-      safeToast({
-        title: errorTitle,
-        description: errorMessage,
-        variant: "destructive",
-        duration: 8000,
-      })
+      // Error is already handled by setAuthError and displayed inline
     } finally {
       safeSetLoading(false)
     }
@@ -139,10 +134,10 @@ export function LoginForm() {
     setAuthError("")
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase!.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/dashboard`,
+          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
         },
       })
 
@@ -150,11 +145,7 @@ export function LoginForm() {
     } catch (error: any) {
       if (!isMountedRef.current) return
 
-      safeToast({
-        title: "Google Sign In Issue",
-        description: error.message || "We couldn't sign you in with Google right now.",
-        variant: "destructive",
-      })
+      setAuthError(error.message || "We couldn't sign you in with Google right now.")
     } finally {
       safeSetLoading(false)
     }
@@ -302,7 +293,7 @@ export function LoginForm() {
                     <Label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                       Password
                     </Label>
-                    <Link href="/auth/forgot-password" size="sm" className="text-[10px] font-bold uppercase text-primary hover:text-primary/80 transition-colors">
+                    <Link href="/auth/forgot-password" className="text-[10px] font-bold uppercase text-primary hover:text-primary/80 transition-colors">
                       Forgot password?
                     </Link>
                   </div>

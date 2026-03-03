@@ -22,6 +22,7 @@ export function RegisterForm() {
   const [errors, setErrors] = useState<{ email?: string; password?: string; fullName?: string }>({})
   const [isFocused, setIsFocused] = useState({ email: false, password: false, fullName: false })
   const [passwordStrength, setPasswordStrength] = useState(0)
+  const [authError, setAuthError] = useState<string>("")
 
   const fullNameRef = useRef<HTMLInputElement>(null)
   const emailRef = useRef<HTMLInputElement>(null)
@@ -96,16 +97,17 @@ export function RegisterForm() {
     if (!validateForm()) return
 
     safeSetLoading(true)
+    setAuthError("")
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await supabase!.auth.signUp({
         email: email.trim(),
         password,
         options: {
           data: {
             full_name: fullName.trim(),
           },
-          emailRedirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/dashboard`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
         },
       })
 
@@ -126,11 +128,7 @@ export function RegisterForm() {
           errorMessage = "We couldn't complete registration. Please try again."
         }
 
-        safeToast({
-          title: "Registration Issue",
-          description: errorMessage,
-          variant: "destructive",
-        })
+        setAuthError(errorMessage)
         return
       }
 
@@ -150,11 +148,7 @@ export function RegisterForm() {
     } catch (error: any) {
       if (!isMountedRef.current) return
 
-      safeToast({
-        title: "Something Went Wrong",
-        description: "We encountered an issue. Please try again.",
-        variant: "destructive",
-      })
+      setAuthError("We encountered an issue. Please try again.")
     } finally {
       safeSetLoading(false)
     }
@@ -162,12 +156,13 @@ export function RegisterForm() {
 
   const handleGoogleLogin = async () => {
     safeSetLoading(true)
+    setAuthError("")
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase!.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${window.location.origin}/dashboard`,
+          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
         },
       })
 
@@ -175,11 +170,7 @@ export function RegisterForm() {
     } catch (error: any) {
       if (!isMountedRef.current) return
 
-      safeToast({
-        title: "Google Sign In Issue",
-        description: error.message || "We couldn't sign you in with Google right now.",
-        variant: "destructive",
-      })
+      setAuthError(error.message || "We couldn't sign you in with Google right now.")
     } finally {
       safeSetLoading(false)
     }
@@ -291,6 +282,21 @@ export function RegisterForm() {
             </div>
 
             <form onSubmit={handleRegister} className="space-y-4">
+              <AnimatePresence>
+                {authError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: "auto" }}
+                    exit={{ opacity: 0, y: -10, height: 0 }}
+                    className="bg-destructive/5 border border-destructive/20 rounded-xl p-4 mb-4"
+                  >
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+                      <p className="text-sm text-destructive font-medium leading-relaxed">{authError}</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
               <div className="space-y-4">
                 <div className="space-y-2 group">
                   <Label htmlFor="fullName" className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">

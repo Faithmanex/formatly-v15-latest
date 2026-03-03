@@ -10,7 +10,8 @@ export interface Profile {
   id: string
   email: string
   full_name: string
-  role: string
+  avatar_url: string | null
+  role: "guest" | "user" | "admin"
   document_limit: number
   documents_used: number
   formatting_preferences?: any
@@ -29,7 +30,7 @@ export function useProfile() {
     isStale,
     lastUpdated,
     refresh,
-  } = useRealtimeData<Profile>({
+  } = useRealtimeData<Profile[]>({
     table: "profiles",
     select: "*",
     filter: user?.id ? { column: "id", value: user.id } : undefined,
