@@ -71,7 +71,7 @@ BEGIN
       0, 
       0, 
       0.00::numeric, 
-      5, -- Default Free limit
+      3, -- Default Free limit
       100, 
       1.00::numeric, 
       'Free'::text, 
@@ -91,6 +91,23 @@ AS $function$
 BEGIN
     UPDATE public.subscriptions 
     SET documents_used = COALESCE(documents_used, 0) + p_increment,
+        updated_at = NOW()
+    WHERE user_id = p_user_id 
+      AND status = 'active';
+    
+    RETURN FOUND;
+END;
+$function$;
+
+-- 2b. Add missing update_storage_usage function
+CREATE OR REPLACE FUNCTION public.update_storage_usage(p_user_id uuid, p_storage_gb numeric)
+ RETURNS boolean
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+BEGIN
+    UPDATE public.subscriptions 
+    SET storage_used_gb = COALESCE(storage_used_gb, 0) + p_storage_gb,
         updated_at = NOW()
     WHERE user_id = p_user_id 
       AND status = 'active';
