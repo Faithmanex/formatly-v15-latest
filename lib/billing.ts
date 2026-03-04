@@ -434,15 +434,13 @@ export async function getUserUsageStats(userId: string): Promise<UsageStats | nu
     }
 
     if (data && data.length > 0) {
-      const stats: any = data[0]
+      const stats = data[0]
       return {
         documents_processed: stats.documents_used,
-        document_limit: stats.documents_limit,
+        document_limit: stats.document_limit,
         plan_name: stats.plan_name,
-        current_period_start: stats.billing_cycle === "yearly" 
-          ? new Date(new Date(stats.next_reset_date).getTime() - 365 * 24 * 60 * 60 * 1000).toISOString()
-          : new Date(new Date(stats.next_reset_date).getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-        current_period_end: stats.next_reset_date,
+        current_period_start: stats.period_start,
+        current_period_end: stats.period_end,
         usage_percentage: stats.usage_percentage,
       }
     }
@@ -459,9 +457,8 @@ export async function getUserUsageStats(userId: string): Promise<UsageStats | nu
 export async function incrementDocumentUsage(userId: string, increment = 1): Promise<void> {
   try {
     const supabase = getSupabase()
-    const { error } = await supabase.rpc("increment_document_usage", {
-      p_user_id: userId,
-      p_increment: increment,
+    const { error } = await supabase.rpc("track_document_usage", {
+      user_uuid: userId,
     })
 
     if (error) {

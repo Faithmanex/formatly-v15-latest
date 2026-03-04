@@ -4,7 +4,7 @@ import { rateLimit, getRateLimitIdentifier, RATE_LIMITS } from "@/lib/rate-limit
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 
 export const dynamic = "force-dynamic"
-import { checkUsageLimits, incrementDocumentUsage } from "@/lib/billing"
+import { checkUsageLimits } from "@/lib/billing"
 
 const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL
 const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT!)
@@ -92,11 +92,6 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await fastApiResponse.json()
-
-    // Increment document usage on success
-    if (result.success) {
-      await incrementDocumentUsage(user.id)
-    }
 
     const response = NextResponse.json(result)
     response.headers.set("Cache-Control", "no-store, must-revalidate")

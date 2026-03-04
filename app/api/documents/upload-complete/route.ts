@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 
 export const dynamic = "force-dynamic"
-import { checkUsageLimits, incrementDocumentUsage } from "@/lib/billing"
+import { checkUsageLimits } from "@/lib/billing"
 
 const FASTAPI_BASE_URL = process.env.FASTAPI_BASE_URL
 const FASTAPI_TIMEOUT = Number.parseInt(process.env.FASTAPI_TIMEOUT!)
@@ -78,12 +78,6 @@ export async function POST(request: NextRequest) {
       }
 
       const data = await response.json()
-      
-      // Increment usage on success
-      if (data.success) {
-        await incrementDocumentUsage(user.id)
-      }
-      
       return NextResponse.json(data)
     } catch (fetchError) {
       if (fetchError instanceof Error) {
