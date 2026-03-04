@@ -221,17 +221,12 @@ export const profileService = {
       }
 
       if (data && data.length > 0) {
-        const stats = data[0]
+        const stats: any = data[0]
         console.log(`Usage stats retrieved successfully`)
 
         const remainingDocuments =
           stats.documents_limit === -1 ? -1 : Math.max(0, stats.documents_limit - stats.documents_used)
-        const usagePercentage =
-          stats.documents_limit === -1
-            ? 0
-            : stats.documents_limit === 0
-              ? 100
-              : Math.round((stats.documents_used / stats.documents_limit) * 100)
+        const usagePercentage = stats.usage_percentage || 0
 
         const periodEnd = new Date(stats.next_reset_date)
         const today = new Date()
@@ -659,26 +654,7 @@ export const planUsageService = {
   },
 
   async incrementPlanUsage(userId: string, increment = 1): Promise<boolean> {
-    try {
-      const { data, error } = await withTimeout(
-        supabase.rpc("increment_document_usage", {
-          p_user_id: userId,
-          p_increment: increment,
-        }),
-        8000,
-        "Increment document usage",
-      )
-
-      if (error) {
-        console.error("Error incrementing document usage:", error)
-        return false
-      }
-
-      return true
-    } catch (error) {
-      console.error("Error in incrementPlanUsage:", error)
-      return false
-    }
+    return profileService.incrementDocumentUsage(userId);
   },
 
   async resetPlanUsage(userId: string, oldPlanId: string, newPlanId: string): Promise<boolean> {
