@@ -83,27 +83,25 @@ CREATE POLICY "Service role can manage all usage records" ON public.unified_usag
 -- Ensure profiles table has consistent column names
 DO $$
 BEGIN
-  -- Standardize on 'documents_used' column name
+  -- Remove deprecated usage tracking columns from profiles table
   IF EXISTS (SELECT 1 FROM information_schema.columns 
              WHERE table_name = 'profiles' AND column_name = 'documents_processed') THEN
-    ALTER TABLE public.profiles RENAME COLUMN documents_processed TO documents_used;
+    ALTER TABLE public.profiles DROP COLUMN documents_processed;
+  END IF;
+
+  IF EXISTS (SELECT 1 FROM information_schema.columns 
+             WHERE table_name = 'profiles' AND column_name = 'documents_used') THEN
+    ALTER TABLE public.profiles DROP COLUMN documents_used;
   END IF;
   
-  -- Standardize on 'document_limit' column name
   IF EXISTS (SELECT 1 FROM information_schema.columns 
              WHERE table_name = 'profiles' AND column_name = 'document_quota') THEN
-    ALTER TABLE public.profiles RENAME COLUMN document_quota TO document_limit;
+    ALTER TABLE public.profiles DROP COLUMN document_quota;
   END IF;
-  
-  -- Add missing columns if they don't exist
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                 WHERE table_name = 'profiles' AND column_name = 'documents_used') THEN
-    ALTER TABLE public.profiles ADD COLUMN documents_used integer DEFAULT 0;
-  END IF;
-  
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                 WHERE table_name = 'profiles' AND column_name = 'document_limit') THEN
-    ALTER TABLE public.profiles ADD COLUMN document_limit integer DEFAULT 5;
+
+  IF EXISTS (SELECT 1 FROM information_schema.columns 
+             WHERE table_name = 'profiles' AND column_name = 'document_limit') THEN
+    ALTER TABLE public.profiles DROP COLUMN document_limit;
   END IF;
 END $$;
 
@@ -255,13 +253,6 @@ BEGIN
     updated_at = now()
   WHERE id = usage_record.id
   RETURNING * INTO usage_record;
-  
-  -- Also update the legacy profiles table for backward compatibility
-  UPDATE public.profiles
-  SET 
-    documents_used = documents_used + p_increment,
-    updated_at = now()
-  WHERE id = p_user_id;
   
   RETURN usage_record;
 END;

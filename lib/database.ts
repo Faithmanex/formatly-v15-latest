@@ -239,9 +239,9 @@ export const profileService = {
 
         return {
           plan_id: "", // Will be populated from subscription data if needed
-          plan_name: stats.plan_name || "Free",
-          document_limit: stats.documents_limit || 0,
-          documents_used: stats.documents_used || 0,
+          plan_name: stats.plan_name,
+          document_limit: stats.documents_limit,
+          documents_used: stats.documents_used,
           remaining_documents: remainingDocuments,
           usage_percentage: usagePercentage,
           billing_period_start: stats.next_reset_date

@@ -15,9 +15,9 @@ import type { Subscription, UsageStats, SubscriptionPlan, SubscriptionStatusWith
 interface PlanSpecificUsage {
   documents_processed: number
   document_limit: number
-  plan_name: string
-  current_period_start: string
-  current_period_end: string
+  plan_name: string | null
+  current_period_start: string | null
+  current_period_end: string | null
   usage_percentage: number
 }
 
@@ -32,7 +32,7 @@ interface SubscriptionContextType {
     currentUsage?: {
       documents_used: number
       document_limit: number
-      plan_name: string
+      plan_name: string | null
       usage_percentage: number
     }
   } | null
@@ -82,7 +82,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     SWR_OPTS,
   )
 
-  const { data: usage, isLoading: usageLoading, mutate: mutateUsage } = useSWR<UsageStats>(
+  const { data: usage, isLoading: usageLoading, mutate: mutateUsage } = useSWR<UsageStats | null>(
     key ? ["usage", key] : null,
     ([, id]: [string, string]) => getUserUsageStats(id),
     SWR_OPTS,
@@ -111,7 +111,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
   const limits = usage
     ? {
-        documentsAtLimit: usage.documents_processed >= usage.document_limit,
+        documentsAtLimit: usage.document_limit > 0 && usage.documents_processed >= usage.document_limit,
         currentUsage: {
           documents_used: usage.documents_processed,
           document_limit: usage.document_limit,

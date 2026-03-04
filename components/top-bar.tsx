@@ -73,9 +73,9 @@ export function TopBar() {
             <Upload className="h-4 w-4 mr-2" />
             <span className="hidden md:inline">Quick Upload</span>
             <span className="md:hidden">Upload</span>
-            {subscription?.plan?.document_limit !== -1 && profile?.documents_processed && (
+            {subscription?.plan?.document_limit !== -1 && (
               <Badge variant="secondary" className="ml-2 text-xs">
-                {profile.documents_processed}/{subscription?.plan?.document_limit || profile?.document_limit || 1}
+                {subscription?.documents_used ?? 0}/{subscription?.plan?.document_limit ?? 1}
               </Badge>
             )}
           </Link>

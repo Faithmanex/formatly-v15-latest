@@ -47,6 +47,9 @@ export interface Invoice {
   invoice_number?: string
   amount_due: number
   amount_paid?: number
+  full_name: string | null
+  avatar_url: string | null
+  role: "guest" | "user" | "admin" | "uncollectible"
   currency: string
   status: "draft" | "open" | "paid" | "void" | "uncollectible"
   description?: string
@@ -75,9 +78,9 @@ export interface PaymentMethod {
 export interface UsageStats {
   documents_processed: number
   document_limit: number
-  plan_name: string
-  current_period_start: string
-  current_period_end: string
+  plan_name: string | null
+  current_period_start: string | null
+  current_period_end: string | null
   usage_percentage: number
 }
 
@@ -418,7 +421,7 @@ export async function setDefaultPaymentMethod(userId: string, paymentMethodId: s
 }
 
 // Usage Statistics - Get real data from database
-export async function getUserUsageStats(userId: string): Promise<UsageStats> {
+export async function getUserUsageStats(userId: string): Promise<UsageStats | null> {
   try {
     const supabase = getSupabase()
     const { data, error } = await supabase.rpc("get_user_usage_stats", {
@@ -427,48 +430,26 @@ export async function getUserUsageStats(userId: string): Promise<UsageStats> {
 
     if (error) {
       console.error("Error fetching usage stats:", error)
-      // Return default stats on error
-      return {
-        documents_processed: 0,
-        document_limit: 0,
-        plan_name: "No Plan",
-        current_period_start: new Date().toISOString(),
-        current_period_end: new Date().toISOString(),
-        usage_percentage: 0,
-      }
+      return null
     }
 
     if (data && data.length > 0) {
       const stats = data[0]
       return {
-        documents_processed: stats.documents_used || 0,
-        document_limit: stats.document_limit || 0,
-        plan_name: stats.plan_name || "Free",
-        current_period_start: stats.period_start || new Date().toISOString(),
-        current_period_end: stats.period_end || new Date().toISOString(),
-        usage_percentage: stats.usage_percentage || 0,
+        documents_processed: stats.documents_used,
+        document_limit: stats.document_limit,
+        plan_name: stats.plan_name,
+        current_period_start: stats.period_start,
+        current_period_end: stats.period_end,
+        usage_percentage: stats.usage_percentage,
       }
     }
 
-    // Return default stats if no data
-    return {
-      documents_processed: 0,
-      document_limit: 0,
-      plan_name: "No Plan",
-      current_period_start: new Date().toISOString(),
-      current_period_end: new Date().toISOString(),
-      usage_percentage: 0,
-    }
+    // Return null if no data
+    return null
   } catch (error) {
     console.error("Error in getUserUsageStats:", error)
-    return {
-      documents_processed: 0,
-      document_limit: 0,
-      plan_name: "No Plan",
-      current_period_start: new Date().toISOString(),
-      current_period_end: new Date().toISOString(),
-      usage_percentage: 0,
-    }
+    return null
   }
 }
 
@@ -507,12 +488,16 @@ export async function checkUsageLimits(
   currentUsage?: {
     documents_used: number
     document_limit: number
-    plan_name: string
+    plan_name: string | null
     usage_percentage: number
   }
 }> {
   try {
     const stats = preFetchedStats || (await getUserUsageStats(userId))
+
+    if (!stats) {
+      return { documentsAtLimit: false }
+    }
 
     const documentsAtLimit = stats.document_limit > 0 && stats.documents_processed >= stats.document_limit
 

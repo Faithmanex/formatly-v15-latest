@@ -100,9 +100,9 @@ export function DocumentUploader({
 
           setQuotaInfo({
             isFreePlan,
-            currentPlan: canProcessResult.planName || "Free",
-            documentsUsed: canProcessResult.currentUsage || 0,
-            documentLimit: canProcessResult.limit || 5,
+            currentPlan: canProcessResult.planName,
+            documentsUsed: canProcessResult.currentUsage,
+            documentLimit: canProcessResult.limit,
             resetDate: subscription?.current_period_end
               ? new Date(subscription.current_period_end).toLocaleDateString()
               : undefined,

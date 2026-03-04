@@ -9,11 +9,9 @@ import { useCacheStorage } from "./use-cache-storage"
 export interface Profile {
   id: string
   email: string
-  full_name: string
+  full_name: string | null
   avatar_url: string | null
   role: "guest" | "user" | "admin"
-  document_limit: number
-  documents_used: number
   formatting_preferences?: any
   created_at: string
   updated_at: string

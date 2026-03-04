@@ -493,7 +493,7 @@ export function MyDocuments() {
         </div>
       </div>
 
-      {limits && (limits.documentsAtLimit || limits.apiCallsAtLimit || limits.storageAtLimit) && (
+      {limits?.documentsAtLimit && (
         <Alert className="border-amber-500/50 bg-amber-500/10">
           <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
           <AlertDescription className="text-amber-900 dark:text-amber-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm">
@@ -654,7 +654,7 @@ export function MyDocuments() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
-                          {getFileIcon(doc.format || "")}
+                          {getFileIcon(doc.original_filename?.split('.').pop() || "")}
                           <div className="flex flex-col">
                             <span className="font-medium text-sm">{doc.original_filename}</span>
                             {doc.tracked_changes && (

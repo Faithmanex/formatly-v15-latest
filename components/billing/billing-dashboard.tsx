@@ -160,6 +160,11 @@ export function BillingDashboard() {
             <div className="text-xl sm:text-2xl font-bold">
               {subscription?.current_period_end ? formatDate(subscription.current_period_end) : "N/A"}
             </div>
+            {usage && (
+              <div className="text-sm text-muted-foreground">
+                {usage.current_period_start ? formatDate(usage.current_period_start) : "—"} - {usage.current_period_end ? formatDate(usage.current_period_end) : "—"}
+              </div>
+            )}
             <p className="text-xs sm:text-sm text-muted-foreground">
               {subscription?.cancel_at_period_end
                 ? "Subscription ends"
@@ -177,7 +182,7 @@ export function BillingDashboard() {
           <CardHeader>
             <CardTitle className="text-base sm:text-lg">Usage This Month</CardTitle>
             <CardDescription className="text-sm sm:text-base">
-              Your current usage for the billing period ending {formatDate(usage.current_period_end)}
+              Your current usage for the billing period ending {usage.current_period_end ? formatDate(usage.current_period_end) : "—"}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -187,31 +192,11 @@ export function BillingDashboard() {
                   <span className="text-xs sm:text-sm font-medium">Documents Processed</span>
                   <span className="text-xs sm:text-sm text-muted-foreground">
                     {usage.documents_processed} /{" "}
-                    {subscription?.plan?.document_limit === -1 ? "∞" : subscription?.plan?.document_limit || 5}
+                    {subscription?.plan?.document_limit === -1 ? "∞" : (subscription?.plan?.document_limit ?? "—")}
                   </span>
                 </div>
                 <Progress
-                  value={calculateUsagePercentage(usage.documents_processed, subscription?.plan?.document_limit || 5)}
-                  className="h-2"
-                />
-                {limits?.documentsAtLimit && (
-                  <div className="flex items-center gap-2 mt-2 text-xs sm:text-sm text-orange-600">
-                    <AlertCircle className="h-4 w-4" />
-                    You've reached your document limit
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs sm:text-sm font-medium">Documents Processed</span>
-                  <span className="text-xs sm:text-sm text-muted-foreground">
-                    {usage.documents_processed} /{" "}
-                    {subscription?.plan?.document_limit === -1 ? "∞" : subscription?.plan?.document_limit || 5}
-                  </span>
-                </div>
-                <Progress
-                  value={calculateUsagePercentage(usage.documents_processed, subscription?.plan?.document_limit || 5)}
+                  value={calculateUsagePercentage(usage.documents_processed, subscription?.plan?.document_limit ?? 0)}
                   className="h-2"
                 />
                 {limits?.documentsAtLimit && (

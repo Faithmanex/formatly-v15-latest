@@ -3,14 +3,12 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
     -- Use UPSERT to handle cases where profile might already exist
-    INSERT INTO public.profiles (id, email, full_name, role, document_quota, documents_used)
+    INSERT INTO public.profiles (id, email, full_name, role)
     VALUES (
         NEW.id,
         NEW.email,
         COALESCE(NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1)),
-        'user',
-        100,
-        0
+        'user'
     )
     ON CONFLICT (id) DO UPDATE SET
         email = EXCLUDED.email,

@@ -12,9 +12,8 @@ export interface Profile {
   id: string
   email: string
   full_name: string | null
-  role: string
-  document_limit: number
-  documents_used: number
+  avatar_url: string | null
+  role: "guest" | "user" | "admin"
   formatting_preferences?: any
   created_at: string
   updated_at: string

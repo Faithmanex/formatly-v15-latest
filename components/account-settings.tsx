@@ -253,9 +253,7 @@ export function AccountSettings() {
       ? subscription.plan.document_limit === -1
         ? 0
         : Math.min((usage.documents_processed / subscription.plan.document_limit) * 100, 100)
-      : profile
-        ? Math.min((profile.documents_used / profile.document_limit) * 100, 100)
-        : 0
+      : 0
 
   return (
     <div className="space-y-6 p-4 md:p-6">
@@ -466,7 +464,7 @@ export function AccountSettings() {
                 <Badge variant={profile?.role === "guest" ? "secondary" : "default"}>{planName}</Badge>
               </div>
 
-              {usage ? (
+              {usage && (
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between text-xs sm:text-sm mb-2">
@@ -483,19 +481,6 @@ export function AccountSettings() {
                         : `${Math.max(0, usage.document_limit - usage.documents_processed)} documents remaining`}
                     </p>
                   </div>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex justify-between text-xs sm:text-sm mb-2">
-                    <span>Documents Processed</span>
-                    <span>
-                      {profile?.documents_used || 0} / {profile?.document_limit || 1}
-                    </span>
-                  </div>
-                  <Progress value={Math.min(usagePercentage, 100)} className="h-2" />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {Math.max(0, (profile?.document_limit || 1) - (profile?.documents_used || 0))} documents remaining
-                  </p>
                 </div>
               )}
 

@@ -72,7 +72,7 @@ export function UsageStats() {
                 <span className="text-sm font-medium">Current Billing Period</span>
               </div>
               <div className="text-sm text-muted-foreground">
-                {formatDate(planUsage.current_period_start)} - {formatDate(planUsage.current_period_end)}
+                {planUsage.current_period_start ? formatDate(planUsage.current_period_start) : "—"} - {planUsage.current_period_end ? formatDate(planUsage.current_period_end) : "—"}
               </div>
             </div>
           </CardContent>

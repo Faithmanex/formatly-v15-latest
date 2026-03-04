@@ -368,7 +368,7 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                       </thead>
                       <tbody>
                         {[
-                          { label: "Documents", key: "document_limit", format: (v: any) => v == null ? "—" : (v === -1 || v === 0 ? "Unlimited" : v.toLocaleString()) },
+                          { label: "Documents", key: "document_limit", format: (v: any) => v == null ? "—" : (v === -1 ? "Unlimited" : v.toLocaleString()) },
                           { label: "Priority Support", key: "priority_support", type: "boolean" },
                           { label: "Custom Styles", key: "custom_styles", type: "boolean" },
                           { label: "Team Collab", key: "team_collaboration", type: "boolean" },
