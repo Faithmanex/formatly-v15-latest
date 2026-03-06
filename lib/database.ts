@@ -390,7 +390,7 @@ export const profileService = {
 
       if (hasReachedLimit) {
         // Special handling for free plan - permanent block until next billing cycle
-        if (usage.plan_name.toLowerCase().includes("free")) {
+        if (usage.plan_name?.toLowerCase().includes("free")) {
           return {
             canProcess: false,
             reason: "Free plan quota reached - resets next billing cycle",

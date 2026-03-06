@@ -435,12 +435,19 @@ export async function getUserUsageStats(userId: string): Promise<UsageStats | nu
 
     if (data && data.length > 0) {
       const stats = data[0]
+      const periodEnd = stats.next_reset_date ?? null
+      const periodStart = periodEnd
+        ? new Date(
+            new Date(periodEnd).getTime() -
+              (stats.billing_cycle === "yearly" ? 365 * 24 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000),
+          ).toISOString()
+        : null
       return {
         documents_processed: stats.documents_used,
-        document_limit: stats.document_limit,
+        document_limit: stats.documents_limit,
         plan_name: stats.plan_name,
-        current_period_start: stats.period_start,
-        current_period_end: stats.period_end,
+        current_period_start: periodStart,
+        current_period_end: periodEnd,
         usage_percentage: stats.usage_percentage,
       }
     }
