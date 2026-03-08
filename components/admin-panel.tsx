@@ -18,19 +18,23 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Shield, Users, FileText, Activity, Key, Settings, AlertTriangle, CheckCircle, Clock, Copy, Trash2, RefreshCw } from 'lucide-react'
+import { Shield, Users, FileText, Activity, Key, Settings, AlertTriangle, CheckCircle, Clock, Copy, Trash2, RefreshCw, Loader2 } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
+import { useEffect, useCallback } from "react"
+import { supabase } from "@/lib/supabase"
+import { Skeleton } from "@/components/ui/skeleton"
 
-// Mock data
-const systemStats = {
-  totalUsers: 1247,
-  activeUsers: 892,
-  totalDocuments: 15634,
-  documentsToday: 234,
-  avgProcessingTime: 45,
-  systemHealth: 98.5,
-  storageUsed: 67
+interface SystemStats {
+  total_users: number
+  active_users: number
+  total_documents: number
+  documents_today: number
+  avg_processing_time: number
+  system_health: number
+  storage_used: number
 }
+
+// Mock data for other sections (remaining placeholders)
 
 const recentLogs = [
   {
@@ -112,9 +116,33 @@ const apiKeys = [
 ]
 
 export function AdminPanel() {
+  const [systemStats, setSystemStats] = useState<SystemStats | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [maintenanceMode, setMaintenanceMode] = useState(false)
   const [newApiKeyName, setNewApiKeyName] = useState("")
   const { toast } = useToast()
+
+  const fetchSystemStats = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      const { data, error } = await supabase!.rpc('get_system_stats')
+      if (error) throw error
+      setSystemStats(data as unknown as SystemStats)
+    } catch (error) {
+      console.error('Error fetching system stats:', error)
+      toast({
+        title: "Error",
+        description: "Failed to fetch system statistics",
+        variant: "destructive"
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }, [toast])
+
+  useEffect(() => {
+    fetchSystemStats()
+  }, [fetchSystemStats])
 
   const handleToggleMaintenance = () => {
     setMaintenanceMode(!maintenanceMode)
@@ -208,10 +236,16 @@ export function AdminPanel() {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{systemStats.totalUsers.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">
-                  {systemStats.activeUsers} active today
-                </p>
+                {isLoading ? (
+                  <Skeleton className="h-8 w-16" />
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">{systemStats?.total_users.toLocaleString() || "0"}</div>
+                    <p className="text-xs text-muted-foreground">
+                      {systemStats?.active_users || "0"} active today
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
 
@@ -221,10 +255,16 @@ export function AdminPanel() {
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{systemStats.totalDocuments.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">
-                  {systemStats.documentsToday} today
-                </p>
+                {isLoading ? (
+                  <Skeleton className="h-8 w-16" />
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">{systemStats?.total_documents.toLocaleString() || "0"}</div>
+                    <p className="text-xs text-muted-foreground">
+                      {systemStats?.documents_today || "0"} today
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
 
@@ -234,10 +274,16 @@ export function AdminPanel() {
                 <Clock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{systemStats.avgProcessingTime}s</div>
-                <p className="text-xs text-muted-foreground">
-                  Last 24 hours
-                </p>
+                {isLoading ? (
+                  <Skeleton className="h-8 w-16" />
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">{systemStats?.avg_processing_time}s</div>
+                    <p className="text-xs text-muted-foreground">
+                      Last 24 hours
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
 
@@ -247,10 +293,16 @@ export function AdminPanel() {
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{systemStats.systemHealth}%</div>
-                <p className="text-xs text-muted-foreground">
-                  All systems operational
-                </p>
+                {isLoading ? (
+                  <Skeleton className="h-8 w-16" />
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">{systemStats?.system_health}%</div>
+                    <p className="text-xs text-muted-foreground">
+                      All systems operational
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -286,8 +338,8 @@ export function AdminPanel() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Storage</span>
                   <div className="flex items-center gap-2">
-                    <Progress value={systemStats.storageUsed} className="w-20 h-2" />
-                    <span className="text-xs">{systemStats.storageUsed}%</span>
+                    <Progress value={systemStats?.storage_used || 0} className="w-20 h-2" />
+                    <span className="text-xs">{systemStats?.storage_used || 0}%</span>
                   </div>
                 </div>
               </CardContent>

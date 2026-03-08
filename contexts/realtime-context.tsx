@@ -93,12 +93,11 @@ export function RealtimeProvider({
       setDocumentsError(null)
       if (DEBUG_REALTIME) logger.realtime("Loading initial documents")
 
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from("documents")
         .select("*")
         .eq("user_id", user.id)
         .order("updated_at", { ascending: false })
-        .limit(50)
 
       if (error) throw error
 
@@ -125,7 +124,7 @@ export function RealtimeProvider({
       setNotificationsError(null)
       if (DEBUG_REALTIME) logger.realtime("Loading initial notifications")
 
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from("notifications")
         .select("*")
         .eq("user_id", user.id)
@@ -136,7 +135,7 @@ export function RealtimeProvider({
 
       if (mountedRef.current) {
         setNotifications(data || [])
-        const unread = data?.filter((n) => !n.is_read).length || 0
+        const unread = (data as Notification[])?.filter((n) => !n.is_read).length || 0
         setUnreadCount(unread)
         if (DEBUG_REALTIME) logger.realtime("Loaded notifications", { count: data?.length || 0, unread })
       }
@@ -186,7 +185,7 @@ export function RealtimeProvider({
       setSubscriptionError(null)
       if (DEBUG_REALTIME) logger.realtime("Loading initial subscription")
 
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from("subscriptions")
         .select("*")
         .eq("user_id", user.id)
@@ -199,7 +198,7 @@ export function RealtimeProvider({
 
       if (mountedRef.current) {
         setSubscription(data)
-        if (DEBUG_REALTIME) logger.realtime("Loaded subscription", { subscriptionId: data?.id || "none" })
+        if (DEBUG_REALTIME) logger.realtime("Loaded subscription", { subscriptionId: (data as Subscription | null)?.id || "none" })
       }
     } catch (error) {
       logger.error("Error loading subscription", error)
@@ -230,7 +229,7 @@ export function RealtimeProvider({
     if (DEBUG_REALTIME) logger.realtime("Setting up real-time subscriptions")
     setConnectionError(null)
 
-    const documentsChannel = supabase
+    const documentsChannel = supabase!
       .channel(`documents-changes-${user.id}`)
       .on(
         "postgres_changes",
@@ -244,7 +243,7 @@ export function RealtimeProvider({
           if (DEBUG_REALTIME)
             logger.realtime("Document change", {
               event: payload.eventType,
-              filename: payload.new?.filename || payload.old?.filename,
+              filename: (payload.new as Document)?.filename || (payload.old as Document)?.filename,
             })
 
           if (payload.eventType === "INSERT" && payload.new) {
@@ -266,7 +265,7 @@ export function RealtimeProvider({
         }
       })
 
-    const notificationsChannel = supabase
+    const notificationsChannel = supabase!
       .channel(`notifications-changes-${user.id}`)
       .on(
         "postgres_changes",
@@ -280,7 +279,7 @@ export function RealtimeProvider({
           if (DEBUG_REALTIME)
             logger.realtime("Notification change", {
               event: payload.eventType,
-              title: payload.new?.title || payload.old?.title,
+              title: (payload.new as Notification)?.title || (payload.old as Notification)?.title,
             })
 
           if (payload.eventType === "INSERT" && payload.new) {
@@ -293,8 +292,8 @@ export function RealtimeProvider({
               prev.map((notif) => (notif.id === payload.new!.id ? (payload.new as Notification) : notif)),
             )
             setNotifications((current) => {
-              const unread = current
-                .map((n) => (n.id === payload.new!.id ? (payload.new as Notification) : n))
+              const unread = (current as Notification[])
+                .map((n) => (n.id === (payload.new as Notification)!.id ? (payload.new as Notification) : n))
                 .filter((n) => !n.is_read).length
               setUnreadCount(unread)
               return current
@@ -316,7 +315,7 @@ export function RealtimeProvider({
         }
       })
 
-    const profileChannel = supabase
+    const profileChannel = supabase!
       .channel(`profile-changes-${user.id}`)
       .on(
         "postgres_changes",
@@ -340,7 +339,7 @@ export function RealtimeProvider({
         }
       })
 
-    const subscriptionChannel = supabase
+    const subscriptionChannel = supabase!
       .channel(`subscription-changes-${user.id}`)
       .on(
         "postgres_changes",
@@ -354,7 +353,7 @@ export function RealtimeProvider({
           if (DEBUG_REALTIME)
             logger.realtime("Subscription change", {
               event: payload.eventType,
-              status: payload.new?.status || payload.old?.status,
+              status: (payload.new as Subscription)?.status || (payload.old as Subscription)?.status,
             })
 
           if (payload.eventType === "INSERT" && payload.new) {
@@ -461,7 +460,7 @@ export function RealtimeProvider({
 
   const markNotificationAsRead = useCallback(async (id: string) => {
     try {
-      const { error } = await supabase.from("notifications").update({ is_read: true }).eq("id", id)
+      const { error } = await supabase.from("notifications").update({ is_read: true } as any).eq("id", id)
 
       if (error) throw error
       // Real-time subscription will handle the state update
@@ -474,9 +473,9 @@ export function RealtimeProvider({
     if (!user?.id) return
 
     try {
-      const { error } = await supabase
+      const { error } = await supabase!
         .from("notifications")
-        .update({ is_read: true })
+        .update({ is_read: true } as any)
         .eq("user_id", user.id)
         .eq("is_read", false)
 

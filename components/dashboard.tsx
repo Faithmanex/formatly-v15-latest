@@ -153,7 +153,7 @@ export function Dashboard() {
 
     return {
       stats: {
-        totalDocuments: allDocuments.length,
+        totalDocuments: allDocuments.filter((doc) => doc.status === "formatted").length,
         processingDocuments: processingCount,
         completedDocuments: completedCount,
         monthlyUsage: monthlyCount,

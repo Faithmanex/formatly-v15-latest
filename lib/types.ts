@@ -205,8 +205,16 @@ export type Database = {
           price_monthly: number
           price_yearly: number | null
           document_limit: number
+          api_calls_limit: number
+          storage_limit_gb: number
           features: any
           is_active: boolean
+          is_popular: boolean
+          priority_support: boolean
+          custom_styles: boolean
+          team_collaboration: boolean
+          currency: string | null
+          billing_cycles: string[] | null
           created_at: string
           updated_at: string
         }
@@ -216,8 +224,16 @@ export type Database = {
           price_monthly: number
           price_yearly?: number | null
           document_limit: number
+          api_calls_limit?: number
+          storage_limit_gb?: number
           features?: any
           is_active?: boolean
+          is_popular?: boolean
+          priority_support?: boolean
+          custom_styles?: boolean
+          team_collaboration?: boolean
+          currency?: string | null
+          billing_cycles?: string[] | null
         }
         Update: {
           name?: string
@@ -225,8 +241,16 @@ export type Database = {
           price_monthly?: number
           price_yearly?: number | null
           document_limit?: number
+          api_calls_limit?: number
+          storage_limit_gb?: number
           features?: any
           is_active?: boolean
+          is_popular?: boolean
+          priority_support?: boolean
+          custom_styles?: boolean
+          team_collaboration?: boolean
+          currency?: string | null
+          billing_cycles?: string[] | null
         }
       }
       subscriptions: {
@@ -242,6 +266,15 @@ export type Database = {
           canceled_at: string | null
           trial_start: string | null
           trial_end: string | null
+          paypal_subscription_id: string | null
+          documents_used: number
+          api_calls_used: number
+          storage_used_gb: number
+          last_usage_reset: string | null
+          pending_plan_id: string | null
+          pending_plan_effective_date: string | null
+          plan_change_reason: string | null
+          previous_plan_id: string | null
           created_at: string
           updated_at: string
         }
@@ -256,6 +289,15 @@ export type Database = {
           canceled_at?: string | null
           trial_start?: string | null
           trial_end?: string | null
+          paypal_subscription_id?: string | null
+          documents_used?: number
+          api_calls_used?: number
+          storage_used_gb?: number
+          last_usage_reset?: string | null
+          pending_plan_id?: string | null
+          pending_plan_effective_date?: string | null
+          plan_change_reason?: string | null
+          previous_plan_id?: string | null
         }
         Update: {
           plan_id?: string
@@ -267,6 +309,15 @@ export type Database = {
           canceled_at?: string | null
           trial_start?: string | null
           trial_end?: string | null
+          paypal_subscription_id?: string | null
+          documents_used?: number
+          api_calls_used?: number
+          storage_used_gb?: number
+          last_usage_reset?: string | null
+          pending_plan_id?: string | null
+          pending_plan_effective_date?: string | null
+          plan_change_reason?: string | null
+          previous_plan_id?: string | null
         }
       }
       invoices: {
@@ -411,6 +462,71 @@ export type Database = {
           api_calls?: number
           storage_used?: number
         }
+      }
+    }
+    Functions: {
+      get_user_usage_stats: {
+        Args: { user_uuid: string }
+        Returns: Array<{
+          documents_used: number
+          api_calls_used: number
+          storage_used_gb: number
+          documents_limit: number
+          api_calls_limit: number
+          storage_limit_gb: number
+          plan_name: string
+          next_reset_date: string
+          billing_cycle: string
+          usage_percentage: number
+        }>
+      }
+      increment_document_usage: {
+        Args: { p_user_id: string; p_increment?: number }
+        Returns: boolean
+      }
+      track_document_usage: {
+        Args: { user_uuid: string }
+        Returns: undefined
+      }
+      check_usage_limits: {
+        Args: { p_user_id: string }
+        Returns: Array<{
+          documents_at_limit: boolean
+          api_calls_at_limit: boolean
+          storage_at_limit: boolean
+          current_usage: Record<string, unknown>
+        }>
+      }
+      handle_subscription_upgrade: {
+        Args: { p_user_id: string; p_new_plan_id: string; p_billing_cycle?: string }
+        Returns: Record<string, unknown>
+      }
+      handle_subscription_downgrade: {
+        Args: { p_user_id: string; p_new_plan_id: string }
+        Returns: Record<string, unknown>
+      }
+      get_subscription_status: {
+        Args: { p_user_id: string }
+        Returns: Record<string, unknown>
+      }
+      reset_usage_for_plan_change: {
+        Args: { p_user_id: string; p_old_plan_id: string; p_new_plan_id: string; p_reason?: string }
+        Returns: undefined
+      }
+      reset_usage_counters: {
+        Args: { user_uuid: string }
+        Returns: undefined
+      }
+      get_current_plan_usage: {
+        Args: { p_user_id: string }
+        Returns: Array<{
+          plan_id: string
+          plan_name: string
+          document_limit: number
+          documents_used: number
+          remaining_documents: number
+          usage_percentage: number
+        }>
       }
     }
   }

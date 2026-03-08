@@ -1,6 +1,6 @@
 import { getSupabaseBrowserClient } from "./supabase"
 
-const getSupabase = () => getSupabaseBrowserClient()
+const getSupabase = () => getSupabaseBrowserClient()!
 
 export interface SubscriptionPlan {
   id: string

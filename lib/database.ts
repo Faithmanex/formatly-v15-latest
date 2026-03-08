@@ -2,7 +2,7 @@ import { getSupabaseBrowserClient } from "./supabase"
 import { withTimeout } from "./utils"
 import type { Database } from "./types"
 
-const supabase = getSupabaseBrowserClient()
+const supabase = getSupabaseBrowserClient()!
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"]
 type Document = Database["public"]["Tables"]["documents"]["Row"]
@@ -607,6 +607,7 @@ export const notificationService = {
   },
 }
 
+/* planUsageService — unused, no external callers
 export const planUsageService = {
   async getUserPlanUsage(
     userId: string,
@@ -624,12 +625,11 @@ export const planUsageService = {
     try {
       const { data, error } = await withTimeout(
         supabase
-          .from("subscription_usage")
-          .select("*")
+          .from("subscriptions")
+          .select("id, user_id, documents_used, api_calls_used, storage_used_gb, last_usage_reset, current_period_start, current_period_end")
           .eq("user_id", userId)
-          .eq("subscription_id", subscriptionId)
-          .order("created_at", { ascending: false })
-          .limit(1)
+          .eq("id", subscriptionId)
+          .eq("status", "active")
           .single(),
         8000,
         "Get subscription usage",
@@ -643,13 +643,13 @@ export const planUsageService = {
       return data
         ? {
             user_id: data.user_id,
-            subscription_id: data.subscription_id,
-            documents_used: data.documents_processed,
-            api_calls_made: data.api_calls_made,
-            storage_used_gb: Number.parseFloat(data.storage_used_gb),
-            last_reset_date: data.last_reset_date,
-            billing_period_start: data.billing_period_start,
-            billing_period_end: data.billing_period_end,
+            subscription_id: data.id,
+            documents_used: data.documents_used ?? 0,
+            api_calls_made: data.api_calls_used ?? 0,
+            storage_used_gb: Number(data.storage_used_gb ?? 0),
+            last_reset_date: data.last_usage_reset ?? data.current_period_start,
+            billing_period_start: data.current_period_start,
+            billing_period_end: data.current_period_end,
           }
         : null
     } catch (error) {
@@ -722,19 +722,19 @@ export const planUsageService = {
     try {
       const { data, error } = await withTimeout(
         supabase
-          .from("subscription_usage")
+          .from("subscriptions")
           .select(`
             plan_id,
-            documents_processed,
-            api_calls_made,
+            documents_used,
+            api_calls_used,
             storage_used_gb,
-            last_reset_date,
-            billing_period_start,
-            billing_period_end,
-            subscription_plans!subscription_usage_plan_id_fkey(name)
+            last_usage_reset,
+            current_period_start,
+            current_period_end,
+            subscription_plans!subscriptions_plan_id_fkey(name)
           `)
           .eq("user_id", userId)
-          .order("billing_period_end", { ascending: false }),
+          .order("current_period_end", { ascending: false }),
         8000,
         "Get all subscription usage records",
       )
@@ -746,16 +746,16 @@ export const planUsageService = {
 
       const currentTime = new Date()
 
-      return (data || []).map((item) => ({
+      return (data || []).map((item: any) => ({
         plan_id: item.plan_id,
-        plan_name: item.subscription_plans?.name || "Unknown Plan",
-        documents_used: item.documents_processed,
-        api_calls_made: item.api_calls_made,
-        storage_used_gb: Number.parseFloat(item.storage_used_gb),
-        last_reset_date: item.last_reset_date,
-        billing_period_start: item.billing_period_start,
-        billing_period_end: item.billing_period_end,
-        is_current_period: new Date(item.billing_period_end) > currentTime,
+        plan_name: item.subscription_plans?.name ?? "Unknown Plan",
+        documents_used: item.documents_used ?? 0,
+        api_calls_made: item.api_calls_used ?? 0,
+        storage_used_gb: Number(item.storage_used_gb ?? 0),
+        last_reset_date: item.last_usage_reset ?? item.current_period_start,
+        billing_period_start: item.current_period_start,
+        billing_period_end: item.current_period_end,
+        is_current_period: new Date(item.current_period_end) > currentTime,
       }))
     } catch (error) {
       console.error("Error in getAllUserPlanUsages:", error)
@@ -817,6 +817,7 @@ export const planUsageService = {
     }
   },
 }
+*/
 
 // Added English variant service
 export const englishVariantService = {
