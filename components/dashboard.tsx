@@ -515,56 +515,70 @@ export function Dashboard() {
                 </Card>
               </div>
 
-              {usage && (
-                <Card className="border-border bg-card">
-                  <CardContent className="p-3 sm:p-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-foreground">Usage</span>
-                      {usage.current_period_end && (
-                        <span className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          Renews {formatDate(usage.current_period_end)}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Documents</span>
-                        <span>
-                          {usage.documents_processed}/
-                          {usage.document_limit === -1 ? "∞" : usage.document_limit}
-                        </span>
+              <Card className="border-border bg-card">
+                <CardContent className="p-3 sm:p-4 space-y-3">
+                  {!usage ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-4 w-24" />
                       </div>
-                      <Progress
-                        value={
-                          usage.document_limit === -1
-                            ? 0
-                            : Math.min((usage.documents_processed / usage.document_limit) * 100, 100)
-                        }
-                        className="h-1.5"
-                      />
+                      <Skeleton className="h-2 w-full" />
+                      <div className="flex justify-between items-center pt-1">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-7 w-20" />
+                      </div>
                     </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-foreground">Usage</span>
+                        {usage.current_period_end && (
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            Renews {formatDate(usage.current_period_end)}
+                          </span>
+                        )}
+                      </div>
 
-                    <div className="flex justify-between items-center pt-1">
-                      <span className="text-xs text-muted-foreground">
-                        Style: <span className="font-medium text-foreground">{stats.mostUsedStyle}</span>
-                      </span>
-                      {!planInfo.isPremium && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-7 text-xs text-primary"
-                          onClick={() => navigateTo("/dashboard/upgrade")}
-                        >
-                          <Zap className="h-3 w-3 mr-1" />
-                          Upgrade
-                        </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>Documents</span>
+                          <span>
+                            {usage.documents_processed}/
+                            {usage.document_limit === -1 ? "∞" : usage.document_limit}
+                          </span>
+                        </div>
+                        <Progress
+                          value={
+                            usage.document_limit === -1
+                              ? 0
+                              : Math.min((usage.documents_processed / usage.document_limit) * 100, 100)
+                          }
+                          className="h-1.5"
+                        />
+                      </div>
+
+                      <div className="flex justify-between items-center pt-1">
+                        <span className="text-xs text-muted-foreground">
+                          Style: <span className="font-medium text-foreground">{stats.mostUsedStyle}</span>
+                        </span>
+                        {!planInfo.isPremium && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 text-xs text-primary"
+                            onClick={() => navigateTo("/dashboard/upgrade")}
+                          >
+                            <Zap className="h-3 w-3 mr-1" />
+                            Upgrade
+                          </Button>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
 
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-4 sm:gap-3 scrollbar-sleek">
                 <Button
