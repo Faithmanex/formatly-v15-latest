@@ -31,6 +31,7 @@ import { useSubscription, useSubscriptionStatus, useUsageLimits } from "@/contex
 import { formatDistanceToNow } from "date-fns"
 import { useRealtime } from "@/contexts/realtime-context"
 import { JobHistory } from "@/components/job-history"
+import { UsageStats } from "@/components/billing/usage-stats"
 import { profileService } from "@/lib/database"
 
 interface DashboardStats {
@@ -515,54 +516,7 @@ export function Dashboard() {
                 </Card>
               </div>
 
-              {!planInfo.isPremium && usage && subscription?.plan && (
-                <Card className="border-border bg-card">
-                  <CardContent className="p-3 sm:p-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-foreground">Usage</span>
-                      {subscription.current_period_end && (
-                        <span className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          Renews {formatDate(subscription.current_period_end)}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Documents</span>
-                        <span>
-                          {usage.documents_processed}/
-                          {subscription.plan.document_limit === -1 ? "∞" : subscription.plan.document_limit}
-                        </span>
-                      </div>
-                      <Progress
-                        value={
-                          subscription.plan.document_limit === -1
-                            ? 0
-                            : Math.min((usage.documents_processed / subscription.plan.document_limit) * 100, 100)
-                        }
-                        className="h-1.5"
-                      />
-                    </div>
-
-                    <div className="flex justify-between items-center pt-1">
-                      <span className="text-xs text-muted-foreground">
-                        Style: <span className="font-medium text-foreground">{stats.mostUsedStyle}</span>
-                      </span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-7 text-xs text-primary"
-                        onClick={() => navigateTo("/dashboard/upgrade")}
-                      >
-                        <Zap className="h-3 w-3 mr-1" />
-                        Upgrade
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+              <UsageStats />
 
               <div className="flex gap-2 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-4 sm:gap-3 scrollbar-sleek">
                 <Button
