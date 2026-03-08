@@ -515,7 +515,7 @@ export function Dashboard() {
                 </Card>
               </div>
 
-              {!planInfo.isPremium && usage && subscription?.plan && (
+              {usage && subscription?.plan && (
                 <Card className="border-border bg-card">
                   <CardContent className="p-3 sm:p-4 space-y-3">
                     <div className="flex items-center justify-between">
@@ -550,15 +550,17 @@ export function Dashboard() {
                       <span className="text-xs text-muted-foreground">
                         Style: <span className="font-medium text-foreground">{stats.mostUsedStyle}</span>
                       </span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-7 text-xs text-primary"
-                        onClick={() => navigateTo("/dashboard/upgrade")}
-                      >
-                        <Zap className="h-3 w-3 mr-1" />
-                        Upgrade
-                      </Button>
+                      {!planInfo.isPremium && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 text-xs text-primary"
+                          onClick={() => navigateTo("/dashboard/upgrade")}
+                        >
+                          <Zap className="h-3 w-3 mr-1" />
+                          Upgrade
+                        </Button>
+                      )}
                     </div>
                   </CardContent>
                 </Card>

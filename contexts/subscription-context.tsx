@@ -139,7 +139,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     return () => window.removeEventListener("subscription-changed", handleSubscriptionChange)
   }, [userId, refreshAll])
 
-  const isSubscribed = subscription?.status === "active" || subscription?.status === "trialing"
+  const isSubscribed = subscription?.status === "active"
   const isPremium = isSubscribed && subscription?.plan?.name !== "Free"
   const planName = subscription?.plan?.name ?? "Free"
   const subscriptionStatus = subscription?.status ?? "none"
