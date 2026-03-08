@@ -84,7 +84,7 @@ export function AccountSettings() {
       // Upload to Supabase Storage
       const fileExt = file.name.split(".").pop()
       const fileName = `${user.id}-${Math.random()}.${fileExt}`
-      const filePath = `avatars/${fileName}`
+      const filePath = `${user.id}/${fileName}`
 
       const { error: uploadError } = await supabase.storage
         .from("avatars") // Ensure this bucket exists in Supabase
