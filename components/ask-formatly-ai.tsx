@@ -148,44 +148,24 @@ export function AskFormatlyAI() {
 
       const contentType = response.headers.get("content-type") ?? ""
 
+      let responseContent = ""
+
       if (contentType.includes("application/json")) {
         const data = await response.json()
-        const responseContent = data.response ?? data.error ?? ""
-
-        if (!responseContent.trim()) {
-          throw new Error("Received empty AI response")
-        }
-
-        setMessages((prev) =>
-          prev.map((message) => (message.id === aiMessageId ? { ...message, content: responseContent } : message)),
-        )
+        responseContent = data.response ?? data.error ?? ""
       } else {
-        const reader = response.body?.getReader()
+        responseContent = await response.text()
+      }
 
-        if (!reader) {
-          throw new Error("Streaming body is not available")
-        }
+      if (!responseContent.trim()) {
+        throw new Error("Received empty AI response")
+      }
 
-        const decoder = new TextDecoder()
-        let accumulated = ""
-
-        while (true) {
-          const { value, done } = await reader.read()
-          if (done) break
-
-          accumulated += decoder.decode(value, { stream: true })
-          const streamedContent = accumulated
-
-          setMessages((prev) =>
-            prev.map((message) => (message.id === aiMessageId ? { ...message, content: streamedContent } : message)),
-          )
-        }
-
-        accumulated += decoder.decode()
-
-        if (!accumulated.trim()) {
-          throw new Error("Received empty AI response")
-        }
+      const aiResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        type: "ai",
+        content: responseContent,
+        timestamp: new Date(),
       }
     } catch (error) {
       console.error("Error getting AI response:", error)
