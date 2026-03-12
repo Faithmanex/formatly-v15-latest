@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/components/auth-provider"
 import { RealtimeProvider } from "@/contexts/realtime-context"
 import { SubscriptionProvider } from "@/contexts/subscription-context"
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -48,6 +49,7 @@ export default function RootLayout({
             </AuthProvider>
           </ThemeProvider>
         </SWRConfig>
+        <Analytics />
       </body>
     </html>
   )
