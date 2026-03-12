@@ -130,12 +130,25 @@ export function AskFormatlyAI() {
         throw new Error("Failed to get AI response")
       }
 
-      const data = await response.json()
+      const contentType = response.headers.get("content-type") ?? ""
+
+      let responseContent = ""
+
+      if (contentType.includes("application/json")) {
+        const data = await response.json()
+        responseContent = data.response ?? data.error ?? ""
+      } else {
+        responseContent = await response.text()
+      }
+
+      if (!responseContent.trim()) {
+        throw new Error("Received empty AI response")
+      }
 
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         type: "ai",
-        content: data.response,
+        content: responseContent,
         timestamp: new Date(),
       }
       setMessages((prev) => [...prev, aiResponse])
