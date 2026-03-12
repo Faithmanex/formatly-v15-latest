@@ -99,27 +99,29 @@ export function FormattingPreferences() {
 
   if (isLoadingData || isLoadingPreferences) {
     return (
-      <div className="space-y-4 md:space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold">Formatting Preferences</h2>
-            <p className="text-sm md:text-base text-muted-foreground">Loading your preferences...</p>
+      <div className="space-y-4 md:space-y-6 p-3 sm:p-4 lg:p-6">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold">Formatting Preferences</h2>
+              <p className="text-sm md:text-base text-muted-foreground">Loading your preferences...</p>
+            </div>
           </div>
-        </div>
-        <div className="grid gap-4 md:gap-6">
-          {[...Array(4)].map((_, i) => (
-            <Card key={i}>
-              <CardHeader className="p-4 md:p-6">
-                <Skeleton className="h-5 md:h-6 w-36 md:w-48" />
-                <Skeleton className="h-3 md:h-4 w-64 md:w-96" />
-              </CardHeader>
-              <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6">
-                <Skeleton className="h-9 md:h-10 w-full" />
-                <Skeleton className="h-9 md:h-10 w-full" />
-                <Skeleton className="h-9 md:h-10 w-full" />
-              </CardContent>
-            </Card>
-          ))}
+          <div className="grid gap-4 md:gap-6">
+            {[...Array(4)].map((_, i) => (
+              <Card key={i}>
+                <CardHeader className="p-4 md:p-6">
+                  <Skeleton className="h-5 md:h-6 w-36 md:w-48" />
+                  <Skeleton className="h-3 md:h-4 w-64 md:w-96" />
+                </CardHeader>
+                <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6">
+                  <Skeleton className="h-9 md:h-10 w-full" />
+                  <Skeleton className="h-9 md:h-10 w-full" />
+                  <Skeleton className="h-9 md:h-10 w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     )
@@ -127,45 +129,48 @@ export function FormattingPreferences() {
 
   if (dataError) {
     return (
-      <div className="space-y-4 md:space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold">Formatting Preferences</h2>
-            <p className="text-sm md:text-base text-muted-foreground">Error loading preferences</p>
+      <div className="space-y-4 md:space-y-6 p-3 sm:p-4 lg:p-6">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold">Formatting Preferences</h2>
+              <p className="text-sm md:text-base text-muted-foreground">Error loading preferences</p>
+            </div>
+            <Button onClick={handleRefresh} variant="outline" size="sm">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Retry
+            </Button>
           </div>
-          <Button onClick={handleRefresh} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Retry
-          </Button>
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="text-sm md:text-base">Failed to load preferences</AlertDescription>
+          </Alert>
         </div>
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="text-sm md:text-base">Failed to load preferences</AlertDescription>
-        </Alert>
       </div>
     )
   }
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
-        <div>
-          <h2 className="text-xl md:text-2xl font-bold">Formatting Preferences</h2>
-          <p className="text-sm md:text-base text-muted-foreground">
-            Customize your default document formatting settings
-          </p>
+    <div className="space-y-4 md:space-y-6 p-3 sm:p-4 lg:p-6">
+      <div className="max-w-7xl mx-auto w-full space-y-4 md:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold">Formatting Preferences</h2>
+            <p className="text-sm md:text-base text-muted-foreground">
+              Customize your default document formatting settings
+            </p>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <Button onClick={handleRefresh} variant="outline" disabled={isSaving} size="sm">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">Refresh</span>
+            </Button>
+            <Button onClick={handleSave} disabled={!hasUnsavedChanges || isSaving} size="sm">
+              {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+              {isSaving ? "Saving..." : "Save"}
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-2 flex-wrap">
-          <Button onClick={handleRefresh} variant="outline" disabled={isSaving} size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">Refresh</span>
-          </Button>
-          <Button onClick={handleSave} disabled={!hasUnsavedChanges || isSaving} size="sm">
-            {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-            {isSaving ? "Saving..." : "Save"}
-          </Button>
-        </div>
-      </div>
 
       {hasUnsavedChanges && (
         <Alert>
@@ -302,6 +307,7 @@ export function FormattingPreferences() {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   )
 }

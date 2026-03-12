@@ -30,7 +30,7 @@ export function Settings() {
   }
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="space-y-6 p-3 sm:p-4 lg:p-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
         <p className="text-muted-foreground">Customize your Formatly experience</p>
