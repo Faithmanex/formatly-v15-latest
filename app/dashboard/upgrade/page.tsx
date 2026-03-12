@@ -2,7 +2,7 @@ import { Pricing } from "@/components/pricing"
 
 export default function UpgradePage() {
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] flex flex-col p-4 md:p-6">
+    <div className="relative min-h-[calc(100vh-4rem)] flex flex-col p-3 sm:p-4 lg:p-6">
       {/* Background decoration */}
       <div className="absolute inset-0 -z-10 h-full w-full bg-white dark:bg-black bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1a1a1a_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
       
