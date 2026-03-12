@@ -66,6 +66,8 @@ export async function POST(request: NextRequest) {
     return new NextResponse(stream, {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
       },
     })
   } catch (error) {
