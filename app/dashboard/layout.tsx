@@ -14,7 +14,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   // Show loading skeleton during auth initialization
   if (!isInitialized || isLoading) {
     return (
-      <div className="min-h-screen bg-background p-6">
+      <div className="min-h-screen bg-background p-3 sm:p-4 lg:p-6">
         <div className="max-w-7xl mx-auto space-y-6">
           <Skeleton className="h-8 w-64" />
           <Skeleton className="h-96 w-full" />
