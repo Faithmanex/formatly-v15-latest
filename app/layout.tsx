@@ -17,8 +17,30 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://formatlyapp.com"),
   title: "Formatly - Professional Document Formatting",
   description: "Transform your documents with professional academic formatting",
+  openGraph: {
+    title: "Formatly - Professional Document Formatting",
+    description: "Transform your documents with professional academic formatting",
+    url: "/",
+    siteName: "Formatly",
+    type: "website",
+    images: [
+      {
+        url: "/placeholder-logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Formatly",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Formatly - Professional Document Formatting",
+    description: "Transform your documents with professional academic formatting",
+    images: ["/placeholder-logo.png"],
+  },
 }
 
 export default function RootLayout({

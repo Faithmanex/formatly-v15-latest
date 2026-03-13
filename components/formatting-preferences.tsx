@@ -116,7 +116,8 @@ export function FormattingPreferences() {
           </div>
           <div className="grid gap-4 md:gap-6">
             {[...Array(4)].map((_, i) => (
-              <Card key={i}>
+              <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+              <Card>
                 <CardHeader className="p-4 md:p-6">
                   <Skeleton className="h-5 md:h-6 w-36 md:w-48" />
                   <Skeleton className="h-3 md:h-4 w-64 md:w-96" />
@@ -127,6 +128,7 @@ export function FormattingPreferences() {
                   <Skeleton className="h-9 md:h-10 w-full" />
                 </CardContent>
               </Card>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -148,10 +150,12 @@ export function FormattingPreferences() {
               Retry
             </Button>
           </div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="text-sm md:text-base">Failed to load preferences</AlertDescription>
           </Alert>
+          </motion.div>
         </div>
       </div>
     )
@@ -319,6 +323,7 @@ export function FormattingPreferences() {
           </div>
         </CardContent>
       </Card>
+      </motion.div>
       </div>
     </div>
   )
