@@ -248,7 +248,7 @@ export function AskFormatlyAI() {
           </div>
         ) : (
           <ScrollArea className="h-full">
-            <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-6">
+            <div className="mx-auto max-w-4xl space-y-6 p-3 sm:p-4 lg:p-6">
               {messages.map((message) => (
                 <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
                   <div
