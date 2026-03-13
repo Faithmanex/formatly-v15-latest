@@ -31,8 +31,8 @@ export function Settings() {
   }
 
   return (
-    <div className="space-y-6 p-3 sm:p-4 lg:p-6">
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+    <div className="max-w-7xl mx-auto space-y-6 p-3 sm:p-4 lg:p-6">
+      <div>
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
         <p className="text-muted-foreground">Customize your Formatly experience</p>
       </motion.div>
