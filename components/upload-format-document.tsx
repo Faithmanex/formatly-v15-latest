@@ -78,7 +78,7 @@ export function UploadFormatDocument() {
 
   if (isLoading || isLoadingPreferences) {
     return (
-      <div className="max-w-6xl mx-auto p-4 md:p-6 lg:p-8 space-y-6 md:space-y-8">
+      <div className="max-w-7xl mx-auto p-3 sm:p-4 lg:p-6 space-y-6 md:space-y-8">
         <div className="space-y-2">
           <Skeleton className="h-6 md:h-8 w-48 md:w-64" />
           <Skeleton className="h-3 md:h-4 w-64 md:w-96" />
@@ -113,7 +113,7 @@ export function UploadFormatDocument() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-6 lg:p-8 space-y-6 md:space-y-8">
+    <div className="max-w-7xl mx-auto p-3 sm:p-4 lg:p-6 space-y-6 md:space-y-8">
       <div className="space-y-1 md:space-y-2">
         <h1 className="text-2xl md:text-3xl font-bold">Upload & Format Documents</h1>
         <p className="text-sm md:text-base text-muted-foreground">

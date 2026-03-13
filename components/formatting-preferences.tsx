@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Save, RefreshCw, AlertCircle, Loader2 } from "lucide-react"
+import { motion } from "framer-motion"
 import { useAuth } from "@/components/auth-provider"
 import { useToast } from "@/hooks/use-toast"
 import { useFormattingData } from "@/hooks/use-formatting-data"
@@ -49,6 +50,12 @@ export function FormattingPreferences() {
   const [preferences, setPreferences] = useState(userPreferences)
   const [isSaving, setIsSaving] = useState(false)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+
+  const cardAnimation = {
+    initial: { opacity: 0, y: 12 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.25, ease: "easeOut" as const },
+  }
 
   useEffect(() => {
     setPreferences(userPreferences)
@@ -99,27 +106,31 @@ export function FormattingPreferences() {
 
   if (isLoadingData || isLoadingPreferences) {
     return (
-      <div className="space-y-4 md:space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold">Formatting Preferences</h2>
-            <p className="text-sm md:text-base text-muted-foreground">Loading your preferences...</p>
+      <div className="space-y-4 md:space-y-6 p-3 sm:p-4 lg:p-6">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold">Formatting Preferences</h2>
+              <p className="text-sm md:text-base text-muted-foreground">Loading your preferences...</p>
+            </div>
           </div>
-        </div>
-        <div className="grid gap-4 md:gap-6">
-          {[...Array(4)].map((_, i) => (
-            <Card key={i}>
-              <CardHeader className="p-4 md:p-6">
-                <Skeleton className="h-5 md:h-6 w-36 md:w-48" />
-                <Skeleton className="h-3 md:h-4 w-64 md:w-96" />
-              </CardHeader>
-              <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6">
-                <Skeleton className="h-9 md:h-10 w-full" />
-                <Skeleton className="h-9 md:h-10 w-full" />
-                <Skeleton className="h-9 md:h-10 w-full" />
-              </CardContent>
-            </Card>
-          ))}
+          <div className="grid gap-4 md:gap-6">
+            {[...Array(4)].map((_, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+              <Card>
+                <CardHeader className="p-4 md:p-6">
+                  <Skeleton className="h-5 md:h-6 w-36 md:w-48" />
+                  <Skeleton className="h-3 md:h-4 w-64 md:w-96" />
+                </CardHeader>
+                <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6">
+                  <Skeleton className="h-9 md:h-10 w-full" />
+                  <Skeleton className="h-9 md:h-10 w-full" />
+                  <Skeleton className="h-9 md:h-10 w-full" />
+                </CardContent>
+              </Card>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     )
@@ -127,56 +138,64 @@ export function FormattingPreferences() {
 
   if (dataError) {
     return (
-      <div className="space-y-4 md:space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold">Formatting Preferences</h2>
-            <p className="text-sm md:text-base text-muted-foreground">Error loading preferences</p>
+      <div className="space-y-4 md:space-y-6 p-3 sm:p-4 lg:p-6">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold">Formatting Preferences</h2>
+              <p className="text-sm md:text-base text-muted-foreground">Error loading preferences</p>
+            </div>
+            <Button onClick={handleRefresh} variant="outline" size="sm">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Retry
+            </Button>
           </div>
-          <Button onClick={handleRefresh} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Retry
-          </Button>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="text-sm md:text-base">Failed to load preferences</AlertDescription>
+          </Alert>
+          </motion.div>
         </div>
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="text-sm md:text-base">Failed to load preferences</AlertDescription>
-        </Alert>
       </div>
     )
   }
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
-        <div>
-          <h2 className="text-xl md:text-2xl font-bold">Formatting Preferences</h2>
-          <p className="text-sm md:text-base text-muted-foreground">
-            Customize your default document formatting settings
-          </p>
+    <div className="space-y-4 md:space-y-6 p-3 sm:p-4 lg:p-6">
+      <div className="max-w-7xl mx-auto w-full space-y-4 md:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold">Formatting Preferences</h2>
+            <p className="text-sm md:text-base text-muted-foreground">
+              Customize your default document formatting settings
+            </p>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            <Button onClick={handleRefresh} variant="outline" disabled={isSaving} size="sm">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">Refresh</span>
+            </Button>
+            <Button onClick={handleSave} disabled={!hasUnsavedChanges || isSaving} size="sm">
+              {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+              {isSaving ? "Saving..." : "Save"}
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-2 flex-wrap">
-          <Button onClick={handleRefresh} variant="outline" disabled={isSaving} size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">Refresh</span>
-          </Button>
-          <Button onClick={handleSave} disabled={!hasUnsavedChanges || isSaving} size="sm">
-            {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-            {isSaving ? "Saving..." : "Save"}
-          </Button>
-        </div>
-      </div>
 
       {hasUnsavedChanges && (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="text-sm md:text-base">
-            You have unsaved changes. Don't forget to save your preferences.
-          </AlertDescription>
-        </Alert>
+        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="text-sm md:text-base">
+              You have unsaved changes. Don't forget to save your preferences.
+            </AlertDescription>
+          </Alert>
+        </motion.div>
       )}
 
       {/* Academic Styles Section */}
+      <motion.div {...cardAnimation}>
       <Card>
         <CardHeader className="p-4 md:p-6">
           <CardTitle className="text-base md:text-lg">Academic Styles</CardTitle>
@@ -275,8 +294,10 @@ export function FormattingPreferences() {
           </div>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Processing Options */}
+      <motion.div {...cardAnimation} transition={{ ...cardAnimation.transition, delay: 0.08 }}>
       <Card>
         <CardHeader className="p-4 md:p-6">
           <CardTitle className="text-base md:text-lg">Processing Options</CardTitle>
@@ -302,6 +323,8 @@ export function FormattingPreferences() {
           </div>
         </CardContent>
       </Card>
+      </motion.div>
+      </div>
     </div>
   )
 }
