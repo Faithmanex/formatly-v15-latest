@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Moon, Sun, Globe, Bell, Save } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useToast } from "@/hooks/use-toast"
+import { motion } from "framer-motion"
 
 export function Settings() {
   const { theme, setTheme } = useTheme()
@@ -34,10 +35,11 @@ export function Settings() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
         <p className="text-muted-foreground">Customize your Formatly experience</p>
-      </div>
+      </motion.div>
 
       <div className="grid gap-6">
         {/* Appearance */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -100,8 +102,10 @@ export function Settings() {
             </div>
           </CardContent>
         </Card>
+        </motion.div>
 
         {/* Notifications */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: 0.08 }}>
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -128,13 +132,14 @@ export function Settings() {
             </div>
           </CardContent>
         </Card>
+        </motion.div>
 
-        <div className="flex justify-end">
+        <motion.div className="flex justify-end" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2, delay: 0.12 }}>
           <Button onClick={handleSaveSettings}>
             <Save className="h-4 w-4 mr-2" />
             Save Settings
           </Button>
-        </div>
+        </motion.div>
       </div>
     </div>
   )

@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Save, RefreshCw, AlertCircle, Loader2 } from "lucide-react"
+import { motion } from "framer-motion"
 import { useAuth } from "@/components/auth-provider"
 import { useToast } from "@/hooks/use-toast"
 import { useFormattingData } from "@/hooks/use-formatting-data"
@@ -49,6 +50,12 @@ export function FormattingPreferences() {
   const [preferences, setPreferences] = useState(userPreferences)
   const [isSaving, setIsSaving] = useState(false)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+
+  const cardAnimation = {
+    initial: { opacity: 0, y: 12 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.25, ease: "easeOut" as const },
+  }
 
   useEffect(() => {
     setPreferences(userPreferences)
@@ -173,15 +180,18 @@ export function FormattingPreferences() {
         </div>
 
       {hasUnsavedChanges && (
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="text-sm md:text-base">
-            You have unsaved changes. Don't forget to save your preferences.
-          </AlertDescription>
-        </Alert>
+        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="text-sm md:text-base">
+              You have unsaved changes. Don't forget to save your preferences.
+            </AlertDescription>
+          </Alert>
+        </motion.div>
       )}
 
       {/* Academic Styles Section */}
+      <motion.div {...cardAnimation}>
       <Card>
         <CardHeader className="p-4 md:p-6">
           <CardTitle className="text-base md:text-lg">Academic Styles</CardTitle>
@@ -280,8 +290,10 @@ export function FormattingPreferences() {
           </div>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* Processing Options */}
+      <motion.div {...cardAnimation} transition={{ ...cardAnimation.transition, delay: 0.08 }}>
       <Card>
         <CardHeader className="p-4 md:p-6">
           <CardTitle className="text-base md:text-lg">Processing Options</CardTitle>
