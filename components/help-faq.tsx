@@ -135,7 +135,7 @@ export function HelpFAQ() {
   })).filter(category => category.questions.length > 0)
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="space-y-6 p-3 sm:p-4 lg:p-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Help & FAQ</h1>
         <p className="text-muted-foreground">
