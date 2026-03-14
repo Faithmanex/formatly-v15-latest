@@ -410,9 +410,11 @@ export function MyDocuments() {
     }
   }, [])
 
+  const pageContainerClasses = "space-y-4 md:space-y-6 p-3 sm:p-4 lg:p-6"
+
   if (documentsError) {
     return (
-      <div className="space-y-4 md:space-y-6">
+      <div className={pageContainerClasses}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">My Documents</h1>
@@ -447,7 +449,7 @@ export function MyDocuments() {
 
   if (documentsLoading) {
     return (
-      <div className="space-y-4 md:space-y-6">
+      <div className={pageContainerClasses}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">My Documents</h1>
