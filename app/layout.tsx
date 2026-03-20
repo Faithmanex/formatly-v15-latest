@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/placeholder-logo.png",
+        url: "/logo-dark.svg",
         width: 1200,
         height: 630,
         alt: "Formatly",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Formatly - Professional Document Formatting",
     description: "Transform your documents with professional academic formatting",
-    images: ["/placeholder-logo.png"],
+    images: ["/logo-dark.svg"],
   },
 }
 
