@@ -5,6 +5,77 @@ import { useAuth } from "@/components/auth-provider"
 import { useToast } from "@/hooks/use-toast"
 import { useSubscription } from "@/contexts/subscription-context"
 
+const PAYPAL_SDK_SRC =
+  "https://www.paypal.com/sdk/js?client-id=AQk7S24Sc2iKHeIuA93BP-3MN3fPOumFejN4lxJmku14oGkjT_T7l8lYgaS9ohmMf8YZl4M1aHLLS_H3&vault=true&intent=subscription"
+
+let paypalSdkPromise: Promise<void> | null = null
+
+function loadPayPalSdk(): Promise<void> {
+  if (typeof window === "undefined") {
+    return Promise.reject(new Error("PayPal SDK can only load in the browser."))
+  }
+
+  if (window.paypal) {
+    return Promise.resolve()
+  }
+
+  if (paypalSdkPromise) {
+    return paypalSdkPromise
+  }
+
+  paypalSdkPromise = new Promise((resolve, reject) => {
+    const existingScript = document.querySelector('script[data-paypal-sdk="true"]') as HTMLScriptElement | null
+
+    if (existingScript) {
+      if (existingScript.dataset.loaded === "true" && window.paypal) {
+        resolve()
+        return
+      }
+
+      if (existingScript.dataset.failed === "true") {
+        existingScript.remove()
+      } else {
+        const onLoad = () => {
+          existingScript.removeEventListener("load", onLoad)
+          existingScript.removeEventListener("error", onError)
+          resolve()
+        }
+
+        const onError = () => {
+          existingScript.removeEventListener("load", onLoad)
+          existingScript.removeEventListener("error", onError)
+          paypalSdkPromise = null
+          reject(new Error("Failed to load PayPal SDK."))
+        }
+
+        existingScript.addEventListener("load", onLoad)
+        existingScript.addEventListener("error", onError)
+        return
+      }
+    }
+
+    const script = document.createElement("script")
+    script.src = PAYPAL_SDK_SRC
+    script.async = true
+    script.dataset.paypalSdk = "true"
+
+    script.onload = () => {
+      script.dataset.loaded = "true"
+      resolve()
+    }
+
+    script.onerror = () => {
+      script.dataset.failed = "true"
+      paypalSdkPromise = null
+      reject(new Error("Failed to load PayPal SDK."))
+    }
+
+    document.head.appendChild(script)
+  })
+
+  return paypalSdkPromise
+}
+
 interface PayPalButtonProps {
   planId: string
   planName: string
@@ -21,14 +92,16 @@ export function PayPalButton({ planId, planName, billingCycle, disabled = false 
   useEffect(() => {
     if (!containerRef.current || !profile?.id || disabled) return
 
-    // Load PayPal script
-    const script = document.createElement("script")
-    script.src =
-      "https://www.paypal.com/sdk/js?client-id=AQk7S24Sc2iKHeIuA93BP-3MN3fPOumFejN4lxJmku14oGkjT_T7l8lYgaS9ohmMf8YZl4M1aHLLS_H3&vault=true&intent=subscription"
-    script.async = true
+    let isMounted = true
 
-    script.onload = () => {
-      if (window.paypal) {
+    loadPayPalSdk()
+      .then(() => {
+        if (!window.paypal || !containerRef.current || !isMounted) {
+          return
+        }
+
+        containerRef.current.innerHTML = ""
+
         const paypalPlanIds: Record<string, Record<string, string>> = {
           free: {
             monthly: "",
@@ -56,7 +129,7 @@ export function PayPalButton({ planId, planName, billingCycle, disabled = false 
           return
         }
 
-        window.paypal
+        void window.paypal
           .Buttons({
             style: {
               shape: "pill",
@@ -80,6 +153,7 @@ export function PayPalButton({ planId, planName, billingCycle, disabled = false 
               window.dispatchEvent(new Event("subscription-changed"))
             },
             onError: (err: any) => {
+              console.error("PayPal subscription flow failed:", err)
               toast({
                 title: "Subscription Failed",
                 description: "There was an error processing your subscription. Please try again.",
@@ -88,23 +162,18 @@ export function PayPalButton({ planId, planName, billingCycle, disabled = false 
             },
           })
           .render(containerRef.current)
-      }
-    }
-
-    script.onerror = () => {
-      toast({
-        title: "Payment Error",
-        description: "Failed to load PayPal. Please refresh and try again.",
-        variant: "destructive",
       })
-    }
-
-    document.body.appendChild(script)
+      .catch((error) => {
+        console.error("Failed to initialize PayPal SDK:", error)
+        toast({
+          title: "Payment Error",
+          description: "Failed to load PayPal. Please disable blockers or refresh and try again.",
+          variant: "destructive",
+        })
+      })
 
     return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script)
-      }
+      isMounted = false
     }
   }, [profile?.id, planId, planName, billingCycle, toast, disabled, refreshAll])
 
