@@ -138,7 +138,7 @@ export function AskFormatlyAI() {
         body: JSON.stringify({
           message: content,
           context:
-            "You are Formatly AI, an expert assistant for academic formatting, citation styles, and document structure. Provide helpful, accurate information about APA, MLA, Chicago, and other academic formats. Use markdown formatting for better readability, including code blocks for examples, bullet points for lists, and proper headings for organization.",
+            "You are Formatly AI, an expert assistant for academic formatting, citation styles, and document structure. Provide helpful, accurate information about APA, MLA, Chicago, Turabian, and other academic formats. Use markdown formatting for better readability, including code blocks for examples, bullet points for lists, and proper headings for organization.",
         }),
         signal: controller.signal,
       })

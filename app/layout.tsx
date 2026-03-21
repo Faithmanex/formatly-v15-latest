@@ -20,6 +20,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://formatlyapp.com"),
   title: "Formatly - Professional Document Formatting",
   description: "Transform your documents with professional academic formatting",
+  icons: {
+    icon: "/logo-icon.svg",
+    apple: "/og-icon.png",
+  },
   openGraph: {
     title: "Formatly - Professional Document Formatting",
     description: "Transform your documents with professional academic formatting",
@@ -28,9 +32,15 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/logo-dark.svg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
+        alt: "Formatly - Professional Document Formatting",
+      },
+      {
+        url: "/og-icon.png",
+        width: 512,
+        height: 512,
         alt: "Formatly",
       },
     ],
@@ -39,7 +49,14 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Formatly - Professional Document Formatting",
     description: "Transform your documents with professional academic formatting",
-    images: ["/logo-dark.svg"],
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Formatly - Professional Document Formatting",
+      },
+    ],
   },
 }
 

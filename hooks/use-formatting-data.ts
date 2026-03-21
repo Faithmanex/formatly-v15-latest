@@ -6,24 +6,24 @@ interface FormattingStyle {
   id: string
   name: string
   code: string
-  description: string
-  is_active: boolean
-  sort_order: number
+  description?: string
+  is_active?: boolean
+  sort_order?: number
 }
 
 interface EnglishVariant {
   id: string
   name: string
   code: string
-  description: string
-  is_active: boolean
-  sort_order: number
+  description?: string
+  is_active?: boolean
+  sort_order?: number
 }
 
 interface CustomStyle {
   id: string
   name: string
-  description: string
+  description?: string | null
   settings: any
   is_default: boolean
   is_global: boolean
@@ -64,6 +64,14 @@ const fetchFormattingStyles = async (): Promise<FormattingStyle[]> => {
         description: "Chicago Manual of Style",
         is_active: true,
         sort_order: 3,
+      },
+      {
+        id: "4",
+        name: "Turabian (9th Edition)",
+        code: "Turabian",
+        description: "Turabian Manual for Writers",
+        is_active: true,
+        sort_order: 4,
       },
     ]
   }

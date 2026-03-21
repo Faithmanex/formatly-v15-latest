@@ -28,7 +28,7 @@ export function Features() {
     {
       icon: FileText,
       title: "All Citation Styles",
-      description: "APA, MLA, Chicago, Harvard, IEEE, and 50+ more academic formats",
+      description: "APA, MLA, Chicago, Harvard, Turabian, IEEE, and 50+ more academic formats",
       color: "text-blue-600 dark:text-blue-400",
       bgColor: "bg-blue-50 dark:bg-blue-950/50",
     },

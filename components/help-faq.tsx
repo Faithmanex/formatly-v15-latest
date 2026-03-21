@@ -34,7 +34,7 @@ const faqData = [
     questions: [
       {
         question: "What citation styles do you support?",
-        answer: "We support APA, MLA, Harvard, and Chicago citation styles. Each style includes proper in-text citations, reference formatting, and document structure according to official guidelines."
+        answer: "We support APA, MLA, Harvard, Chicago, and Turabian citation styles. Each style includes proper in-text citations, reference formatting, and document structure according to official guidelines."
       },
       {
         question: "Can I create custom formatting styles?",

@@ -509,10 +509,16 @@ function FlipCardCarousel() {
                 className="absolute"
               >
                 <motion.div style={{ x: currentDragOffset }}>
-                  <TiltCard className={currentCard === index ? "" : "pointer-events-none"}>
+                  <TiltCard className={currentCard === index ? "" : ""}>
                     <Card
-                      className="w-[280px] h-64 sm:w-[380px] sm:h-72 md:w-[500px] md:h-[380px] lg:w-[550px] lg:h-[400px] bg-muted/40 backdrop-blur border-2 shadow-2xl overflow-hidden cursor-pointer transition-transform hover:scale-105"
-                      onClick={() => currentCard === index && setSelectedImageIndex(index)}
+                      className={`w-[280px] h-64 sm:w-[380px] sm:h-72 md:w-[500px] md:h-[380px] lg:w-[550px] lg:h-[400px] bg-muted/40 backdrop-blur border-2 shadow-2xl overflow-hidden cursor-pointer transition-transform hover:scale-105 ${currentCard !== index ? "opacity-70" : ""}`}
+                      onClick={() => {
+                        if (currentCard === index) {
+                          setSelectedImageIndex(index)
+                        } else {
+                          setCurrentCard(index)
+                        }
+                      }}
                     >
                       <CardContent className="h-full p-0 relative">
                         <div className="absolute top-2 left-3 sm:top-3 sm:left-4 md:top-4 md:left-6 text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white/20 z-10">
@@ -649,6 +655,61 @@ function AnimatedCounter({ value, label }: { value: string; label: string }) {
     </div>
   )
 }
+
+function TypewriterHeadline() {
+  const headlines = useMemo(() => [
+    "Flawless Academic Formatting",
+    "Perfect Citations & Referencing",
+    "Tailored Style Guide Compliance",
+    "Publication-Ready Documents"
+  ], [])
+
+  const [index, setIndex] = useState(0)
+  const [subIndex, setSubIndex] = useState(0)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [pause, setPause] = useState(false)
+
+  useEffect(() => {
+    if (pause) return
+
+    if (isDeleting) {
+      if (subIndex === 0) {
+        setIsDeleting(false)
+        setIndex((prev) => (prev + 1) % headlines.length)
+        setPause(true)
+        setTimeout(() => setPause(false), 300)
+        return
+      }
+    } else {
+      if (subIndex === headlines[index].length) {
+        setPause(true)
+        setTimeout(() => {
+          setPause(false)
+          setIsDeleting(true)
+        }, 2000)
+        return
+      }
+    }
+
+    const timer = setTimeout(() => {
+      setSubIndex((prev) => prev + (isDeleting ? -1 : 1))
+    }, isDeleting ? 30 : 60)
+
+    return () => clearTimeout(timer)
+  }, [subIndex, isDeleting, index, headlines, pause])
+
+  return (
+    <span className="relative">
+      {headlines[index].substring(0, subIndex)}
+      <motion.span
+        animate={{ opacity: [1, 0, 1] }}
+        transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
+        className="inline-block border-r-2 border-primary h-[1em] translate-y-1 ml-1"
+      />
+    </span>
+  )
+}
+
 
 export function LandingPage() {
   const { user, isLoading, isInitialized } = useAuth()
@@ -800,7 +861,7 @@ export function LandingPage() {
                   transition={{ duration: 0.5, delay: 0.1 }}
                   className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight mb-4 sm:mb-6 px-2"
                 >
-                  Flawless Academic Formatting
+                  <TypewriterHeadline />
                   <span className="block text-primary">in Seconds</span>
                 </motion.h1>
 
@@ -811,7 +872,7 @@ export function LandingPage() {
                   className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 sm:mb-12 max-w-3xl mx-auto px-4"
                 >
                   Let Formatly handle the formatting while you focus on your research. Our AI ensures precision, speed,
-                  and compliance with every major academic style—APA, MLA, Chicago, IEEE, and more.
+                  and compliance with every major academic style—APA, MLA, Chicago, Turabian, IEEE, and more.
                 </motion.p>
 
                 <motion.div
