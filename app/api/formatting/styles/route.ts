@@ -8,7 +8,8 @@ const defaultStyles = [
   { id: "apa", name: "APA Style", description: "American Psychological Association" },
   { id: "mla", name: "MLA Style", description: "Modern Language Association" },
   { id: "chicago", name: "Chicago Style", description: "Chicago Manual of Style" },
-  { id: "ieee", name: "IEEE Style", description: "Institute of Electrical and Electronics Engineers" },
+  { id: "harvard", name: "Harvard Style", description: "Harvard Referencing System" },
+  { id: "turabian", name: "Turabian Style", description: "Turabian Manual for Writers" },
 ]
 
 export async function GET(request: NextRequest) {

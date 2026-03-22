@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   title: "Formatly - Professional Document Formatting",
   description: "Transform your documents with professional academic formatting",
   icons: {
-    icon: "/logo-icon.svg",
-    apple: "/og-icon.png",
+    icon: "/favicon.ico",
+    apple: "/logo.jpg",
   },
   openGraph: {
     title: "Formatly - Professional Document Formatting",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
         alt: "Formatly - Professional Document Formatting",
       },
       {
-        url: "/og-icon.png",
+        url: "/logo.jpg",
         width: 512,
         height: 512,
         alt: "Formatly",

@@ -99,6 +99,32 @@ export function Dashboard() {
     }
   }, [user, authLoading, isInitialized, router])
 
+  // Swipe to Refresh on Mobile
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    
+    let startY = 0
+    const handleTouchStart = (e: TouchEvent) => {
+      startY = e.touches[0].pageY
+    }
+    
+    const handleTouchEnd = (e: TouchEvent) => {
+      const endY = e.changedTouches[0].pageY
+      // Only trigger if at the top of the page pulling downward
+      if (window.scrollY === 0 && endY - startY > 150) {
+        handleRefresh()
+      }
+    }
+
+    window.addEventListener("touchstart", handleTouchStart)
+    window.addEventListener("touchend", handleTouchEnd)
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart)
+      window.removeEventListener("touchend", handleTouchEnd)
+    }
+  }, [handleRefresh])
+
   // Centralized data computation with optimized dependencies
   const dashboardData = useMemo<DashboardData>(() => {
     const allDocuments = documents || []
