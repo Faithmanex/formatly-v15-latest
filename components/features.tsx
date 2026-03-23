@@ -6,7 +6,7 @@ import { Zap, FileText, Shield, BookOpen, Users, Award } from 'lucide-react'
 import { useState } from "react"
 
 // 3D Tilt Card Component
-function TiltCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+const TiltCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
   return (
     <div className={className}>
       {children}
@@ -14,7 +14,7 @@ function TiltCard({ children, className = "" }: { children: React.ReactNode; cla
   )
 }
 
-export function Features() {
+export const Features = () => {
   const [hoveredFeature, setHoveredFeature] = useState<number | null>(null)
 
   const features = [

@@ -57,11 +57,11 @@ const FAQ = dynamic(() => import("@/components/faq").then((mod) => mod.FAQ), {
 })
 
 // 3D Tilt Card Component
-function TiltCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+const TiltCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
   return <div className={`transition-base hover-lift ${className}`}>{children}</div>
 }
 
-function Navigation() {
+const Navigation = () => {
   const { user, profile, isLoading, isInitialized } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -285,7 +285,7 @@ function Navigation() {
 
 
 // Flip Card Carousel Component - Enhanced with Momentum Scrolling, Keyboard Nav, Auto-Pause
-function FlipCardCarousel() {
+const FlipCardCarousel = () => {
   const [currentCard, setCurrentCard] = useState(1)
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -610,7 +610,7 @@ function FlipCardCarousel() {
   )
 }
 
-function AnimatedCounter({ value, label }: { value: string; label: string }) {
+const AnimatedCounter = ({ value, label }: { value: string; label: string }) => {
   const [displayValue, setDisplayValue] = useState("0")
   const nodeRef = useRef<HTMLDivElement>(null)
 
@@ -656,20 +656,29 @@ function AnimatedCounter({ value, label }: { value: string; label: string }) {
   )
 }
 
-function TypewriterHeadline() {
+const TypewriterHeadline = () => {
   const headlines = useMemo(() => [
-    "Flawless Academic Formatting",
+    "Flawless Research Formatting",
     "Perfect Citations & Referencing",
     "Tailored Style Guide Compliance",
     "Publication-Ready Documents"
   ], [])
 
   const [index, setIndex] = useState(0)
-  const [subIndex, setSubIndex] = useState(0)
+  const [subIndex, setSubIndex] = useState(headlines[0].length)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [pause, setPause] = useState(false)
+  const [pause, setPause] = useState(true)
 
   useEffect(() => {
+    // Initial pause on the first fully typed headline
+    if (pause && index === 0 && subIndex === headlines[0].length && !isDeleting) {
+      const initialTimer = setTimeout(() => {
+        setPause(false)
+        setIsDeleting(true)
+      }, 2000)
+      return () => clearTimeout(initialTimer)
+    }
+
     if (pause) return
 
     if (isDeleting) {

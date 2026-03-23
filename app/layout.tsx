@@ -18,15 +18,15 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://formatlyapp.com"),
-  title: "Formatly - Professional Document Formatting",
-  description: "Transform your documents with professional academic formatting",
+  title: "Formatly | Format APA, MLA, Chicago & Turabian in Seconds",
+  description: "Instantly format your academic and professional research papers. Auto-apply APA, MLA, Chicago, Harvard, and Turabian styles to get publication-ready documents in seconds.",
   icons: {
     icon: "/favicon.ico",
     apple: "/logo.jpg",
   },
   openGraph: {
-    title: "Formatly - Professional Document Formatting",
-    description: "Transform your documents with professional academic formatting",
+    title: "Formatly | Format APA, MLA, Chicago & Turabian in Seconds",
+    description: "Instantly format your academic and professional research papers. Auto-apply APA, MLA, Chicago, Harvard, and Turabian styles to get publication-ready documents in seconds.",
     url: "/",
     siteName: "Formatly",
     type: "website",
@@ -47,8 +47,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Formatly - Professional Document Formatting",
-    description: "Transform your documents with professional academic formatting",
+    title: "Formatly | Format APA, MLA, Chicago & Turabian in Seconds",
+    description: "Instantly format your academic and professional research papers. Auto-apply APA, MLA, Chicago, Harvard, and Turabian styles to get publication-ready documents in seconds.",
     images: [
       {
         url: "/og-image.png",
