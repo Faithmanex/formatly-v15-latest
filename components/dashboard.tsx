@@ -432,7 +432,21 @@ export function Dashboard() {
       const { stats, recentDocuments, allDocuments, usagePercentage, planInfo } = dashboardData
 
       return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background relative">
+          <AnimatePresence>
+            {isRefreshing && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-background border border-border shadow-md rounded-full px-3 py-1 z-50 pointer-events-none"
+              >
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                <span className="text-[10px] font-medium">Refreshing...</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div className="p-3 sm:p-4 lg:p-6 pb-24 sm:pb-6">
             <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
               <div className="flex items-start justify-between gap-3">
@@ -676,6 +690,7 @@ export function Dashboard() {
       formatDistanceToNow,
       handleRefresh,
       isLoading,
+      isRefreshing,
       handleDownloadDocument,
       downloadingDocs,
       documentsLoading,
@@ -690,7 +705,7 @@ export function Dashboard() {
     return null
   }
 
-  if (isLoading) {
+  if (isLoading && !dashboardData) {
     return <LoadingSkeleton />
   }
 
