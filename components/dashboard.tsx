@@ -99,6 +99,28 @@ export function Dashboard() {
     }
   }, [user, authLoading, isInitialized, router])
 
+  // Safe refresh handler
+  const handleRefresh = useCallback(async () => {
+    if (!isMountedRef.current || isRefreshing) return
+
+    safeSetIsRefreshing(true)
+
+    try {
+      // Use router.refresh() instead of router.reload()
+      router.refresh()
+      await refreshAll()
+    } catch (error) {
+      console.error("Error during refresh:", error)
+    } finally {
+      // Add delay to prevent rapid refresh clicks
+      setTimeout(() => {
+        if (isMountedRef.current) {
+          safeSetIsRefreshing(false)
+        }
+      }, 1000)
+    }
+  }, [router, refreshAll, isRefreshing, safeSetIsRefreshing])
+
   // Swipe to Refresh on Mobile
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -210,28 +232,6 @@ export function Dashboard() {
       console.error("Error refreshing data after upload:", error)
     }
   }, [refreshAll])
-
-  // Safe refresh handler
-  const handleRefresh = useCallback(async () => {
-    if (!isMountedRef.current || isRefreshing) return
-
-    safeSetIsRefreshing(true)
-
-    try {
-      // Use router.refresh() instead of router.reload()
-      router.refresh()
-      await refreshAll()
-    } catch (error) {
-      console.error("Error during refresh:", error)
-    } finally {
-      // Add delay to prevent rapid refresh clicks
-      setTimeout(() => {
-        if (isMountedRef.current) {
-          safeSetIsRefreshing(false)
-        }
-      }, 1000)
-    }
-  }, [router, refreshAll, isRefreshing, safeSetIsRefreshing])
 
   // Navigation helpers
   const navigateTo = useCallback(
