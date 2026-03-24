@@ -21,13 +21,10 @@ export const metadata: Metadata = {
   title: "Formatly | Format APA, MLA, Chicago & Turabian in Seconds",
   description: "Instantly format your academic and professional research papers. Auto-apply APA, MLA, Chicago, Harvard, and Turabian styles to get publication-ready documents in seconds.",
   icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/logo-16.svg", type: "image/svg+xml", sizes: "16x16" },
-      { url: "/logo-32.svg", type: "image/svg+xml", sizes: "32x32" },
-      { url: "/logo-192.svg", type: "image/svg+xml", sizes: "192x192" },
-    ],
-    apple: { url: "/logo-180.svg", type: "image/svg+xml", sizes: "180x180" },
+    icon: "/favicon.ico",
+    apple: [
+      { url: "/logo-180-light.svg", type: "image/svg+xml", sizes: "180x180" },
+    ]
   },
   openGraph: {
     title: "Formatly | Format APA, MLA, Chicago & Turabian in Seconds",
@@ -37,7 +34,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.svg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Formatly - Format APA, MLA, Chicago & Turabian in Seconds",
@@ -50,7 +47,7 @@ export const metadata: Metadata = {
     description: "Instantly format your academic and professional research papers. Auto-apply APA, MLA, Chicago, Harvard, and Turabian styles to get publication-ready documents in seconds.",
     images: [
       {
-        url: "/twitter-card.svg",
+        url: "/twitter-card-light.svg",
         width: 800,
         height: 418,
         alt: "Formatly - Format APA, MLA, Chicago & Turabian in Seconds",

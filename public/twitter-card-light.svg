@@ -7,5 +7,5 @@
     <rect x="30" y="130" width="70" height="35" rx="10" fill="#002a57"/>
   </g>
   <text x="400" y="330" text-anchor="middle" fill="#002a57" style="font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 56px; font-weight: 750; letter-spacing: -1px;">Formatly</text>
-  <text x="400" y="380" text-anchor="middle" fill="#002a57" opacity="0.8" style="font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 22px; font-weight: 400;">Format APA, MLA, Chicago &amp; Turabian in Seconds</text>
+  <text x="400" y="380" text-anchor="middle" fill="#002a57" opacity="0.8" style="font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 30px; font-weight: 600;">Format APA, MLA, Chicago &amp; Turabian in Seconds</text>
 </svg>
