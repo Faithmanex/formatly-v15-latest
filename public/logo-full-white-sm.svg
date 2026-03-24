@@ -1,0 +1,9 @@
+<svg width="185" height="50" viewBox="0 0 740 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="740" height="200" rx="30" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <g id="Formatly-Icon">
+    <rect x="30" y="30" width="135" height="35" rx="10" fill="#002a57"/>
+    <rect x="30" y="80" width="110" height="35" rx="10" fill="#002a57"/>
+    <rect x="30" y="130" width="70" height="35" rx="10" fill="#002a57"/>
+  </g>
+  <text x="185" y="150" fill="#002a57" style="font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 130px; font-weight: 750; letter-spacing: -3px;">Formatly</text>
+</svg>

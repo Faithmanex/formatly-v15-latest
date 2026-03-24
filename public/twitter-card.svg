@@ -1,0 +1,18 @@
+<svg width="800" height="418" viewBox="0 0 800 418" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="418" fill="#002a57"/>
+
+  <!-- Logo icon (centered) -->
+  <g transform="translate(260, 60) scale(1.1)">
+    <rect width="200" height="200" rx="40" fill="#fff" opacity="0.15"/>
+    <rect x="30" y="30" width="135" height="35" rx="10" fill="#fff"/>
+    <rect x="30" y="80" width="110" height="35" rx="10" fill="#fff"/>
+    <rect x="30" y="130" width="70" height="35" rx="10" fill="#fff"/>
+  </g>
+
+  <!-- Brand name -->
+  <text x="400" y="330" text-anchor="middle" fill="#fff" style="font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 56px; font-weight: 750; letter-spacing: -1px;">Formatly</text>
+
+  <!-- Tagline -->
+  <text x="400" y="380" text-anchor="middle" fill="#fff" opacity="0.6" style="font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 22px; font-weight: 400;">Format APA, MLA, Chicago &amp; Turabian in Seconds</text>
+</svg>
