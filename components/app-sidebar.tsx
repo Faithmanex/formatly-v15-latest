@@ -140,8 +140,8 @@ export function AppSidebar() {
       <SidebarHeader>
         <div className="px-2 py-4">
           <div className="flex items-center gap-2">
-            <img src="/logo-full-dark.svg" alt="Formatly Logo" className="h-8 dark:hidden" />
-            <img src="/logo-full-white.svg" alt="Formatly Logo" className="h-8 hidden dark:block" />
+            <img src="/logo-dark.svg" alt="Formatly Logo" className="h-8 dark:hidden" />
+            <img src="/logo-white.svg" alt="Formatly Logo" className="h-8 hidden dark:block" />
           </div>
         </div>
       </SidebarHeader>

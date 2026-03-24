@@ -93,8 +93,8 @@ const Navigation = () => {
         <div className="flex justify-between items-center h-14 sm:h-16">
           {/* Logo and Site Name - Left Aligned */}
           <motion.div whileHover={{ scale: 1.05 }} className="flex items-center">
-            <img src="/logo-full-dark.svg" alt="Formatly Logo" className="h-8 sm:h-10 dark:hidden" />
-            <img src="/logo-full-white.svg" alt="Formatly Logo" className="h-8 sm:h-10 hidden dark:block" />
+            <img src="/logo-dark.svg" alt="Formatly Logo" className="h-8 sm:h-10 dark:hidden" />
+            <img src="/logo-white.svg" alt="Formatly Logo" className="h-8 sm:h-10 hidden dark:block" />
           </motion.div>
 
           {/* Navigation Links - Centered */}
@@ -170,8 +170,8 @@ const Navigation = () => {
                 {/* Header with logo */}
                 <SheetHeader className="border-b bg-muted/30 px-6 py-5">
                   <SheetTitle className="flex items-center justify-center py-2">
-                    <img src="/logo-full-dark.svg" alt="Formatly Logo" className="h-8 dark:hidden" />
-                    <img src="/logo-full-white.svg" alt="Formatly Logo" className="h-8 hidden dark:block" />
+                    <img src="/logo-dark.svg" alt="Formatly Logo" className="h-8 dark:hidden" />
+                    <img src="/logo-white.svg" alt="Formatly Logo" className="h-8 hidden dark:block" />
                   </SheetTitle>
                 </SheetHeader>
 
