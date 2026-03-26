@@ -881,7 +881,7 @@ export function LandingPage() {
                   className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 sm:mb-12 max-w-3xl mx-auto px-4"
                 >
                   Let Formatly handle the formatting while you focus on your research. Our AI ensures precision, speed,
-                  and compliance with every major academic style—APA, MLA, Chicago, Turabian, IEEE, and more.
+                  and compliance with every major academic style—APA, MLA, Chicago, Harvard, and Turabian.
                 </motion.p>
 
                 <motion.div
@@ -925,14 +925,14 @@ export function LandingPage() {
             className="text-center mb-8 sm:mb-12 px-4"
           >
             <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">
-              Trusted by 50,000+ researchers from world-leading universities
+              Built for researchers and academics who take formatting seriously
             </p>
             <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-8 opacity-60">
-              <span className="text-base sm:text-xl md:text-2xl font-bold">Stanford</span>
-              <span className="text-base sm:text-xl md:text-2xl font-bold">MIT</span>
+              <span className="text-base sm:text-xl md:text-2xl font-bold">APA</span>
+              <span className="text-base sm:text-xl md:text-2xl font-bold">MLA</span>
+              <span className="text-base sm:text-xl md:text-2xl font-bold">Chicago</span>
               <span className="text-base sm:text-xl md:text-2xl font-bold">Harvard</span>
-              <span className="text-base sm:text-xl md:text-2xl font-bold">Oxford</span>
-              <span className="text-base sm:text-xl md:text-2xl font-bold">Cambridge</span>
+              <span className="text-base sm:text-xl md:text-2xl font-bold">Turabian</span>
             </div>
           </motion.div>
         </div>

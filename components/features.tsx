@@ -28,7 +28,7 @@ export const Features = () => {
     {
       icon: FileText,
       title: "All Citation Styles",
-      description: "APA, MLA, Chicago, Harvard, Turabian, IEEE, and 50+ more academic formats",
+      description: "APA, MLA, Chicago, Harvard, and Turabian — proper references and document structure",
       color: "text-blue-600 dark:text-blue-400",
       bgColor: "bg-blue-50 dark:bg-blue-950/50",
     },
