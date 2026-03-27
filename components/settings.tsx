@@ -54,7 +54,7 @@ export function Settings() {
                 <Label htmlFor="theme">Theme</Label>
                 <p className="text-sm text-muted-foreground">Choose your preferred color scheme</p>
               </div>
-              <Select value={mounted ? theme : undefined} onValueChange={setTheme}>
+              <Select value={mounted ? (theme ?? '') : ''} onValueChange={setTheme}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select theme" />
                 </SelectTrigger>

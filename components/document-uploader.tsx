@@ -99,10 +99,10 @@ export function DocumentUploader({
           const isFreePlan = !subscription || subscription.plan?.name?.toLowerCase().includes("free")
 
           setQuotaInfo({
-            isFreePlan,
-            currentPlan: canProcessResult.planName,
-            documentsUsed: canProcessResult.currentUsage,
-            documentLimit: canProcessResult.limit,
+            isFreePlan: isFreePlan ?? false,
+            currentPlan: canProcessResult.planName || 'Free',
+            documentsUsed: canProcessResult.currentUsage ?? 0,
+            documentLimit: canProcessResult.limit ?? 0,
             resetDate: subscription?.current_period_end
               ? new Date(subscription.current_period_end).toLocaleDateString()
               : undefined,

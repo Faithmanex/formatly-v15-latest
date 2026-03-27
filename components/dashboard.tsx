@@ -100,6 +100,8 @@ export function Dashboard() {
   }, [user, authLoading, isInitialized, router])
 
   // Swipe to Refresh on Mobile
+  const handleRefreshRef = useRef<() => void>(() => {})
+
   useEffect(() => {
     if (typeof window === "undefined") return
     
@@ -112,7 +114,7 @@ export function Dashboard() {
       const endY = e.changedTouches[0].pageY
       // Only trigger if at the top of the page pulling downward
       if (window.scrollY === 0 && endY - startY > 150) {
-        handleRefresh()
+        handleRefreshRef.current()
       }
     }
 
@@ -123,7 +125,7 @@ export function Dashboard() {
       window.removeEventListener("touchstart", handleTouchStart)
       window.removeEventListener("touchend", handleTouchEnd)
     }
-  }, [handleRefresh])
+  }, [])
 
   // Centralized data computation with optimized dependencies
   const dashboardData = useMemo<DashboardData>(() => {
@@ -232,6 +234,10 @@ export function Dashboard() {
       }, 1000)
     }
   }, [router, refreshAll, isRefreshing, safeSetIsRefreshing])
+
+  useEffect(() => {
+    handleRefreshRef.current = handleRefresh
+  }, [handleRefresh])
 
   // Navigation helpers
   const navigateTo = useCallback(

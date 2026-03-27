@@ -23,7 +23,7 @@ export const features = [
   {
     icon: FileText,
     title: "All Citation Styles",
-    description: "APA, MLA, Chicago, Harvard, IEEE, and 50+ more academic formats",
+    description: "APA, MLA, Chicago, Harvard, and Turabian — all properly formatted to official standards",
     color: "text-blue-600 dark:text-blue-400",
     bgColor: "bg-blue-50 dark:bg-blue-950/50",
   },
@@ -118,7 +118,7 @@ export const pricingPlans = [
     features: [
       "Everything in Free, plus:",
       "50 documents per month",
-      "All formatting styles: MLA, Chicago, Harvard, AMA, IEEE",
+      "All formatting styles: MLA, Chicago, Harvard, Turabian",
       "Tracked Changes: Full transparency on every structural adjustment",
       "Custom styles: Tailor formatting to specific journal or institutional requirements",
       "AI Assistant: Real-time intelligence to refine your document’s flow",
@@ -188,7 +188,7 @@ export const faqs = [
   {
     question: "Which citation styles are supported?",
     answer:
-      "Formatly supports 50+ citation styles including APA 7th edition, MLA 9th edition, Chicago Manual of Style (16th edition), Harvard, IEEE, and many more. We continuously add new styles based on user requests.",
+      "Formatly supports APA 7th edition, MLA 9th edition, Chicago Manual of Style, Harvard, and Turabian. We continuously evaluate new styles based on user requests.",
   },
   {
     question: "Is my data secure?",
@@ -213,6 +213,6 @@ export const faqs = [
   {
     question: "What file formats do you support?",
     answer:
-      "We supports only Word (.docx) files. You can upload your document in this format and download the formatted version in Word (.docx) format.",
+      "We support Word (.docx), PDF, and plain text (.txt) files. You can upload your document in any of these formats and download the formatted version in Word (.docx) format.",
   },
 ]

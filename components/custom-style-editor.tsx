@@ -111,16 +111,16 @@ export function CustomStyleEditor({ style, onClose, onSave }: CustomStyleEditorP
       let savedStyle
       if (style?.id) {
         // Update existing style
-        savedStyle = await customStyleService.updateStyle(style.id, styleData)
+        savedStyle = await (customStyleService as any).updateStyle(style.id, styleData)
       } else {
         // Create new style
-        savedStyle = await customStyleService.createStyle(styleData)
+        savedStyle = await (customStyleService as any).createStyle(styleData)
       }
 
       if (savedStyle) {
         // If this is set as default, update the default style
         if (formData.isDefault) {
-          await customStyleService.setDefaultStyle(user.id, savedStyle.id)
+          await (customStyleService as any).setDefaultStyle(user.id, savedStyle.id)
         }
 
         onSave(savedStyle)
