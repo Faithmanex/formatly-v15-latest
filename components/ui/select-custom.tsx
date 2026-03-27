@@ -53,11 +53,11 @@ export function SelectTrigger({ className, children }: SelectTriggerProps) {
   React.useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (triggerRef.current && !triggerRef.current.contains(event.target as Node)) {
-        context.setIsOpen(false)
+        context?.setIsOpen(false)
       }
     }
 
-    if (context.isOpen) {
+    if (context?.isOpen) {
       document.addEventListener("mousedown", handleClickOutside)
       return () => document.removeEventListener("mousedown", handleClickOutside)
     }

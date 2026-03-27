@@ -122,6 +122,8 @@ export function Dashboard() {
   }, [router, refreshAll, isRefreshing, safeSetIsRefreshing])
 
   // Swipe to Refresh on Mobile
+  const handleRefreshRef = useRef<() => void>(() => {})
+
   useEffect(() => {
     if (typeof window === "undefined") return
     
@@ -134,7 +136,7 @@ export function Dashboard() {
       const endY = e.changedTouches[0].pageY
       // Only trigger if at the top of the page pulling downward
       if (window.scrollY === 0 && endY - startY > 150) {
-        handleRefresh()
+        handleRefreshRef.current()
       }
     }
 
@@ -145,7 +147,7 @@ export function Dashboard() {
       window.removeEventListener("touchstart", handleTouchStart)
       window.removeEventListener("touchend", handleTouchEnd)
     }
-  }, [handleRefresh])
+  }, [])
 
   // Centralized data computation with optimized dependencies
   const dashboardData = useMemo<DashboardData>(() => {
@@ -232,6 +234,32 @@ export function Dashboard() {
       console.error("Error refreshing data after upload:", error)
     }
   }, [refreshAll])
+
+  // Safe refresh handler
+  const handleRefresh = useCallback(async () => {
+    if (!isMountedRef.current || isRefreshing) return
+
+    safeSetIsRefreshing(true)
+
+    try {
+      // Use router.refresh() instead of router.reload()
+      router.refresh()
+      await refreshAll()
+    } catch (error) {
+      console.error("Error during refresh:", error)
+    } finally {
+      // Add delay to prevent rapid refresh clicks
+      setTimeout(() => {
+        if (isMountedRef.current) {
+          safeSetIsRefreshing(false)
+        }
+      }, 1000)
+    }
+  }, [router, refreshAll, isRefreshing, safeSetIsRefreshing])
+
+  useEffect(() => {
+    handleRefreshRef.current = handleRefresh
+  }, [handleRefresh])
 
   // Navigation helpers
   const navigateTo = useCallback(

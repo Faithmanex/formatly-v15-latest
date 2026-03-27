@@ -6,19 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Download, Calendar, DollarSign } from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
-import { getBillingHistory } from "@/lib/billing"
-
-interface Invoice {
-  id: string
-  invoice_number: string
-  amount: number
-  currency: string
-  status: "paid" | "pending" | "failed"
-  created_at: string
-  due_date: string
-  description: string
-  pdf_url?: string
-}
+import { getBillingHistory, type Invoice } from "@/lib/billing"
 
 export function BillingHistory() {
   const { profile } = useAuth()
@@ -31,7 +19,7 @@ export function BillingHistory() {
 
       try {
         const history = await getBillingHistory(profile.id)
-        setInvoices(history)
+        setInvoices(history as Invoice[])
       } catch (error) {
         console.error("Error loading billing history:", error)
       } finally {
@@ -54,8 +42,13 @@ export function BillingHistory() {
     switch (status) {
       case "paid":
         return "bg-green-100 text-green-800"
+      case "open":
       case "pending":
         return "bg-yellow-100 text-yellow-800"
+      case "draft":
+        return "bg-gray-100 text-gray-800"
+      case "void":
+      case "uncollectible":
       case "failed":
         return "bg-red-100 text-red-800"
       default:
@@ -118,20 +111,20 @@ export function BillingHistory() {
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h4 className="font-medium">{invoice.invoice_number}</h4>
+                      <h4 className="font-medium">{invoice.invoice_number || invoice.id.slice(0, 8)}</h4>
                       <Badge className={getStatusColor(invoice.status)}>
                         {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-600 mb-1">{invoice.description}</p>
+                    <p className="text-sm text-gray-600 mb-1">{invoice.description || ''}</p>
                     <div className="flex items-center gap-4 text-sm text-gray-500">
                       <span>Created: {formatDate(invoice.created_at)}</span>
-                      <span>Due: {formatDate(invoice.due_date)}</span>
+                      {invoice.due_date && <span>Due: {formatDate(invoice.due_date)}</span>}
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
-                      <div className="font-semibold">{formatCurrency(invoice.amount, invoice.currency)}</div>
+                      <div className="font-semibold">{formatCurrency(invoice.amount_due || invoice.amount_paid || 0, invoice.currency)}</div>
                     </div>
                     <Button
                       variant="outline"

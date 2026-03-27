@@ -186,7 +186,7 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
             
             const buttonInfo = isDashboard ? getPlanButtonInfo(plan) : null
             const isShowingPayPal = isDashboard && selectedPlan === plan.id && !isCurrentPlan && profile?.id
-            const isPopular = plan.is_popular || plan.popular
+            const isPopular = (plan as any).is_popular || (plan as any).popular
             const features = Array.isArray(plan.features) ? plan.features : []
 
             return (
@@ -301,7 +301,7 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                       ) : (
                         <Button
                           size="lg"
-                          variant={plan.buttonVariant || (isPopular ? "default" : "outline")}
+                          variant={(plan as any).buttonVariant || (isPopular ? "default" : "outline")}
                           asChild
                           disabled={(plan as any).comingSoon || plan.name === "Business"}
                           className={cn(
@@ -311,7 +311,7 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                           )}
                         >
                           <Link href={(user && plan.name !== "Business") ? "/dashboard" : (plan.name === "Business" ? "#" : "/auth/register")}>
-                            {plan.buttonText || (plan.name === "Business" ? "Coming soon..." : (plan.name === "Free" ? "Get Started" : "Buy Now"))}
+                            {(plan as any).buttonText || (plan.name === "Business" ? "Coming soon..." : (plan.name === "Free" ? "Get Started" : "Buy Now"))}
                           </Link>
                         </Button>
                       )}
