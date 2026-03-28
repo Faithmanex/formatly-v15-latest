@@ -38,6 +38,7 @@ import { useSubscription, useSubscriptionStatus, useUsageLimits } from "@/contex
 import { documentService, notificationService } from "@/lib/database"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
+import { DocumentViewer } from "@/components/document-viewer"
 import type { Database } from "@/lib/supabase"
 
 type Document = Database["public"]["Tables"]["documents"]["Row"]
@@ -56,6 +57,7 @@ export function MyDocuments() {
   const [sortBy, setSortBy] = useState("updated")
   const [showFiltersModal, setShowFiltersModal] = useState(false)
   const [downloadingDocs, setDownloadingDocs] = useState<Set<string>>(new Set())
+  const [viewingDoc, setViewingDoc] = useState<{ id: string; filename: string } | null>(null)
 
   const filteredDocuments = useMemo(() => {
     let filtered = documents
@@ -370,6 +372,17 @@ export function MyDocuments() {
     [getToken, toast],
   )
 
+  const handleViewDocument = (doc: Document) => {
+    if (doc.status !== "formatted") {
+      toast({
+        title: "Preview Not Available",
+        description: "This document is still being processed. You can preview it once formatting is complete.",
+      })
+      return
+    }
+    setViewingDoc({ id: doc.id, filename: doc.original_filename || doc.filename })
+  }
+
   const getFileIcon = useCallback((format: string) => {
     switch (format?.toLowerCase()) {
       case "docx":
@@ -682,12 +695,20 @@ export function MyDocuments() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
-                          {doc.status === "formatted" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleViewDocument(doc)}
+                              title="View Document"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleDownloadDocument(doc)}
                               disabled={downloadingDocs.has(doc.id)}
+                              title="Download Word"
                             >
                               {downloadingDocs.has(doc.id) ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -695,7 +716,6 @@ export function MyDocuments() {
                                 <Download className="h-4 w-4" />
                               )}
                             </Button>
-                          )}
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="sm">
@@ -703,9 +723,9 @@ export function MyDocuments() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleViewDocument(doc)}>
                                 <Eye className="h-4 w-4 mr-2" />
-                                View
+                                View PDF Preview
                               </DropdownMenuItem>
                               {doc.status === "formatted" && (
                                 <DropdownMenuItem onClick={() => handleDownloadDocument(doc)}>
@@ -765,6 +785,14 @@ export function MyDocuments() {
             Delete Selected
           </Button>
         </div>
+      )}
+
+      {viewingDoc && (
+        <DocumentViewer
+          documentId={viewingDoc.id}
+          filename={viewingDoc.filename}
+          onClose={() => setViewingDoc(null)}
+        />
       )}
     </div>
   )
