@@ -2,10 +2,13 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { supabase } from "@/lib/supabase"
+import type { Database } from "@/lib/types"
 import { useCacheStorage } from "./use-cache-storage"
 
+type TableName = keyof Database["public"]["Tables"]
+
 interface RealtimeDataOptions<T> {
-  table: string
+  table: TableName
   select?: string
   filter?: { column: string; value: any }
   cacheKey: string
