@@ -213,6 +213,6 @@ export const faqs = [
   {
     question: "What file formats do you support?",
     answer:
-      "We support Word (.docx), PDF, and plain text (.txt) files. You can upload your document in any of these formats and download the formatted version in Word (.docx) format.",
+      "We support Word (.docx) files only. Upload your .docx document and download the formatted version in the same format.",
   },
 ]
