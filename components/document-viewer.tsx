@@ -9,25 +9,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { 
-  Loader2, 
-  Download, 
-  Printer, 
-  X, 
-  FileText, 
-  AlertCircle, 
-  Eye, 
-  EyeOff, 
-  Undo2, 
-  Redo2, 
-  ChevronDown, 
-  AlignLeft, 
-  AlignCenter, 
-  AlignRight, 
-  AlignJustify, 
-  List, 
-  ListOrdered 
-} from "lucide-react"
+import { Loader2, Download, Printer, X, FileText, AlertCircle, Eye, EyeOff } from "lucide-react"
 import mammoth from "mammoth"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
@@ -163,154 +145,105 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
 
   return (
     <Dialog open={!!documentId} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-6xl w-[98vw] h-[95vh] sm:h-[90vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl rounded-none sm:rounded-lg">
-        {/* Main Ribbon / Header */}
-        <div className="bg-[#f9fbfd] dark:bg-slate-900 border-b flex flex-col">
-          <div className="p-3 flex flex-row items-center justify-between space-y-0">
-            <div className="flex items-center gap-4 px-2">
-              <div className="bg-blue-600 p-2 rounded text-white hidden sm:block">
-                <FileText className="h-5 w-5" />
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2">
-                  <DialogTitle className="text-sm font-semibold text-slate-700 dark:text-slate-200 line-clamp-1 truncate max-w-[200px] sm:max-w-md">
-                    {filename}
-                  </DialogTitle>
-                  <span className="text-[10px] bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500 uppercase font-bold tracking-wider">DOCX</span>
-                </div>
-                {/* Mock Menu Bar */}
-                <div className="hidden md:flex items-center gap-3 mt-0.5">
-                  {["File", "Edit", "View", "Insert", "Format", "Tools", "Extensions", "Help"].map((menu) => (
-                    <span key={menu} className="text-xs text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 px-1 rounded cursor-default transition-colors">
-                      {menu}
-                    </span>
-                  ))}
-                </div>
-              </div>
+      <DialogContent className="max-w-5xl w-[95vw] h-[95vh] sm:h-[90vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl">
+        <DialogHeader className="p-4 bg-background border-b flex flex-row items-center justify-between space-y-0 sticky top-0 z-10">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 p-2 rounded-lg">
+              <FileText className="h-5 w-5 text-primary" />
             </div>
-            
-            <div className="flex items-center gap-3 pr-2">
-              <Button 
-                  variant="default" 
-                  size="sm" 
-                  onClick={handlePrint} 
-                  disabled={loading || !!error || !content}
-                  className="bg-blue-600 hover:bg-blue-700 h-8 gap-2 rounded-full shadow-sm text-xs font-medium"
-              >
-                <Printer className="h-4 w-4" />
-                <span className="hidden md:inline">Print / Export</span>
-              </Button>
-              <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800">
-                <X className="h-4 w-4" />
-              </Button>
+            <div>
+              <DialogTitle className="text-lg font-bold line-clamp-1">{filename}</DialogTitle>
+              <DialogDescription className="text-xs">PDF Preview Mode</DialogDescription>
             </div>
           </div>
-
-          {/* Mock Formatting Toolbar */}
-          <div className="bg-[#edf2fa] dark:bg-slate-800/50 px-4 py-1.5 border-t border-b flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar">
-            <div className="hidden lg:flex items-center gap-1 border-r border-slate-300 dark:border-slate-700 pr-2 mr-1">
-              <Button variant="ghost" size="icon" className="h-7 w-7"><Undo2 className="h-3.5 w-3.5" /></Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7"><Redo2 className="h-3.5 w-3.5" /></Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7"><Printer size={14} /></Button>
-            </div>
-            
-            <div className="flex items-center gap-1 bg-white dark:bg-slate-800 rounded px-2 py-0.5 border border-slate-200 dark:border-slate-700 text-xs font-medium min-w-[100px] cursor-default">
-              Times New Roman <ChevronDown className="h-3 w-3 ml-auto opacity-50" />
-            </div>
-
-            <div className="flex items-center gap-1 border-r border-slate-300 dark:border-slate-700 pr-2 mx-1">
-              <Button variant="ghost" size="icon" className="h-7 w-7 font-bold">B</Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7 italic">I</Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7 underline underline-offset-4 decoration-2">U</Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-600">A</Button>
-            </div>
-
-            <div className="hidden sm:flex items-center gap-1 border-r border-slate-300 dark:border-slate-700 pr-2 mx-1">
-              <Button variant="ghost" size="icon" className="h-7 w-7"><AlignLeft className="h-3.5 w-3.5" /></Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7"><AlignCenter className="h-3.5 w-3.5" /></Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7"><AlignRight className="h-3.5 w-3.5" /></Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7"><AlignJustify className="h-3.5 w-3.5" /></Button>
-            </div>
-
-            <div className="hidden md:flex items-center gap-1">
-              <Button variant="ghost" size="icon" className="h-7 w-7"><List className="h-3.5 w-3.5" /></Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7"><ListOrdered className="h-3.5 w-3.5" /></Button>
-            </div>
-
-            <div className="ml-auto md:flex items-center gap-2 mr-2 bg-white dark:bg-slate-800 rounded-px px-2 py-0.5 border border-slate-200 dark:border-slate-700 hidden">
-                <Button variant="ghost" size="icon" onClick={() => setZoom(Math.max(50, zoom - 10))} className="h-5 w-5">-</Button>
+          <div className="flex items-center gap-2 pr-8">
+            <div className="hidden md:flex items-center gap-2 mr-4 bg-muted/50 rounded-full px-3 py-1">
+                <Button variant="ghost" size="icon" onClick={() => setZoom(Math.max(50, zoom - 10))} className="h-6 w-6 rounded-full">-</Button>
                 <span className="text-[10px] font-medium w-8 text-center">{zoom}%</span>
-                <Button variant="ghost" size="icon" onClick={() => setZoom(Math.min(200, zoom + 10))} className="h-5 w-5">+</Button>
+                <Button variant="ghost" size="icon" onClick={() => setZoom(Math.min(200, zoom + 10))} className="h-6 w-6 rounded-full">+</Button>
             </div>
+            <Button 
+                variant="default" 
+                size="sm" 
+                onClick={handlePrint} 
+                disabled={loading || !!error || !content}
+                className="gap-2 shadow-sm"
+            >
+              <Printer className="h-4 w-4" />
+              <span className="hidden sm:inline">Print / Save as PDF</span>
+              <span className="sm:hidden text-xs">PDF</span>
+            </Button>
+            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 rounded-full hover:bg-muted/80">
+              <X className="h-4 w-4" />
+            </Button>
           </div>
-        </div>
+        </DialogHeader>
 
-        <div className="flex-1 overflow-auto bg-slate-100/50 p-2 sm:p-4 md:p-8 flex justify-center items-start dark:bg-slate-900/50">
+        <div className="flex-1 overflow-auto bg-[#525659] p-4 sm:p-8 flex justify-center items-start outline-none">
           {loading ? (
             <div className="flex flex-col items-center justify-center h-full w-full py-20 gap-4">
               <div className="relative">
-                <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                <FileText className="h-6 w-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary/50" />
+                <Loader2 className="h-10 w-10 animate-spin text-white" />
+                <FileText className="h-6 w-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/50" />
               </div>
-              <div className="text-center">
-                <p className="text-base font-semibold">Generating Preview</p>
-                <p className="text-sm text-muted-foreground animate-pulse mt-1">Applying formatting rules...</p>
-              </div>
+              <p className="text-white/70 text-sm font-medium animate-pulse">Loading document preview...</p>
             </div>
           ) : error ? (
-            /* Error state unchanged */
-            <div className="flex flex-col items-center justify-center h-full w-full py-20 text-center max-w-md mx-auto gap-4">
-              <div className="bg-destructive/10 p-4 rounded-full">
+            <div className="flex flex-col items-center justify-center h-full w-full py-20 text-center max-w-md mx-auto gap-6 bg-background/5 rounded-xl p-8 border border-white/10">
+              <div className="bg-destructive/20 p-4 rounded-full">
                 <AlertCircle className="h-10 w-10 text-destructive" />
               </div>
-              <div>
-                <h3 className="text-xl font-bold">Preview Unavailable</h3>
-                <p className="text-sm text-muted-foreground mt-2">{error}</p>
+              <div className="space-y-2">
+                <h3 className="text-xl font-bold text-white">Preview Unavailable</h3>
+                <p className="text-sm text-white/50">{error}</p>
               </div>
-              <Button onClick={loadDocument} variant="outline" size="sm" className="mt-2">
+              <Button onClick={loadDocument} variant="outline" size="sm" className="text-white border-white/20 hover:bg-white/10">
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Retry Loading
+                Retry
               </Button>
             </div>
           ) : (
             <div 
-              className="bg-white shadow-2xl dark:bg-slate-50 text-black overflow-hidden flex-shrink-0 origin-top transition-all duration-200 mx-auto"
+              className="flex-shrink-0 origin-top transition-transform duration-300 ease-in-out"
               style={{
-                width: "100%",
-                maxWidth: `${(8.5 * 96 * zoom) / 100}px`,
-                minHeight: `${(11 * 96 * zoom) / 100}px`,
-                padding: `clamp(1rem, 5vw, ${(1 * 96 * zoom) / 100}px)`,
-                boxShadow: "0 0 40px rgba(0,0,0,0.15)",
-                borderRadius: "1px",
-                marginBottom: "2rem"
+                transform: `scale(${zoom / 100})`,
+                marginBottom: `${(11 * 96 * (zoom / 100)) / 2}px` // Add margin to prevent cutoff at bottom when zoomed
               }}
             >
               <div 
-                ref={viewerRef}
-                className="h-full w-full preview-content"
-                dangerouslySetInnerHTML={{ __html: content }}
-                style={{
-                    fontSize: `clamp(10pt, 2vw, ${(12 * zoom) / 100}pt)`,
-                    lineHeight: "1.6",
-                    fontFamily: "'Times New Roman', serif"
-                }}
-              />
-              
-              <style 
-                dangerouslySetInnerHTML={{ __html: `
-                .preview-content h1 { text-align: center; margin-bottom: 1em; font-size: 1.8em; font-weight: bold; }
-                .preview-content h2 { margin-top: 1.5em; margin-bottom: 0.5em; font-size: 1.4em; font-weight: bold; }
-                .preview-content h3 { margin-top: 1.25em; margin-bottom: 0.5em; font-size: 1.2em; font-weight: bold; }
-                .preview-content p { margin-bottom: 1em; text-align: justify; }
+               className="bg-white text-black shadow-[0_0_20px_rgba(0,0,0,0.3)] mx-auto relative overflow-hidden"
+               style={{
+                 width: "816px", // 8.5in at 96dpi
+                 minHeight: "1056px", // 11in at 96dpi
+                 padding: "72px", // 0.75in margins
+                 borderRadius: "2px"
+               }}
+              >
+                <div 
+                  ref={viewerRef}
+                  className="h-full w-full preview-content select-text"
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
                 
-                @media (min-width: 640px) {
-                  .preview-content p { text-indent: 0.5in; }
-                }
-
-                .preview-content table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9em; overflow-x: auto; display: block; }
-                .preview-content td, .preview-content th { border: 1px solid #000; padding: 0.5em; }
-                .preview-content img { max-width: 100%; height: auto; display: block; margin: 1em auto; }
-              `}} />
+                <style dangerouslySetInnerHTML={{ __html: `
+                  .preview-content {
+                    font-family: 'Times New Roman', Times, serif;
+                    line-height: 1.5;
+                    font-size: 11pt;
+                    color: black;
+                  }
+                  .preview-content h1 { font-size: 20pt; font-weight: bold; text-align: center; margin-bottom: 24pt; line-height: 1.2; }
+                  .preview-content h2 { font-size: 14pt; font-weight: bold; margin-top: 18pt; margin-bottom: 12pt; border-bottom: 0.5pt solid #eee; padding-bottom: 4pt; }
+                  .preview-content h3 { font-size: 12pt; font-weight: bold; margin-top: 14pt; margin-bottom: 8pt; }
+                  .preview-content p { margin-bottom: 12pt; text-align: justify; Orphans: 3; Widows: 3; }
+                  .preview-content table { border-collapse: collapse; width: 100%; margin: 12pt 0; }
+                  .preview-content td, .preview-content th { border: 0.5pt solid black; padding: 6pt; text-align: left; font-size: 10pt; }
+                  .preview-content img { max-width: 100%; height: auto; display: block; margin: 12pt auto; border: 1px solid #ddd; padding: 4pt; }
+                  .preview-content ul, .preview-content ol { margin-bottom: 12pt; padding-left: 24pt; }
+                  .preview-content li { margin-bottom: 6pt; }
+                  .preview-content blockquote { border-left: 3pt solid #ddd; padding-left: 12pt; font-style: italic; color: #555; margin: 12pt 0; }
+                `}} />
+              </div>
             </div>
           )}
         </div>
