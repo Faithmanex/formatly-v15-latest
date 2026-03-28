@@ -362,4 +362,5 @@ const uploadUrl = await client.documents.getUploadUrl({
 })
 ```
 
+
 This API documentation provides comprehensive coverage of all available endpoints in the Formatly application.
