@@ -71,28 +71,20 @@ export const testimonials = [
     rating: 5,
     avatar: "L",
   },
-  // TODO: Add more real testimonials from testers
-  // {
-  //   name: "Amara Osei",
-  //   role: "PhD Candidate, University of Ghana",
-  //   content: "I used to spend entire weekends fixing my references. Formatly got my dissertation formatted in under two minutes — APA 7th edition, perfectly. I almost didn't believe it.",
-  //   rating: 5,
-  //   avatar: "AO",
-  // },
-  // {
-  //   name: "Marcus DeSouza",
-  //   role: "Graduate Student, University of Toronto",
-  //   content: "My advisor kept sending my chapters back because of formatting issues. Since I started using Formatly, that hasn't happened once. It just works.",
-  //   rating: 5,
-  //   avatar: "MD",
-  // },
-  // {
-  //   name: "Dr. Priya Nair",
-  //   role: "Assistant Professor, NYU",
-  //   content: "I recommend Formatly to all my students now. It handles Chicago style better than any other tool I've tried, and I've tried a lot of them.",
-  //   rating: 5,
-  //   avatar: "PN",
-  // },
+  {
+    name: "David",
+    role: "Master's Student, University of Michigan",
+    content: "I was using a free citation generator and my references were all wrong. My professor flagged it immediately. Formatly caught errors I didn't even know existed — hanging indents, italicized journal names, the works.",
+    rating: 5,
+    avatar: "D",
+  },
+  {
+    name: "Rachel",
+    role: "Undergraduate, Ohio State",
+    content: "I spent three hours trying to fix my running head and page numbers. Three hours. Formatly did it in seconds. I wish I'd found this before my junior year.",
+    rating: 5,
+    avatar: "R",
+  },
 ]
 
 export const pricingPlans = [
