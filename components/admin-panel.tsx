@@ -21,7 +21,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Shield, Users, FileText, Activity, Key, Settings, AlertTriangle, CheckCircle, Clock, Copy, Trash2, RefreshCw, Loader2 } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { useEffect, useCallback } from "react"
-import { supabase } from "@/lib/supabase"
+import { getSupabase } from "@/lib/supabase"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface SystemStats {
@@ -125,7 +125,7 @@ export function AdminPanel() {
   const fetchSystemStats = useCallback(async () => {
     try {
       setIsLoading(true)
-      const { data, error } = await supabase!.rpc('get_system_stats')
+      const { data, error } = await getSupabase().rpc('get_system_stats')
       if (error) throw error
       setSystemStats(data as unknown as SystemStats)
     } catch (error) {

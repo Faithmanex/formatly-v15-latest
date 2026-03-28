@@ -26,7 +26,7 @@ export const documentService = {
       let query = supabase.from("documents").select("*").eq("user_id", userId).order("updated_at", { ascending: false })
 
       if (filters?.status && filters.status !== "all") {
-        query = query.eq("status", filters.status)
+        query = query.eq("status", filters.status as "draft" | "processing" | "formatted" | "failed")
       }
       if (filters?.style && filters.style !== "all") {
         query = query.eq("style_applied", filters.style)
@@ -339,8 +339,8 @@ export const profileService = {
       }
 
       const documentsUsed = subscription.documents_used || 0
-      const documentLimit = subscription.subscription_plans?.document_limit || 0
-      const planName = subscription.subscription_plans?.name || "Unknown Plan"
+      const documentLimit = (subscription as any).subscription_plans?.document_limit || 0
+      const planName = (subscription as any).subscription_plans?.name || "Unknown Plan"
 
       const remainingDocuments = documentLimit === -1 ? -1 : Math.max(0, documentLimit - documentsUsed)
       const usagePercentage =

@@ -2,7 +2,7 @@ import { ProfileCacheService } from "@/lib/profile-cache"
 import { getSupabaseBrowserClient } from "@/lib/supabase"
 import { logger } from "./logger"
 
-const supabase = getSupabaseBrowserClient()
+const supabase = getSupabaseBrowserClient()!
 
 export class LogoutHandler {
   static async performSecureLogout(): Promise<void> {

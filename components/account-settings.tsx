@@ -27,7 +27,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useProfileCache } from "@/hooks/use-profile-cache"
 import { profileService } from "@/lib/database"
 import { ProfileCacheService } from "@/lib/profile-cache"
-import { supabase } from "@/lib/supabase"
+import { getSupabase } from "@/lib/supabase"
 import Link from "next/link"
 
 export function AccountSettings() {
@@ -86,14 +86,14 @@ export function AccountSettings() {
       const fileName = `${user.id}-${Math.random()}.${fileExt}`
       const filePath = `${user.id}/${fileName}`
 
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError } = await getSupabase().storage
         .from("avatars") // Ensure this bucket exists in Supabase
         .upload(filePath, file)
 
       if (uploadError) throw uploadError
 
       // Get public URL
-      const { data: { publicUrl } } = supabase.storage
+      const { data: { publicUrl } } = getSupabase().storage
         .from("avatars")
         .getPublicUrl(filePath)
 
@@ -131,7 +131,7 @@ export function AccountSettings() {
       setIsUpdatingProfile(true)
 
       if (email !== user.email) {
-        const { error: emailError } = await supabase.auth.updateUser({
+        const { error: emailError } = await getSupabase().auth.updateUser({
           email: email,
         })
 
@@ -184,7 +184,7 @@ export function AccountSettings() {
     try {
       setIsChangingPassword(true)
 
-      const { error } = await supabase.auth.updateUser({
+      const { error } = await getSupabase().auth.updateUser({
         password: newPassword,
       })
 

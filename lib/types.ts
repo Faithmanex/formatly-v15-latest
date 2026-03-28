@@ -1,4 +1,5 @@
 // Centralized type definitions for Supabase database schema
+// Synced with actual database schema on 2026-03-28
 export type Database = {
   public: {
     Tables: {
@@ -9,11 +10,11 @@ export type Database = {
           full_name: string | null
           avatar_url: string | null
           role: "guest" | "user" | "admin"
-          document_limit: number
-          documents_used: number
-          subscription_id: string | null
           created_at: string
           updated_at: string
+          subscription_id: string | null
+          formatting_preferences: any
+          paypal_customer_id: string | null
         }
         Insert: {
           id: string
@@ -21,20 +22,20 @@ export type Database = {
           full_name?: string | null
           avatar_url?: string | null
           role?: "guest" | "user" | "admin"
-          document_limit?: number
-          documents_used?: number
           subscription_id?: string | null
+          formatting_preferences?: any
+          paypal_customer_id?: string | null
         }
         Update: {
           full_name?: string | null
           avatar_url?: string | null
           role?: "guest" | "user" | "admin"
-          document_limit?: number
-          documents_used?: number
           subscription_id?: string | null
           formatting_preferences?: any
+          paypal_customer_id?: string | null
           updated_at?: string
         }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
       }
       documents: {
         Row: {
@@ -45,19 +46,20 @@ export type Database = {
           status: "draft" | "processing" | "formatted" | "failed"
           style_applied: string
           word_count: number | null
-          tracked_changes: boolean
           processing_log: any | null
           storage_location: string | null
           file_size: number | null
-          result_url: string | null
-          tracked_changes_url: string | null
           created_at: string
           updated_at: string
           language_variant: string | null
           file_type: string | null
           processed_at: string | null
           formatting_options: any | null
+          tracked_changes: boolean | null
+          result_url: string | null
           formatting_time: number | null
+          tracked_changes_url: string | null
+          error_message: string | null
         }
         Insert: {
           user_id: string
@@ -66,35 +68,38 @@ export type Database = {
           status?: "draft" | "processing" | "formatted" | "failed"
           style_applied: string
           word_count?: number | null
-          tracked_changes?: boolean
           processing_log?: any | null
           storage_location?: string | null
           file_size?: number | null
-          result_url?: string | null
-          tracked_changes_url?: string | null
           language_variant?: string | null
           file_type?: string | null
           processed_at?: string | null
           formatting_options?: any | null
+          tracked_changes?: boolean | null
+          result_url?: string | null
           formatting_time?: number | null
+          tracked_changes_url?: string | null
+          error_message?: string | null
         }
         Update: {
           filename?: string
           status?: "draft" | "processing" | "formatted" | "failed"
           style_applied?: string
           word_count?: number | null
-          tracked_changes?: boolean
           processing_log?: any | null
           storage_location?: string | null
           file_size?: number | null
-          result_url?: string | null
-          tracked_changes_url?: string | null
           language_variant?: string | null
           file_type?: string | null
           processed_at?: string | null
           formatting_options?: any | null
+          tracked_changes?: boolean | null
+          result_url?: string | null
           formatting_time?: number | null
+          tracked_changes_url?: string | null
+          error_message?: string | null
         }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
       }
       custom_styles: {
         Row: {
@@ -123,6 +128,7 @@ export type Database = {
           is_default?: boolean
           is_global?: boolean
         }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
       }
       notifications: {
         Row: {
@@ -133,7 +139,7 @@ export type Database = {
           message: string
           action_url: string | null
           action_text: string | null
-          is_read: boolean
+          is_read: boolean | null
           created_at: string
         }
         Insert: {
@@ -143,11 +149,12 @@ export type Database = {
           message: string
           action_url?: string | null
           action_text?: string | null
-          is_read?: boolean
+          is_read?: boolean | null
         }
         Update: {
-          is_read?: boolean
+          is_read?: boolean | null
         }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
       }
       api_keys: {
         Row: {
@@ -157,7 +164,7 @@ export type Database = {
           key_preview: string
           created_by: string
           last_used_at: string | null
-          is_active: boolean
+          is_active: boolean | null
           created_at: string
         }
         Insert: {
@@ -166,13 +173,14 @@ export type Database = {
           key_preview: string
           created_by: string
           last_used_at?: string | null
-          is_active?: boolean
+          is_active?: boolean | null
         }
         Update: {
           name?: string
           last_used_at?: string | null
-          is_active?: boolean
+          is_active?: boolean | null
         }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
       }
       system_logs: {
         Row: {
@@ -196,6 +204,7 @@ export type Database = {
           message?: string
           metadata?: any | null
         }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
       }
       subscription_plans: {
         Row: {
@@ -205,18 +214,20 @@ export type Database = {
           price_monthly: number
           price_yearly: number | null
           document_limit: number
+          features: any
+          is_active: boolean | null
+          created_at: string
+          updated_at: string
+          billing_cycles: any
+          currency: string
           api_calls_limit: number
           storage_limit_gb: number
-          features: any
-          is_active: boolean
-          is_popular: boolean
+          is_popular: boolean | null
           priority_support: boolean
           custom_styles: boolean
           team_collaboration: boolean
-          currency: string | null
-          billing_cycles: string[] | null
-          created_at: string
-          updated_at: string
+          paypal_plan_id_monthly: string | null
+          paypal_plan_id_yearly: string | null
         }
         Insert: {
           name: string
@@ -224,16 +235,18 @@ export type Database = {
           price_monthly: number
           price_yearly?: number | null
           document_limit: number
+          features?: any
+          is_active?: boolean | null
+          billing_cycles?: any
+          currency?: string
           api_calls_limit?: number
           storage_limit_gb?: number
-          features?: any
-          is_active?: boolean
-          is_popular?: boolean
+          is_popular?: boolean | null
           priority_support?: boolean
           custom_styles?: boolean
           team_collaboration?: boolean
-          currency?: string | null
-          billing_cycles?: string[] | null
+          paypal_plan_id_monthly?: string | null
+          paypal_plan_id_yearly?: string | null
         }
         Update: {
           name?: string
@@ -241,84 +254,94 @@ export type Database = {
           price_monthly?: number
           price_yearly?: number | null
           document_limit?: number
+          features?: any
+          is_active?: boolean | null
+          billing_cycles?: any
+          currency?: string
           api_calls_limit?: number
           storage_limit_gb?: number
-          features?: any
-          is_active?: boolean
-          is_popular?: boolean
+          is_popular?: boolean | null
           priority_support?: boolean
           custom_styles?: boolean
           team_collaboration?: boolean
-          currency?: string | null
-          billing_cycles?: string[] | null
+          paypal_plan_id_monthly?: string | null
+          paypal_plan_id_yearly?: string | null
         }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
       }
       subscriptions: {
         Row: {
           id: string
           user_id: string
           plan_id: string
-          status: "active" | "canceled" | "past_due" | "unpaid" | "trialing"
-          billing_cycle: "monthly" | "yearly"
+          status: string
+          billing_cycle: string
           current_period_start: string
           current_period_end: string
-          cancel_at_period_end: boolean
+          cancel_at_period_end: boolean | null
           canceled_at: string | null
           trial_start: string | null
           trial_end: string | null
-          paypal_subscription_id: string | null
-          documents_used: number
-          api_calls_used: number
-          storage_used_gb: number
-          last_usage_reset: string | null
+          created_at: string
+          updated_at: string
           pending_plan_id: string | null
           pending_plan_effective_date: string | null
           plan_change_reason: string | null
           previous_plan_id: string | null
-          created_at: string
-          updated_at: string
+          pending_change_date: string | null
+          change_reason: string | null
+          documents_used: number | null
+          api_calls_used: number | null
+          storage_used_gb: number | null
+          last_usage_reset: string | null
+          paypal_subscription_id: string | null
         }
         Insert: {
           user_id: string
           plan_id: string
-          status: "active" | "canceled" | "past_due" | "unpaid" | "trialing"
-          billing_cycle: "monthly" | "yearly"
+          status: string
+          billing_cycle: string
           current_period_start: string
           current_period_end: string
-          cancel_at_period_end?: boolean
+          cancel_at_period_end?: boolean | null
           canceled_at?: string | null
           trial_start?: string | null
           trial_end?: string | null
-          paypal_subscription_id?: string | null
-          documents_used?: number
-          api_calls_used?: number
-          storage_used_gb?: number
-          last_usage_reset?: string | null
           pending_plan_id?: string | null
           pending_plan_effective_date?: string | null
           plan_change_reason?: string | null
           previous_plan_id?: string | null
+          pending_change_date?: string | null
+          change_reason?: string | null
+          documents_used?: number | null
+          api_calls_used?: number | null
+          storage_used_gb?: number | null
+          last_usage_reset?: string | null
+          paypal_subscription_id?: string | null
         }
         Update: {
           plan_id?: string
-          status?: "active" | "canceled" | "past_due" | "unpaid" | "trialing"
-          billing_cycle?: "monthly" | "yearly"
+          status?: string
+          billing_cycle?: string
           current_period_start?: string
           current_period_end?: string
-          cancel_at_period_end?: boolean
+          cancel_at_period_end?: boolean | null
           canceled_at?: string | null
           trial_start?: string | null
           trial_end?: string | null
-          paypal_subscription_id?: string | null
-          documents_used?: number
-          api_calls_used?: number
-          storage_used_gb?: number
-          last_usage_reset?: string | null
           pending_plan_id?: string | null
           pending_plan_effective_date?: string | null
           plan_change_reason?: string | null
           previous_plan_id?: string | null
+          pending_change_date?: string | null
+          change_reason?: string | null
+          documents_used?: number | null
+          api_calls_used?: number | null
+          storage_used_gb?: number | null
+          last_usage_reset?: string | null
+          paypal_subscription_id?: string | null
         }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
       }
       invoices: {
         Row: {
@@ -326,46 +349,52 @@ export type Database = {
           user_id: string
           subscription_id: string | null
           amount_due: number
-          amount_paid: number
-          currency: string
-          status: "draft" | "open" | "paid" | "void" | "uncollectible"
+          amount_paid: number | null
+          currency: string | null
+          status: string
           invoice_number: string | null
           invoice_pdf_url: string | null
           due_date: string | null
           paid_at: string | null
           billing_reason: string | null
           description: string | null
-          line_items: any
+          line_items: any | null
           created_at: string
           updated_at: string
+          paypal_transaction_id: string | null
         }
         Insert: {
           user_id: string
-          amount_paid?: number
-          currency?: string
-          status: "draft" | "open" | "paid" | "void" | "uncollectible"
+          subscription_id?: string | null
+          amount_due: number
+          amount_paid?: number | null
+          currency?: string | null
+          status: string
           invoice_number?: string | null
           invoice_pdf_url?: string | null
           due_date?: string | null
           paid_at?: string | null
           billing_reason?: string | null
           description?: string | null
-          line_items?: any
+          line_items?: any | null
+          paypal_transaction_id?: string | null
         }
         Update: {
           subscription_id?: string | null
           amount_due?: number
-          amount_paid?: number
-          currency?: string
-          status?: "draft" | "open" | "paid" | "void" | "uncollectible"
+          amount_paid?: number | null
+          currency?: string | null
+          status?: string
           invoice_number?: string | null
           invoice_pdf_url?: string | null
           due_date?: string | null
           paid_at?: string | null
           billing_reason?: string | null
           description?: string | null
-          line_items?: any
+          line_items?: any | null
+          paypal_transaction_id?: string | null
         }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
       }
       payment_methods: {
         Row: {
@@ -376,9 +405,10 @@ export type Database = {
           card_last4: string | null
           card_exp_month: number | null
           card_exp_year: number | null
-          is_default: boolean
+          is_default: boolean | null
           created_at: string
           updated_at: string
+          paypal_payment_method_id: string | null
         }
         Insert: {
           user_id: string
@@ -387,7 +417,8 @@ export type Database = {
           card_last4?: string | null
           card_exp_month?: number | null
           card_exp_year?: number | null
-          is_default?: boolean
+          is_default?: boolean | null
+          paypal_payment_method_id?: string | null
         }
         Update: {
           type?: string
@@ -395,8 +426,10 @@ export type Database = {
           card_last4?: string | null
           card_exp_month?: number | null
           card_exp_year?: number | null
-          is_default?: boolean
+          is_default?: boolean | null
+          paypal_payment_method_id?: string | null
         }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
       }
       billing_addresses: {
         Row: {
@@ -408,7 +441,7 @@ export type Database = {
           state: string | null
           postal_code: string
           country: string
-          is_default: boolean
+          is_default: boolean | null
           created_at: string
           updated_at: string
         }
@@ -420,7 +453,7 @@ export type Database = {
           state?: string | null
           postal_code: string
           country: string
-          is_default?: boolean
+          is_default?: boolean | null
         }
         Update: {
           line1?: string
@@ -429,39 +462,103 @@ export type Database = {
           state?: string | null
           postal_code?: string
           country?: string
-          is_default?: boolean
+          is_default?: boolean | null
         }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
       }
-      usage_tracking: {
+      waitlist: {
+        Row: {
+          id: number
+          created_at: string
+          full_name: string | null
+          email: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          email: string
+        }
+        Update: {
+          full_name?: string | null
+          email?: string
+        }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
+      }
+      english_variants: {
         Row: {
           id: string
-          user_id: string
-          subscription_id: string | null
-          period_start: string
-          period_end: string
-          documents_processed: number
-          api_calls: number
-          storage_used: number
+          name: string
+          code: string
+          description: string | null
+          is_active: boolean | null
+          sort_order: number | null
           created_at: string
           updated_at: string
         }
         Insert: {
-          user_id: string
-          subscription_id?: string | null
-          period_start: string
-          period_end: string
-          documents_processed?: number
-          api_calls?: number
-          storage_used?: number
+          name: string
+          code: string
+          description?: string | null
+          is_active?: boolean | null
+          sort_order?: number | null
         }
         Update: {
-          subscription_id?: string | null
-          period_start?: string
-          period_end?: string
-          documents_processed?: number
-          api_calls?: number
-          storage_used?: number
+          name?: string
+          code?: string
+          description?: string | null
+          is_active?: boolean | null
+          sort_order?: number | null
         }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
+      }
+      formatting_styles: {
+        Row: {
+          id: string
+          name: string
+          code: string
+          description: string | null
+          is_active: boolean | null
+          sort_order: number | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          name: string
+          code: string
+          description?: string | null
+          is_active?: boolean | null
+          sort_order?: number | null
+        }
+        Update: {
+          name?: string
+          code?: string
+          description?: string | null
+          is_active?: boolean | null
+          sort_order?: number | null
+        }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
+      }
+    }
+    Views: {
+      active_english_variants: {
+        Row: {
+          id: string | null
+          name: string | null
+          code: string | null
+          description: string | null
+          sort_order: number | null
+        }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
+      }
+      active_formatting_styles: {
+        Row: {
+          id: string | null
+          name: string | null
+          code: string | null
+          description: string | null
+          sort_order: number | null
+        }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
       }
     }
     Functions: {
@@ -527,6 +624,10 @@ export type Database = {
           remaining_documents: number
           usage_percentage: number
         }>
+      }
+      get_system_stats: {
+        Args: {}
+        Returns: Record<string, unknown>
       }
     }
   }

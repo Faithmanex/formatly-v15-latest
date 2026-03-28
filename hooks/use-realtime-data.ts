@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { supabase } from "@/lib/supabase"
+import { getSupabase } from "@/lib/supabase"
 import type { Database } from "@/lib/types"
 import { useCacheStorage } from "./use-cache-storage"
 
@@ -75,7 +75,7 @@ export function useRealtimeData<T>(options: RealtimeDataOptions<T>) {
           setState((prev) => ({ ...prev, isLoading: true, error: null }))
         }
 
-        let query = supabase.from(table).select(select)
+        let query = getSupabase().from(table).select(select)
 
         if (filter) {
           query = query.eq(filter.column, filter.value)
@@ -159,7 +159,7 @@ export function useRealtimeData<T>(options: RealtimeDataOptions<T>) {
 
     return () => {
       if (subscriptionRef.current) {
-        supabase.removeChannel(subscriptionRef.current)
+        getSupabase().removeChannel(subscriptionRef.current)
       }
     }
   }, [table, filter, cacheKey, clearCache, fetchData])
@@ -172,7 +172,7 @@ export function useRealtimeData<T>(options: RealtimeDataOptions<T>) {
     return () => {
       mountedRef.current = false
       if (subscriptionRef.current) {
-        supabase.removeChannel(subscriptionRef.current)
+        getSupabase().removeChannel(subscriptionRef.current)
       }
     }
   }, [])

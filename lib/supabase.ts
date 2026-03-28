@@ -8,49 +8,20 @@ let browserClient: ReturnType<typeof createBrowserClient<Database>> | null = nul
 
 export function getSupabaseBrowserClient() {
   if (typeof window === "undefined") {
-    // For SSR, create a new client each time
     return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey, {
-      db: {
-        schema: "public",
-      },
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true,
-      },
-      realtime: {
-        params: {
-          eventsPerSecond: 10,
-        },
-      },
-      global: {
-        headers: {
-          "x-client-timeout": "30000",
-        },
-      },
+      db: { schema: "public" },
+      auth: { autoRefreshToken: true, persistSession: true, detectSessionInUrl: true },
+      realtime: { params: { eventsPerSecond: 10 } },
+      global: { headers: { "x-client-timeout": "30000" } },
     })
   }
 
   if (!browserClient || !(window as any).__supabase_client) {
     browserClient = createBrowserClient<Database>(supabaseUrl, supabaseAnonKey, {
-      db: {
-        schema: "public",
-      },
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true,
-      },
-      realtime: {
-        params: {
-          eventsPerSecond: 10,
-        },
-      },
-      global: {
-        headers: {
-          "x-client-timeout": "30000",
-        },
-      },
+      db: { schema: "public" },
+      auth: { autoRefreshToken: true, persistSession: true, detectSessionInUrl: true },
+      realtime: { params: { eventsPerSecond: 10 } },
+      global: { headers: { "x-client-timeout": "30000" } },
     })
     ;(window as any).__supabase_client = browserClient
   } else {
@@ -60,6 +31,8 @@ export function getSupabaseBrowserClient() {
   return browserClient
 }
 
-export const supabase = getSupabaseBrowserClient()!
+export function getSupabase() {
+  return getSupabaseBrowserClient()!
+}
 
 export type { Database }

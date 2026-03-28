@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { supabase } from "@/lib/supabase"
+import { getSupabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
@@ -100,7 +100,7 @@ export function RegisterForm() {
     setAuthError("")
 
     try {
-      const { data, error } = await supabase!.auth.signUp({
+      const { data, error } = await getSupabase().auth.signUp({
         email: email.trim(),
         password,
         options: {
@@ -159,7 +159,7 @@ export function RegisterForm() {
     setAuthError("")
 
     try {
-      const { error } = await supabase!.auth.signInWithOAuth({
+      const { error } = await getSupabase().auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,

@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react"
-import { supabase } from "@/lib/supabase"
+import { getSupabase } from "@/lib/supabase"
 import { notificationService } from "@/lib/database"
 import { useAuth } from "@/components/auth-provider"
 import type { RealtimeChannel, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
@@ -94,7 +94,7 @@ export function RealtimeProvider({
       setDocumentsError(null)
       if (DEBUG_REALTIME) logger.realtime("Loading initial documents")
 
-      const { data, error } = await supabase!
+      const { data, error } = await getSupabase()
         .from("documents")
         .select("*")
         .eq("user_id", user.id)
@@ -125,7 +125,7 @@ export function RealtimeProvider({
       setNotificationsError(null)
       if (DEBUG_REALTIME) logger.realtime("Loading initial notifications")
 
-      const { data, error } = await supabase!
+      const { data, error } = await getSupabase()
         .from("notifications")
         .select("*")
         .eq("user_id", user.id)
@@ -159,7 +159,7 @@ export function RealtimeProvider({
       setProfileError(null)
       if (DEBUG_REALTIME) logger.realtime("Loading initial profile")
 
-      const { data, error } = await supabase.from("profiles").select("*").eq("id", user.id).single()
+      const { data, error } = await getSupabase().from("profiles").select("*").eq("id", user.id).single()
 
       if (error) throw error
 
@@ -186,7 +186,7 @@ export function RealtimeProvider({
       setSubscriptionError(null)
       if (DEBUG_REALTIME) logger.realtime("Loading initial subscription")
 
-      const { data, error } = await supabase!
+      const { data, error } = await getSupabase()
         .from("subscriptions")
         .select("*")
         .eq("user_id", user.id)
@@ -230,7 +230,7 @@ export function RealtimeProvider({
     if (DEBUG_REALTIME) logger.realtime("Setting up real-time subscriptions")
     setConnectionError(null)
 
-    const documentsChannel = supabase!
+    const documentsChannel = getSupabase()
       .channel(`documents-changes-${user.id}`)
       .on(
         "postgres_changes",
@@ -266,7 +266,7 @@ export function RealtimeProvider({
         }
       })
 
-    const notificationsChannel = supabase!
+    const notificationsChannel = getSupabase()
       .channel(`notifications-changes-${user.id}`)
       .on(
         "postgres_changes",
@@ -316,7 +316,7 @@ export function RealtimeProvider({
         }
       })
 
-    const profileChannel = supabase!
+    const profileChannel = getSupabase()
       .channel(`profile-changes-${user.id}`)
       .on(
         "postgres_changes",
@@ -340,7 +340,7 @@ export function RealtimeProvider({
         }
       })
 
-    const subscriptionChannel = supabase!
+    const subscriptionChannel = getSupabase()
       .channel(`subscription-changes-${user.id}`)
       .on(
         "postgres_changes",
@@ -404,7 +404,7 @@ export function RealtimeProvider({
   const cleanupSubscriptions = useCallback(() => {
     if (DEBUG_REALTIME) logger.realtime("Cleaning up real-time subscriptions")
     channelsRef.current.forEach((channel) => {
-      supabase.removeChannel(channel)
+      getSupabase().removeChannel(channel)
     })
     channelsRef.current = []
     subscriptionsSetup.current = false

@@ -3,7 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react"
 import type { User } from "@supabase/supabase-js"
-import { supabase } from "@/lib/supabase"
+import { getSupabase } from "@/lib/supabase"
 import { profileService } from "@/lib/database"
 import { LogoutHandler } from "@/lib/logout-handler"
 import useSWR, { mutate as globalMutate } from "swr"
@@ -60,11 +60,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   })
 
   useEffect(() => {
-    if (!supabase) return
+    if (!getSupabase()) return
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = getSupabase().auth.onAuthStateChange((event, session) => {
       if (
         event === "INITIAL_SESSION" ||
         event === "SIGNED_IN" ||
@@ -93,14 +93,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   )
 
   const signIn = async (email: string, password: string) => {
-    if (!supabase) return { error: new Error("Supabase client not initialized") }
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (!getSupabase()) return { error: new Error("Supabase client not initialized") }
+    const { error } = await getSupabase().auth.signInWithPassword({ email, password })
     return { error: error ?? null }
   }
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    if (!supabase) return { error: new Error("Supabase client not initialized") }
-    const { error } = await supabase.auth.signUp({
+    if (!getSupabase()) return { error: new Error("Supabase client not initialized") }
+    const { error } = await getSupabase().auth.signUp({
       email,
       password,
       options: { data: { full_name: fullName } },
@@ -110,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      if (!supabase) throw new Error("Supabase client not initialized")
+      if (!getSupabase()) throw new Error("Supabase client not initialized")
       await LogoutHandler.performSecureLogout()
     } catch (error) {
       console.error("Error signing out:", error)
@@ -120,11 +120,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const getToken = useCallback(async (): Promise<string | null> => {
     try {
-      if (!supabase) return null
+      if (!getSupabase()) return null
       const {
         data: { session },
         error,
-      } = await supabase.auth.getSession()
+      } = await getSupabase().auth.getSession()
       if (error) return null
       return session?.access_token ?? null
     } catch {
