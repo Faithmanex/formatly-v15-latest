@@ -24,7 +24,7 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
   const [content, setContent] = useState<string>("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [zoom, setZoom] = useState(100)
+  const [zoom, setZoom] = useState(80)
   const { getToken } = useAuth()
   const { toast } = useToast()
   const viewerRef = useRef<HTMLDivElement>(null)
@@ -32,6 +32,10 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
   useEffect(() => {
     if (documentId) {
       loadDocument()
+      // Auto-adjust zoom for small screens
+      if (window.innerWidth < 1000) {
+        setZoom(Math.floor((window.innerWidth / 1000) * 80))
+      }
     } else {
       setContent("")
       setError(null)
@@ -145,33 +149,32 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
 
   return (
     <Dialog open={!!documentId} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-5xl w-[95vw] h-[95vh] sm:h-[90vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl">
-        <DialogHeader className="p-4 bg-background border-b flex flex-row items-center justify-between space-y-0 sticky top-0 z-10">
+      <DialogContent className="sm:max-w-[95vw] lg:max-w-[1200px] w-[95vw] h-[95vh] sm:h-[90vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl bg-background outline-none">
+        <DialogHeader className="p-3 bg-background border-b flex flex-row items-center justify-between space-y-0 sticky top-0 z-50">
           <div className="flex items-center gap-3">
-            <div className="bg-primary/10 p-2 rounded-lg">
+            <div className="bg-primary/10 p-2 rounded-lg hidden xs:block">
               <FileText className="h-5 w-5 text-primary" />
             </div>
-            <div>
-              <DialogTitle className="text-lg font-bold line-clamp-1">{filename}</DialogTitle>
-              <DialogDescription className="text-xs">PDF Preview Mode</DialogDescription>
+            <div className="flex flex-col">
+              <DialogTitle className="text-sm sm:text-lg font-bold line-clamp-1 max-w-[200px] sm:max-w-md">{filename}</DialogTitle>
+              <DialogDescription className="text-[10px] sm:text-xs">PDF Preview Mode</DialogDescription>
             </div>
           </div>
-          <div className="flex items-center gap-2 pr-8">
-            <div className="hidden md:flex items-center gap-2 mr-4 bg-muted/50 rounded-full px-3 py-1">
-                <Button variant="ghost" size="icon" onClick={() => setZoom(Math.max(50, zoom - 10))} className="h-6 w-6 rounded-full">-</Button>
-                <span className="text-[10px] font-medium w-8 text-center">{zoom}%</span>
-                <Button variant="ghost" size="icon" onClick={() => setZoom(Math.min(200, zoom + 10))} className="h-6 w-6 rounded-full">+</Button>
+          <div className="flex items-center gap-1 sm:gap-2 mr-6 sm:mr-8">
+            <div className="flex items-center gap-1 sm:gap-2 bg-muted/50 rounded-full px-2 py-1 mr-1 sm:mr-2">
+                <Button variant="ghost" size="icon" onClick={() => setZoom(Math.max(25, zoom - 10))} className="h-6 w-6 sm:h-7 sm:w-7 rounded-full text-xs">-</Button>
+                <span className="text-[10px] font-bold w-10 text-center">{zoom}%</span>
+                <Button variant="ghost" size="icon" onClick={() => setZoom(Math.min(300, zoom + 10))} className="h-6 w-6 sm:h-7 sm:w-7 rounded-full text-xs">+</Button>
             </div>
             <Button 
                 variant="default" 
                 size="sm" 
                 onClick={handlePrint} 
                 disabled={loading || !!error || !content}
-                className="gap-2 shadow-sm"
+                className="gap-2 shadow-sm h-8 sm:h-9"
             >
-              <Printer className="h-4 w-4" />
-              <span className="hidden sm:inline">Print / Save as PDF</span>
-              <span className="sm:hidden text-xs">PDF</span>
+              <Printer className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Print / PDF</span>
             </Button>
             <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 rounded-full hover:bg-muted/80">
               <X className="h-4 w-4" />
@@ -242,6 +245,12 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
                   .preview-content ul, .preview-content ol { margin-bottom: 12pt; padding-left: 24pt; }
                   .preview-content li { margin-bottom: 6pt; }
                   .preview-content blockquote { border-left: 3pt solid #ddd; padding-left: 12pt; font-style: italic; color: #555; margin: 12pt 0; }
+                  
+                  /* Scrollbar styling for a cleaner look */
+                  ::-webkit-scrollbar { width: 8px; height: 8px; }
+                  ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+                  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+                  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
                 `}} />
               </div>
             </div>
