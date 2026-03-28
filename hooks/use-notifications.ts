@@ -17,11 +17,9 @@ export function useNotifications() {
     // This will be handled by the real-time context
     // For now, we can implement it here or move it to the context
     try {
-      const { supabase } = await import("@/lib/supabase")
-      const { useAuth } = await import("@/components/auth-provider")
+      const { getSupabase } = await import("@/lib/supabase")
+      const supabase = getSupabase()
 
-      // Get current user - this is a simplified approach
-      // In practice, you'd want to pass user through context or get it differently
       const response = await supabase.auth.getUser()
       if (response.data.user) {
         await supabase.from("notifications").delete().eq("user_id", response.data.user.id)
