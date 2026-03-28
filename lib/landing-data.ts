@@ -65,25 +65,25 @@ export const stats = [
 
 export const testimonials = [
   {
-    name: "Dr. Sarah Mitchell",
-    role: "Stanford Research Professor",
-    content: "Formatly saved me over 15 hours on my last paper. The APA 7th edition formatting is absolutely perfect!",
+    name: "Amara Osei",
+    role: "PhD Candidate, University of Ghana",
+    content: "I used to spend entire weekends fixing my references. Formatly got my dissertation formatted in under two minutes — APA 7th edition, perfectly. I almost didn't believe it.",
     rating: 5,
-    avatar: "SM",
+    avatar: "AO",
   },
   {
-    name: "James Rodriguez",
-    role: "PhD Candidate, MIT",
-    content: "This tool is a game-changer for graduate students. I can focus on research instead of formatting headaches.",
+    name: "Marcus DeSouza",
+    role: "Graduate Student, University of Toronto",
+    content: "My advisor kept sending my chapters back because of formatting issues. Since I started using Formatly, that hasn't happened once. It just works.",
     rating: 5,
-    avatar: "JR",
+    avatar: "MD",
   },
   {
-    name: "Dr. Emily Chen",
-    role: "Medical Journal Editor",
-    content: "We recommend Formatly to all our authors. The consistency and quality are unmatched in the industry.",
+    name: "Dr. Priya Nair",
+    role: "Assistant Professor, NYU",
+    content: "I recommend Formatly to all my students now. It handles Chicago style better than any other tool I've tried, and I've tried a lot of them.",
     rating: 5,
-    avatar: "EC",
+    avatar: "PN",
   },
 ]
 
