@@ -9,7 +9,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Loader2, Download, Printer, X, FileText, AlertCircle, Eye, EyeOff } from "lucide-react"
+import { Loader2, Download, Printer, X, FileText, AlertCircle, Eye, EyeOff, ChevronLeft, ChevronRight } from "lucide-react"
 import mammoth from "mammoth"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
@@ -27,9 +27,12 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [zoom, setZoom] = useState(80)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const { getToken } = useAuth()
   const { toast } = useToast()
   const viewerRef = useRef<HTMLDivElement>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (documentId) {
@@ -106,6 +109,33 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
     }
   }
 
+  // Handle scroll to update current page indicator
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const container = e.currentTarget
+    const pageHeight = 1056 * (zoom / 100)
+    const newPage = Math.floor(container.scrollTop / pageHeight) + 1
+    
+    // Calculate total pages more accurately
+    const total = Math.max(1, Math.ceil(container.scrollHeight / pageHeight))
+    setTotalPages(total)
+    
+    if (newPage !== page) setPage(newPage)
+  }
+
+  const navigatePage = (direction: "next" | "prev") => {
+    if (!scrollContainerRef.current) return
+    const container = scrollContainerRef.current
+    const pageHeight = 1056 * (zoom / 100)
+    const targetScroll = direction === "next" 
+      ? container.scrollTop + pageHeight
+      : container.scrollTop - pageHeight
+    
+    container.scrollTo({
+      top: targetScroll,
+      behavior: "smooth"
+    })
+  }
+
   // Same print logic but uses current view
   const handlePrint = () => {
     const htmlToPrint = currentView === "tracked" && trackedContent ? trackedContent : content
@@ -172,6 +202,14 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2 mr-6 sm:mr-8">
+            {!loading && !error && content && (
+              <div className="flex items-center gap-1 bg-muted/30 px-2 py-1 rounded-full border border-border mr-1 sm:mr-2">
+                <Button variant="ghost" size="icon" onClick={() => navigatePage("prev")} disabled={page <= 1} className="h-6 w-6 rounded-full"><ChevronLeft className="h-4 w-4" /></Button>
+                <div className="text-[10px] font-bold min-w-[50px] text-center">Page {page} of {totalPages}</div>
+                <Button variant="ghost" size="icon" onClick={() => navigatePage("next")} disabled={page >= totalPages} className="h-6 w-6 rounded-full"><ChevronRight className="h-4 w-4" /></Button>
+              </div>
+            )}
+
             {trackedContent && !loading && !error && (
                 <div className="hidden md:flex items-center bg-muted/30 p-0.5 rounded-lg border border-border mr-2">
                     <Button 
@@ -216,7 +254,11 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
           </div>
         </DialogHeader>
 
-        <div className="flex-1 overflow-auto bg-[#525659] p-4 sm:p-8 flex justify-center items-start outline-none">
+        <div 
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+            className="flex-1 overflow-auto bg-[#525659] p-4 sm:p-8 flex justify-center items-start outline-none"
+        >
           {loading ? (
             <div className="flex flex-col items-center justify-center h-full w-full py-20 gap-4">
               <div className="relative">
@@ -249,35 +291,58 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
             >
               <div 
                className="bg-white text-black shadow-[0_0_20px_rgba(0,0,0,0.4)] mx-auto relative overflow-hidden"
-               style={{
-                 width: "816px",
-                 minHeight: "1056px",
-                 padding: "72px",
-                 borderRadius: "2px"
-               }}
+                 style={{
+                   width: "816px",
+                   minHeight: "1056px",
+                   padding: "72px",
+                   borderRadius: "2px",
+                   position: 'relative'
+                 }}
               >
+                {/* Visual Page Overlays to show breaks */}
+                <div className="absolute inset-0 pointer-events-none z-0">
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                        <div 
+                            key={i} 
+                            className="w-full border-b-[1px] border-dashed border-slate-300/30" 
+                            style={{ 
+                                position: 'absolute', 
+                                top: `${(i + 1) * 1056}px`, 
+                                left: 0 
+                            }} 
+                        />
+                    ))}
+                </div>
+
                 <div 
                   ref={viewerRef}
-                  className="h-full w-full preview-content select-text"
+                  className="h-full w-full preview-content select-text relative z-10"
                   dangerouslySetInnerHTML={{ __html: currentView === "tracked" && trackedContent ? trackedContent : content }}
                 />
                 
                 <style dangerouslySetInnerHTML={{ __html: `
                   .preview-content {
                     font-family: 'Times New Roman', Times, serif;
-                    line-height: 1.5;
-                    font-size: 11pt;
+                    line-height: 2.0; /* Increased for better page-by-page readability in Word style */
+                    font-size: 12pt;
                     color: black;
                   }
                   .preview-content h1 { font-size: 20pt; font-weight: bold; text-align: center; margin-bottom: 24pt; line-height: 1.2; }
-                  .preview-content h2 { font-size: 14pt; font-weight: bold; margin-top: 18pt; margin-bottom: 12pt; border-bottom: 0.5pt solid #eee; padding-bottom: 4pt; }
-                  .preview-content h3 { font-size: 12pt; font-weight: bold; margin-top: 14pt; margin-bottom: 8pt; }
-                  .preview-content p { margin-bottom: 12pt; text-align: justify; Orphans: 3; Widows: 3; }
-                  .preview-content table { border-collapse: collapse; width: 100%; margin: 12pt 0; }
-                  .preview-content td, .preview-content th { border: 0.5pt solid black; padding: 6pt; text-align: left; font-size: 10pt; }
-                  .preview-content img { max-width: 100%; height: auto; display: block; margin: 12pt auto; border: 1px solid #ddd; padding: 4pt; }
+                  .preview-content h2 { font-size: 14pt; font-weight: bold; margin-top: 24pt; margin-bottom: 12pt; border-bottom: 0.5pt solid #eee; padding-bottom: 4pt; }
+                  .preview-content h3 { font-size: 12pt; font-weight: bold; margin-top: 18pt; margin-bottom: 8pt; }
+                  .preview-content p { margin-bottom: 24pt; text-align: justify; Orphans: 3; Widows: 3; }
+                  
+                  /* Page break lines in the document itself to simulate sheets */
+                  .preview-content > * { position: relative; }
+                  
+                  .preview-content table { border-collapse: collapse; width: 100%; margin: 12pt 0; background: white; }
+                  .preview-content td, .preview-content th { border: 1px solid black; padding: 12pt; text-align: left; font-size: 11pt; }
+                  .preview-content img { max-width: 100%; height: auto; display: block; margin: 24pt auto; }
+                  
+                  /* Word-like spacing for lists */
                   .preview-content ul, .preview-content ol { margin-bottom: 12pt; padding-left: 24pt; }
                   .preview-content li { margin-bottom: 6pt; }
+                  
                   .preview-content blockquote { border-left: 3pt solid #ddd; padding-left: 12pt; font-style: italic; color: #555; margin: 12pt 0; }
                   
                   /* Specific styles for tracked changes in HTML */
