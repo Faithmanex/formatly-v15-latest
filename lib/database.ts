@@ -9,6 +9,13 @@ type Document = Database["public"]["Tables"]["documents"]["Row"]
 type CustomStyle = Database["public"]["Tables"]["custom_styles"]["Row"]
 type Notification = Database["public"]["Tables"]["notifications"]["Row"]
 
+interface UploadDocumentOptions {
+  userId: string
+  style?: string
+  trackedChanges?: boolean
+  englishVariant?: string
+}
+
 // Added comprehensive document service with timeout handling
 export const documentService = {
   async getDocuments(
@@ -59,6 +66,34 @@ export const documentService = {
       return data
     } catch (error) {
       console.error("Error in createDocument:", error)
+      return null
+    }
+  },
+
+  async uploadDocument(
+    file: File,
+    options: UploadDocumentOptions,
+  ): Promise<Document | null> {
+    try {
+      if (!options.userId) {
+        throw new Error("User ID is required to upload a document")
+      }
+
+      const documentRecord: Database["public"]["Tables"]["documents"]["Insert"] = {
+        user_id: options.userId,
+        filename: file.name,
+        original_filename: file.name,
+        style_applied: options.style || "APA",
+        status: "draft",
+        tracked_changes: options.trackedChanges ?? false,
+        file_size: file.size,
+        file_type: file.type || null,
+        language_variant: options.englishVariant || null,
+      }
+
+      return await this.createDocument(documentRecord)
+    } catch (error) {
+      console.error("Error in uploadDocument:", error)
       return null
     }
   },

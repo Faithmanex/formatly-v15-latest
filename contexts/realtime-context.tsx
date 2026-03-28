@@ -3,6 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react"
 import { supabase } from "@/lib/supabase"
+import { notificationService } from "@/lib/database"
 import { useAuth } from "@/components/auth-provider"
 import type { RealtimeChannel, RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 import type { Database } from "@/lib/types"
@@ -460,9 +461,8 @@ export function RealtimeProvider({
 
   const markNotificationAsRead = useCallback(async (id: string) => {
     try {
-      const { error } = await (supabase!.from("notifications") as any).update({ is_read: true }).eq("id", id)
-
-      if (error) throw error
+      const success = await notificationService.markAsRead(id)
+      if (!success) throw new Error("Failed to mark notification as read")
       // Real-time subscription will handle the state update
     } catch (error) {
       logger.error("Error marking notification as read", error)
@@ -473,13 +473,8 @@ export function RealtimeProvider({
     if (!user?.id) return
 
     try {
-      const { error } = await (supabase!
-        .from("notifications") as any)
-        .update({ is_read: true })
-        .eq("user_id", user.id)
-        .eq("is_read", false)
-
-      if (error) throw error
+      const success = await notificationService.markAllAsRead(user.id)
+      if (!success) throw new Error("Failed to mark all notifications as read")
       // Real-time subscription will handle the state update
     } catch (error) {
       logger.error("Error marking all notifications as read", error)

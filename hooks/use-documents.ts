@@ -22,6 +22,13 @@ export interface Document {
   report_url?: string
 }
 
+interface UploadDocumentOptions {
+  style?: string
+  trackedChanges?: boolean
+  englishVariant?: string
+  [key: string]: unknown
+}
+
 export function useDocuments() {
   const { user } = useAuth()
   const { clearCache } = useCacheStorage()
@@ -48,29 +55,15 @@ export function useDocuments() {
   })
 
   const uploadDocument = useCallback(
-    async (file: File, options: any) => {
+    async (file: File, options: UploadDocumentOptions) => {
       if (!user?.id) throw new Error("User not authenticated")
 
       try {
-
-        const optimisticDoc: Document = {
-          id: `temp_${Date.now()}`,
-          user_id: user.id,
-          filename: file.name,
-          original_filename: file.name,
-          file_size: file.size,
-          file_type: file.type,
-          status: "pending",
-          formatting_style: options.style || "APA",
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }
-
-        const currentDocs = documents || []
-        const optimisticDocs = [optimisticDoc, ...currentDocs]
-
         // Upload the actual document
-        const uploadedDoc = await documentService.uploadDocument(file, options)
+        const uploadedDoc = await documentService.uploadDocument(file, {
+          ...options,
+          userId: user.id,
+        })
 
         if (uploadedDoc) {
           clearCache(`documents_${user.id}`)
@@ -85,7 +78,7 @@ export function useDocuments() {
         throw error
       }
     },
-    [user?.id, documents, clearCache, refresh],
+    [user?.id, clearCache, refresh],
   )
 
   const deleteDocument = useCallback(
@@ -93,10 +86,6 @@ export function useDocuments() {
       if (!user?.id) throw new Error("User not authenticated")
 
       try {
-
-        const currentDocs = documents || []
-        const optimisticDocs = currentDocs.filter((doc) => doc.id !== documentId)
-
         // Delete the actual document
         await documentService.deleteDocument(documentId)
 
@@ -108,7 +97,7 @@ export function useDocuments() {
         throw error
       }
     },
-    [user?.id, documents, clearCache, refresh],
+    [user?.id, clearCache, refresh],
   )
 
   return {
