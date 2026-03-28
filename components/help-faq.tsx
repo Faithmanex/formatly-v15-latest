@@ -20,7 +20,7 @@ const faqData = [
       },
       {
         question: "What file formats are supported?",
-        answer: "Currently, we support Microsoft Word documents (.docx format). Support for additional formats like .doc, .pdf, and .txt is coming soon."
+        answer: "Currently, we support Microsoft Word documents (.docx format). We do not support .doc, .pdf, or .txt files at this time."
       },
       {
         question: "What is guest mode?",
