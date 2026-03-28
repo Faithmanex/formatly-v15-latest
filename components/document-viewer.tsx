@@ -22,6 +22,8 @@ interface DocumentViewerProps {
 
 export function DocumentViewer({ documentId, filename, onClose }: DocumentViewerProps) {
   const [content, setContent] = useState<string>("")
+  const [trackedContent, setTrackedContent] = useState<string>("")
+  const [currentView, setCurrentView] = useState<"final" | "tracked">("final")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [zoom, setZoom] = useState(80)
@@ -38,6 +40,8 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
       }
     } else {
       setContent("")
+      setTrackedContent("")
+      setCurrentView("final")
       setError(null)
     }
   }, [documentId])
@@ -57,33 +61,43 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
       }
 
       const data = await response.json()
-      if (!data.success || !data.content) {
+      if (!data.success || (!data.content && !data.tracked_changes_content)) {
         throw new Error(data.error || "No content found")
       }
 
-      // Convert base64 to ArrayBuffer for mammoth
-      const binaryString = atob(data.content)
-      const bytes = new Uint8Array(binaryString.length)
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i)
+      const convertToHtml = async (base64: string) => {
+          const binaryString = atob(base64)
+          const bytes = new Uint8Array(binaryString.length)
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i)
+          }
+          const result = await mammoth.convertToHtml(
+            { arrayBuffer: bytes.buffer },
+            { 
+              styleMap: [
+                "p[style-name='Title'] => h1:fresh",
+                "p[style-name='Heading 1'] => h2:fresh",
+                "p[style-name='Heading 2'] => h3:fresh",
+              ]
+            }
+          )
+          return result.value
       }
 
-      const result = await mammoth.convertToHtml(
-        { arrayBuffer: bytes.buffer },
-        { 
-          styleMap: [
-            "p[style-name='Title'] => h1:fresh",
-            "p[style-name='Heading 1'] => h2:fresh",
-            "p[style-name='Heading 2'] => h3:fresh",
-          ]
-        }
-      )
-      
-      setContent(result.value)
-      
-      if (result.messages.length > 0) {
-        console.warn("Mammoth warnings:", result.messages)
+      if (data.content) {
+          const mainHtml = await convertToHtml(data.content)
+          setContent(mainHtml)
       }
+      
+      if (data.tracked_changes_content) {
+          const trackedHtml = await convertToHtml(data.tracked_changes_content)
+          setTrackedContent(trackedHtml)
+          // If we have tracked changes, maybe default to that? No, final is better.
+      } else {
+          setTrackedContent("")
+          setCurrentView("final")
+      }
+      
     } catch (err) {
       console.error("Error loading document:", err)
       setError(err instanceof Error ? err.message : "Failed to load document preview")
@@ -92,7 +106,9 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
     }
   }
 
+  // Same print logic but uses current view
   const handlePrint = () => {
+    const htmlToPrint = currentView === "tracked" && trackedContent ? trackedContent : content
     const printWindow = window.open("", "_blank")
     if (!printWindow) {
       toast({
@@ -106,44 +122,29 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
     printWindow.document.write(`
       <html>
         <head>
-          <title>${filename}</title>
+          <title>${filename} - ${currentView === "tracked" ? "Tracked Changes" : "Final"}</title>
           <style>
-            body { 
-              font-family: 'Times New Roman', serif; 
-              padding: 40px; 
-              line-height: 1.6;
-              max-width: 800px;
-              margin: 0 auto;
-              color: #000;
-              background: #fff;
-            }
-            h1, h2, h3 { color: #000; font-family: 'Times New Roman', serif; }
-            h1 { font-size: 24pt; text-align: center; margin-bottom: 24pt; }
-            h2 { font-size: 18pt; margin-top: 18pt; }
-            p { font-size: 12pt; margin-bottom: 12pt; text-align: justify; }
-            table { border-collapse: collapse; width: 100%; margin: 20px 0; }
-            th, td { border: 1px solid #000; padding: 8px; text-align: left; }
-            img { max-width: 100%; height: auto; }
-            @media print {
-              body { padding: 0; margin: 0; }
-              @page { size: auto; margin: 2.54cm; }
-            }
+             /* Same styles as before */
+            body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.6; max-width: 800px; margin: 0 auto; color: #000; background: #fff; }
+            h1, h2, h3 { color: #000; }
+            h1 { font-size: 20pt; text-align: center; margin-bottom: 24pt; }
+            @media print { body { padding: 0; } @page { margin: 1in; } }
+            ins { text-decoration: none; background-color: #d4edda; color: #155724; }
+            del { text-decoration: line-through; background-color: #f8d7da; color: #721c24; }
           </style>
         </head>
         <body>
-          ${content}
+          ${htmlToPrint}
         </body>
       </html>
     `)
     printWindow.document.close()
-    
-    // Wait for content (especially images) to load before printing
     printWindow.onload = () => {
-      printWindow.focus()
-      setTimeout(() => {
-        printWindow.print()
-        printWindow.close()
-      }, 500)
+        printWindow.focus()
+        setTimeout(() => {
+            printWindow.print()
+            printWindow.close()
+        }, 500)
     }
   }
 
@@ -152,30 +153,63 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
       <DialogContent className="sm:max-w-[95vw] lg:max-w-[1200px] w-[95vw] h-[95vh] sm:h-[90vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl bg-background outline-none">
         <DialogHeader className="p-3 bg-background border-b flex flex-row items-center justify-between space-y-0 sticky top-0 z-50">
           <div className="flex items-center gap-3">
-            <div className="bg-primary/10 p-2 rounded-lg hidden xs:block">
-              <FileText className="h-5 w-5 text-primary" />
+            <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-lg hidden xs:block">
+              <FileText className="h-5 w-5 text-green-600 dark:text-green-400" />
             </div>
             <div className="flex flex-col">
-              <DialogTitle className="text-sm sm:text-lg font-bold line-clamp-1 max-w-[200px] sm:max-w-md">{filename}</DialogTitle>
-              <DialogDescription className="text-[10px] sm:text-xs">PDF Preview Mode</DialogDescription>
+              <div className="flex items-center gap-2">
+                <DialogTitle className="text-sm sm:text-base font-bold line-clamp-1 max-w-[150px] sm:max-w-md">
+                    {filename}
+                </DialogTitle>
+                <div className="bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 text-[10px] font-bold px-1.5 py-0.5 rounded leading-none">
+                    FORMATTED
+                </div>
+              </div>
+              <DialogDescription className="text-[10px]">
+                {loading ? "Checking status..." : currentView === "tracked" ? "Tracked Changes View" : "Final Formatted Document"}
+              </DialogDescription>
             </div>
           </div>
+
           <div className="flex items-center gap-1 sm:gap-2 mr-6 sm:mr-8">
-            <div className="flex items-center gap-1 sm:gap-2 bg-muted/50 rounded-full px-2 py-1 mr-1 sm:mr-2">
-                <Button variant="ghost" size="icon" onClick={() => setZoom(Math.max(25, zoom - 10))} className="h-6 w-6 sm:h-7 sm:w-7 rounded-full text-xs">-</Button>
+            {trackedContent && !loading && !error && (
+                <div className="hidden md:flex items-center bg-muted/30 p-0.5 rounded-lg border border-border mr-2">
+                    <Button 
+                        variant={currentView === "final" ? "secondary" : "ghost"} 
+                        size="sm" 
+                        onClick={() => setCurrentView("final")}
+                        className="h-7 text-[10px] px-3 font-semibold rounded-md shadow-none"
+                    >
+                        Final Copy
+                    </Button>
+                    <Button 
+                        variant={currentView === "tracked" ? "secondary" : "ghost"} 
+                        size="sm" 
+                        onClick={() => setCurrentView("tracked")}
+                        className="h-7 text-[10px] px-3 font-semibold rounded-md shadow-none"
+                    >
+                        Track Changes
+                    </Button>
+                </div>
+            )}
+
+            <div className="flex items-center gap-1 bg-muted/50 rounded-full px-2 py-1 mr-1">
+                <Button variant="ghost" size="icon" onClick={() => setZoom(Math.max(25, zoom - 10))} className="h-6 w-6 rounded-full text-xs">-</Button>
                 <span className="text-[10px] font-bold w-10 text-center">{zoom}%</span>
-                <Button variant="ghost" size="icon" onClick={() => setZoom(Math.min(300, zoom + 10))} className="h-6 w-6 sm:h-7 sm:w-7 rounded-full text-xs">+</Button>
+                <Button variant="ghost" size="icon" onClick={() => setZoom(Math.min(300, zoom + 10))} className="h-6 w-6 rounded-full text-xs">+</Button>
             </div>
+
             <Button 
                 variant="default" 
                 size="sm" 
                 onClick={handlePrint} 
-                disabled={loading || !!error || !content}
-                className="gap-2 shadow-sm h-8 sm:h-9"
+                disabled={loading || !!error || (!content && !trackedContent)}
+                className="gap-2 shadow-sm h-8 px-3"
             >
               <Printer className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Print / PDF</span>
+              <span className="hidden sm:inline">Save PDF</span>
             </Button>
+            
             <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 rounded-full hover:bg-muted/80">
               <X className="h-4 w-4" />
             </Button>
@@ -189,20 +223,20 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
                 <Loader2 className="h-10 w-10 animate-spin text-white" />
                 <FileText className="h-6 w-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/50" />
               </div>
-              <p className="text-white/70 text-sm font-medium animate-pulse">Loading document preview...</p>
+              <p className="text-white/70 text-[11px] font-medium tracking-wide uppercase animate-pulse">Processing Formatted Content</p>
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center h-full w-full py-20 text-center max-w-md mx-auto gap-6 bg-background/5 rounded-xl p-8 border border-white/10">
-              <div className="bg-destructive/20 p-4 rounded-full">
+              <div className="bg-destructive/20 p-4 rounded-full shadow-[0_0_20px_rgba(239,68,68,0.2)]">
                 <AlertCircle className="h-10 w-10 text-destructive" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-xl font-bold text-white">Preview Unavailable</h3>
-                <p className="text-sm text-white/50">{error}</p>
+                <h3 className="text-xl font-bold text-white">Preview Failed</h3>
+                <p className="text-sm text-white/50 leading-relaxed">{error}</p>
               </div>
-              <Button onClick={loadDocument} variant="outline" size="sm" className="text-white border-white/20 hover:bg-white/10">
+              <Button onClick={loadDocument} variant="outline" size="sm" className="text-white border-white/20 hover:bg-white/10 px-8 h-10">
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Retry
+                Retry Connection
               </Button>
             </div>
           ) : (
@@ -210,22 +244,22 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
               className="flex-shrink-0 origin-top transition-transform duration-300 ease-in-out"
               style={{
                 transform: `scale(${zoom / 100})`,
-                marginBottom: `${(11 * 96 * (zoom / 100)) / 2}px` // Add margin to prevent cutoff at bottom when zoomed
+                marginBottom: `${(11 * 96 * (zoom / 100)) / 2}px`
               }}
             >
               <div 
-               className="bg-white text-black shadow-[0_0_20px_rgba(0,0,0,0.3)] mx-auto relative overflow-hidden"
+               className="bg-white text-black shadow-[0_0_20px_rgba(0,0,0,0.4)] mx-auto relative overflow-hidden"
                style={{
-                 width: "816px", // 8.5in at 96dpi
-                 minHeight: "1056px", // 11in at 96dpi
-                 padding: "72px", // 0.75in margins
+                 width: "816px",
+                 minHeight: "1056px",
+                 padding: "72px",
                  borderRadius: "2px"
                }}
               >
                 <div 
                   ref={viewerRef}
                   className="h-full w-full preview-content select-text"
-                  dangerouslySetInnerHTML={{ __html: content }}
+                  dangerouslySetInnerHTML={{ __html: currentView === "tracked" && trackedContent ? trackedContent : content }}
                 />
                 
                 <style dangerouslySetInnerHTML={{ __html: `
@@ -246,6 +280,10 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
                   .preview-content li { margin-bottom: 6pt; }
                   .preview-content blockquote { border-left: 3pt solid #ddd; padding-left: 12pt; font-style: italic; color: #555; margin: 12pt 0; }
                   
+                  /* Specific styles for tracked changes in HTML */
+                  ins, .mammoth-inserted { text-decoration: none; background-color: #d4edda; color: #155724; border-bottom: 1px solid #c3e6cb; }
+                  del, .mammoth-deleted { text-decoration: line-through; background-color: #f8d7da; color: #721c24; border-bottom: 1px solid #f5c6cb; }
+
                   /* Scrollbar styling for a cleaner look */
                   ::-webkit-scrollbar { width: 8px; height: 8px; }
                   ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
