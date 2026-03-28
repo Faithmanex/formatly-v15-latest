@@ -1,8 +1,11 @@
 "use client"
 
 import { useRealtime } from "@/contexts/realtime-context"
+import { useAuth } from "@/components/auth-provider"
+import { getSupabase } from "@/lib/supabase"
 
 export function useNotifications() {
+  const { user } = useAuth()
   const {
     notifications,
     unreadCount,
@@ -14,23 +17,15 @@ export function useNotifications() {
   } = useRealtime()
 
   const clearAll = async () => {
-    // This will be handled by the real-time context
-    // For now, we can implement it here or move it to the context
-    try {
-      const { getSupabase } = await import("@/lib/supabase")
-      const supabase = getSupabase()
+    if (!user) return
 
-      const response = await supabase.auth.getUser()
-      if (response.data.user) {
-        await supabase.from("notifications").delete().eq("user_id", response.data.user.id)
-      }
+    try {
+      const supabase = getSupabase()
+      const { error } = await supabase.from("notifications").delete().eq("user_id", user.id)
+      if (error) throw error
     } catch (error) {
       console.error("Error clearing all notifications:", error)
     }
-  }
-
-  const addNotification = (notification: any) => {
-    // This is now handled automatically by real-time subscriptions
   }
 
   const retry = () => {
@@ -45,7 +40,6 @@ export function useNotifications() {
     markAsRead,
     markAllAsRead,
     clearAll,
-    addNotification,
     refresh,
     retry,
   }

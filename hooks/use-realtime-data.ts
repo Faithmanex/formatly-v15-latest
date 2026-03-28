@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { getSupabase } from "@/lib/supabase"
 import type { Database } from "@/lib/types"
+import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js"
 import { useCacheStorage } from "./use-cache-storage"
 
 type TableName = keyof Database["public"]["Tables"]
@@ -104,13 +105,13 @@ export function useRealtimeData<T>(options: RealtimeDataOptions<T>) {
         if (!mountedRef.current) return
 
         const err = error as Error
-        console.error(`[v0] Error fetching data for ${cacheKey}:`, err)
+        console.error(`Error fetching data for ${cacheKey}:`, err)
 
         if (retryCountRef.current < retryAttempts) {
           retryCountRef.current++
           const delay = retryDelay * Math.pow(2, retryCountRef.current - 1)
 
-          console.log(`[v0] Retrying ${cacheKey} in ${delay}ms (attempt ${retryCountRef.current}/${retryAttempts})`)
+          console.log(`Retrying ${cacheKey} in ${delay}ms (attempt ${retryCountRef.current}/${retryAttempts})`)
 
           setTimeout(() => {
             if (mountedRef.current) {
@@ -137,7 +138,7 @@ export function useRealtimeData<T>(options: RealtimeDataOptions<T>) {
   useEffect(() => {
     if (!table) return
 
-    const subscription = supabase
+    const subscription = getSupabase()
       .channel(`${table}_changes`)
       .on(
         "postgres_changes",
@@ -147,7 +148,7 @@ export function useRealtimeData<T>(options: RealtimeDataOptions<T>) {
           table: table,
           ...(filter && { filter: `${filter.column}=eq.${filter.value}` }),
         },
-        (payload) => {
+        (payload: RealtimePostgresChangesPayload<any>) => {
 
           clearCache(cacheKey)
           fetchData()
