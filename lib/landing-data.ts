@@ -66,7 +66,7 @@ export const stats = [
 export const testimonials = [
   {
     name: "Lakeisha",
-    role: "Doctoral Candidate",
+    role: "PhD Student",
     content: "APA 7th edition has so many rules, different heading levels, references, grammar. I had my content done but couldn't get the formatting right. Formatly handled all of it in one go. The headings, the references, everything.",
     rating: 5,
     avatar: "L",
