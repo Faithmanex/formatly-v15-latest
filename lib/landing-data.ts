@@ -65,26 +65,34 @@ export const stats = [
 
 export const testimonials = [
   {
-    name: "Amara Osei",
-    role: "PhD Candidate, University of Ghana",
-    content: "I used to spend entire weekends fixing my references. Formatly got my dissertation formatted in under two minutes — APA 7th edition, perfectly. I almost didn't believe it.",
+    name: "Lakeisha",
+    role: "Doctoral Candidate",
+    content: "APA 7th edition has so many rules, different heading levels, references, grammar. I had my content done but couldn't get the formatting right. Formatly handled all of it in one go. The headings, the references, everything.",
     rating: 5,
-    avatar: "AO",
+    avatar: "L",
   },
-  {
-    name: "Marcus DeSouza",
-    role: "Graduate Student, University of Toronto",
-    content: "My advisor kept sending my chapters back because of formatting issues. Since I started using Formatly, that hasn't happened once. It just works.",
-    rating: 5,
-    avatar: "MD",
-  },
-  {
-    name: "Dr. Priya Nair",
-    role: "Assistant Professor, NYU",
-    content: "I recommend Formatly to all my students now. It handles Chicago style better than any other tool I've tried, and I've tried a lot of them.",
-    rating: 5,
-    avatar: "PN",
-  },
+  // TODO: Add more real testimonials from testers
+  // {
+  //   name: "Amara Osei",
+  //   role: "PhD Candidate, University of Ghana",
+  //   content: "I used to spend entire weekends fixing my references. Formatly got my dissertation formatted in under two minutes — APA 7th edition, perfectly. I almost didn't believe it.",
+  //   rating: 5,
+  //   avatar: "AO",
+  // },
+  // {
+  //   name: "Marcus DeSouza",
+  //   role: "Graduate Student, University of Toronto",
+  //   content: "My advisor kept sending my chapters back because of formatting issues. Since I started using Formatly, that hasn't happened once. It just works.",
+  //   rating: 5,
+  //   avatar: "MD",
+  // },
+  // {
+  //   name: "Dr. Priya Nair",
+  //   role: "Assistant Professor, NYU",
+  //   content: "I recommend Formatly to all my students now. It handles Chicago style better than any other tool I've tried, and I've tried a lot of them.",
+  //   rating: 5,
+  //   avatar: "PN",
+  // },
 ]
 
 export const pricingPlans = [
