@@ -460,7 +460,7 @@ export function RealtimeProvider({
 
   const markNotificationAsRead = useCallback(async (id: string) => {
     try {
-      const { error } = await supabase.from("notifications").update({ is_read: true } as any).eq("id", id)
+      const { error } = await (supabase!.from("notifications") as any).update({ is_read: true }).eq("id", id)
 
       if (error) throw error
       // Real-time subscription will handle the state update
@@ -473,9 +473,9 @@ export function RealtimeProvider({
     if (!user?.id) return
 
     try {
-      const { error } = await supabase!
-        .from("notifications")
-        .update({ is_read: true } as any)
+      const { error } = await (supabase!
+        .from("notifications") as any)
+        .update({ is_read: true })
         .eq("user_id", user.id)
         .eq("is_read", false)
 
