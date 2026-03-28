@@ -1,6 +1,6 @@
 import { getSupabaseBrowserClient } from "./supabase"
 
-const getSupabase = () => getSupabaseBrowserClient()!
+const getSupabase = (): any => getSupabaseBrowserClient()!
 
 export interface SubscriptionPlan {
   id: string
@@ -149,7 +149,7 @@ export async function getSubscriptionPlans(forceRefresh = false): Promise<Subscr
 
     cachedPlans = data || []
     plansLastFetched = now
-    return cachedPlans
+    return cachedPlans || []
   } catch (error) {
     console.error("Error fetching subscription plans:", error)
     return cachedPlans || []

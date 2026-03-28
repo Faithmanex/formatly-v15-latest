@@ -51,7 +51,7 @@ export function useRealtimeData<T>(options: RealtimeDataOptions<T>) {
   const mountedRef = useRef(true)
 
   useEffect(() => {
-    const cachedData = getCache<T>(cacheKey, { ttl: cacheTTL })
+    const cachedData = getCache(cacheKey, { ttl: cacheTTL }) as T | null
     if (cachedData) {
       setState((prev) => ({
         ...prev,
