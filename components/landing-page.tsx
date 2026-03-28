@@ -31,7 +31,6 @@ import {
   BookMarked,
   ChevronDown,
   Menu,
-  Eye,
 } from "lucide-react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
@@ -40,7 +39,6 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { ImageModal } from "@/components/image-modal"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { features, stats, testimonials, pricingPlans, useCases, faqs } from "@/lib/landing-data"
-import { DocumentViewer } from "@/components/document-viewer"
 
 const Features = dynamic(() => import("@/components/features").then((mod) => mod.Features), {
   loading: () => <div className="h-96 animate-pulse bg-muted/20 rounded-xl" />,
@@ -725,7 +723,6 @@ const TypewriterHeadline = () => {
 export function LandingPage() {
   const { user, isLoading, isInitialized } = useAuth()
   const { usage } = useSubscription()
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -825,22 +822,28 @@ export function LandingPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
-                  className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 sm:mb-20 px-4"
+                  className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 sm:mb-20 px-4"
                 >
-                  <Button size="lg" className="w-full sm:w-auto px-8 py-6 text-lg rounded-full group" asChild>
+                  <Button
+                    size="lg"
+                    className="text-base sm:text-lg px-6 py-5 sm:px-8 sm:py-6 bg-primary hover:bg-primary/90 rounded-full"
+                    asChild
+                  >
                     <Link href="/dashboard">
                       Go to Dashboard
-                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                     </Link>
                   </Button>
                   <Button
-                    variant="outline"
                     size="lg"
-                    onClick={() => setIsPreviewOpen(true)}
-                    className="w-full sm:w-auto px-8 py-6 text-lg rounded-full border-primary/20 hover:bg-primary/5"
+                    variant="outline"
+                    className="text-base sm:text-lg px-6 py-5 sm:px-8 sm:py-6 bg-transparent rounded-full"
+                    asChild
                   >
-                    <Eye className="mr-2 w-5 h-5" />
-                    See Interactive Preview
+                    <Link href="/dashboard/documents">
+                      My Documents
+                      <FileText className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+                    </Link>
                   </Button>
                 </motion.div>
               </>
@@ -885,22 +888,17 @@ export function LandingPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
-                  className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 sm:mb-20 px-4"
+                  className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 sm:mb-20 px-4"
                 >
-                  <Button size="lg" className="w-full sm:w-auto px-8 py-6 text-lg rounded-full group" asChild>
+                  <Button
+                    size="lg"
+                    className="text-base sm:text-lg px-6 py-5 sm:px-8 sm:py-6 bg-primary hover:bg-primary/90 shadow-xl rounded-full"
+                    asChild
+                  >
                     <Link href="/auth/register">
                       Get Started
-                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                     </Link>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    onClick={() => setIsPreviewOpen(true)}
-                    className="w-full sm:w-auto px-8 py-6 text-lg rounded-full border-primary/20 hover:bg-primary/5"
-                  >
-                    <Eye className="mr-2 w-5 h-5" />
-                    See Interactive Preview
                   </Button>
                 </motion.div>
               </>
@@ -1087,15 +1085,6 @@ export function LandingPage() {
           </div>
         </div>
       </footer>
-
-      {isPreviewOpen && (
-        <DocumentViewer
-          documentId={null}
-          isDemo={true}
-          filename="Formatly_Academic_Demo.docx"
-          onClose={() => setIsPreviewOpen(false)}
-        />
-      )}
     </div>
   )
 }

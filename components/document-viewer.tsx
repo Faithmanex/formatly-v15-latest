@@ -17,11 +17,10 @@ import { useAuth } from "@/components/auth-provider"
 interface DocumentViewerProps {
   documentId: string | null
   filename: string
-  isDemo?: boolean
   onClose: () => void
 }
 
-export function DocumentViewer({ documentId, filename, isDemo = false, onClose }: DocumentViewerProps) {
+export function DocumentViewer({ documentId, filename, onClose }: DocumentViewerProps) {
   const [content, setContent] = useState<string>("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -31,9 +30,7 @@ export function DocumentViewer({ documentId, filename, isDemo = false, onClose }
   const viewerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (isDemo) {
-      loadDemoDocument()
-    } else if (documentId) {
+    if (documentId) {
       loadDocument()
       // Auto-adjust zoom for small screens
       if (window.innerWidth < 1000) {
@@ -93,58 +90,6 @@ export function DocumentViewer({ documentId, filename, isDemo = false, onClose }
     } finally {
       setLoading(false)
     }
-  }
-
-  const loadDemoDocument = async () => {
-    setLoading(true)
-    // Simulate slight loading delay for realism
-    await new Promise(resolve => setTimeout(resolve, 800))
-    setContent(`
-      <h1>The Impact of Artificial Intelligence on Modern Academic Research</h1>
-      <p style="text-align: center; margin-bottom: 24pt;">Research Fellowship Program, 2024</p>
-      
-      <h2>1. Introduction</h2>
-      <p>This scholarly document serves as a demonstration of the professional formatting capabilities provided by <strong>Formatly</strong>. When authors submit their manuscripts, the system automatically identifies structural elements such as headers, blockquotes, and citations, ensuring strict adherence to style guides like APA, MLA, and Chicago.</p>
-      
-      <h2>2. Methodology</h2>
-      <p>The core algorithm utilizes advanced natural language processing to parse document hierarchies. Unlike traditional templates, this approach adapts to the unique voice of the author while maintaining the rigid standards required for academic publication.</p>
-      
-      <blockquote>"The transition from manual formatting to automated precision represents a significant leap forward in academic productivity, allowing researchers to focus on content rather than indentation rules." — Journal of Digital Scholarship, Vol 42.</blockquote>
-      
-      <h2>3. Quantitative Analysis</h2>
-      <p>Initial testing across 5,000 research papers indicates a 98.4% accuracy rate in citation placement. The remaining margin is typically attributed to unconventional source material which can be manually reviewed via the interactive editor.</p>
-      
-      <table>
-        <thead>
-          <tr>
-            <th>Style Guide</th>
-            <th>Accuracy</th>
-            <th>Processing Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>APA 7th Ed.</td>
-            <td>99.2%</td>
-            <td>2.4s</td>
-          </tr>
-          <tr>
-            <td>Chicago 17th</td>
-            <td>98.1%</td>
-            <td>3.1s</td>
-          </tr>
-          <tr>
-            <td>MLA 9th Ed.</td>
-            <td>98.7%</td>
-            <td>2.8s</td>
-          </tr>
-        </tbody>
-      </table>
-      
-      <h2>4. Conclusion</h2>
-      <p>In conclusion, automated academic formatting is no longer a luxury but a necessity in the fast-paced world of digital publishing. Formatly continues to lead the way in providing robust, reliable, and responsive tools for the next generation of scholars.</p>
-    `)
-    setLoading(false)
   }
 
   const handlePrint = () => {
