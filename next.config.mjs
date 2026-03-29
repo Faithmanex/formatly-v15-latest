@@ -74,7 +74,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: blob: https://res.cloudinary.com https://ladyknightediting.com https://www.paypal.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "connect-src 'self' https://*.supabase.co https://www.paypal.com https://api.formatlyapp.com",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.paypal.com https://api.formatlyapp.com ws://localhost:* ws://127.0.0.1:*",
               "frame-src https://www.paypal.com https://www.sandbox.paypal.com",
               "object-src 'none'",
               "base-uri 'self'",
