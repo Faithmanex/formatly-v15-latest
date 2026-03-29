@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Zap, FileText, FileCheck, BookOpen, Award, RefreshCw } from 'lucide-react'
+import { Zap, FileText, FileCheck, Sparkles, Award, RefreshCw } from 'lucide-react'
 import { useState } from "react"
 
 const TiltCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
@@ -20,14 +20,14 @@ export const Features = () => {
     {
       icon: Zap,
       title: "Lightning Fast",
-      description: "Upload and format complete documents in about 30 seconds — no manual tweaking needed.",
+      description: "Upload and format complete documents in about 30 seconds.",
       color: "text-yellow-600 dark:text-yellow-400",
       bgColor: "bg-yellow-50 dark:bg-yellow-950/50",
     },
     {
       icon: FileText,
       title: "All Citation Styles",
-      description: "APA 7th, MLA 9th, Chicago, Harvard & Turabian — with automatic in-text citations, reference lists, hanging indents, and DOI formatting.",
+      description: "APA 7th, MLA 9th, Chicago, Harvard & Turabian. Reference lists, hanging indents, and DOI formatting handled for you.",
       color: "text-blue-600 dark:text-blue-400",
       bgColor: "bg-blue-50 dark:bg-blue-950/50",
     },
@@ -39,9 +39,9 @@ export const Features = () => {
       bgColor: "bg-green-50 dark:bg-green-950/50",
     },
     {
-      icon: BookOpen,
+      icon: Sparkles,
       title: "Smart AI Assistant",
-      description: "Real-time guidance that catches formatting and structure issues, suggests improvements, and helps organise your heading hierarchy and flow.",
+      description: "Real-time guidance to help refine your document's structure, flow, and overall presentation.",
       color: "text-purple-600 dark:text-purple-400",
       bgColor: "bg-purple-50 dark:bg-purple-950/50",
     },
@@ -55,7 +55,7 @@ export const Features = () => {
     {
       icon: RefreshCw,
       title: "Instant Style Conversion",
-      description: "Convert between APA, MLA, Chicago, Harvard & Turabian in one click. Headings, citations, and references adjust automatically — no need to re-upload.",
+      description: "Convert between APA, MLA, Chicago, Harvard & Turabian in one click. Headings, citations, and references adjust automatically, no need to re-upload.",
       color: "text-indigo-600 dark:text-indigo-400",
       bgColor: "bg-indigo-50 dark:bg-indigo-950/50",
     },
