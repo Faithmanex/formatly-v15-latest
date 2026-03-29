@@ -191,6 +191,11 @@ export const faqs = [
       "Formatly supports APA 7th edition, MLA 9th edition, Chicago Manual of Style, Harvard, and Turabian. We continuously evaluate new styles based on user requests.",
   },
   {
+    question: "Can I switch my document to a different citation style?",
+    answer:
+      "Yes. You can convert your document between any supported style in one click. All headings, citations, and references update automatically — no need to re-upload your document.",
+  },
+  {
     question: "Is my data secure?",
     answer:
       "Yes, absolutely. We use enterprise-grade end-to-end encryption for all documents. Your files are never stored on our servers longer than necessary, and we comply with GDPR, CCPA, and other data protection regulations.",
