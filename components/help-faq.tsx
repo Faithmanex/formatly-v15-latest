@@ -37,6 +37,10 @@ const faqData = [
         answer: "We support APA, MLA, Harvard, Chicago, and Turabian citation styles. Each style includes proper in-text citations, reference formatting, and document structure according to official guidelines."
       },
       {
+        question: "Can I switch my document to a different citation style?",
+        answer: "Yes! You can convert your document between any supported style — APA, MLA, Chicago, Harvard, and Turabian — in one click. All headings, citations, and references update automatically. You don't need to re-upload your document to reformat it for a different journal."
+      },
+      {
         question: "Can I create custom formatting styles?",
         answer: "Yes! Registered users can create custom formatting styles with their own font, spacing, margin, and citation preferences. You can save multiple custom styles and set one as your default."
       },
@@ -52,7 +56,7 @@ const faqData = [
     questions: [
       {
         question: "How long does processing take?",
-        answer: "Most documents are processed within 30-60 seconds, depending on length and complexity. You'll see real-time progress updates during processing."
+        answer: "Most documents are processed within 30 seconds, depending on length and complexity. You'll see real-time progress updates during processing."
       },
       {
         question: "What happens if processing fails?",

@@ -16,7 +16,7 @@ export const features = [
   {
     icon: Zap,
     title: "Lightning Fast",
-    description: "Format in under 60 seconds.",
+    description: "Format in about 30 seconds.",
     color: "text-yellow-600 dark:text-yellow-400",
     bgColor: "bg-yellow-50 dark:bg-yellow-950/50",
   },
@@ -191,6 +191,11 @@ export const faqs = [
       "Formatly supports APA 7th edition, MLA 9th edition, Chicago Manual of Style, Harvard, and Turabian. We continuously evaluate new styles based on user requests.",
   },
   {
+    question: "Can I switch my document to a different citation style?",
+    answer:
+      "Yes. You can convert your document between any supported style in one click. All headings, citations, and references update automatically — no need to re-upload your document.",
+  },
+  {
     question: "Is my data secure?",
     answer:
       "Yes, absolutely. We use enterprise-grade end-to-end encryption for all documents. Your files are never stored on our servers longer than necessary, and we comply with GDPR, CCPA, and other data protection regulations.",
@@ -203,7 +208,7 @@ export const faqs = [
   {
     question: "How long does formatting take?",
     answer:
-      "Most documents are formatted in under 60 seconds. The time depends on document size and length, but our AI-powered engine is optimized for speed without sacrificing accuracy.",
+      "Most documents are formatted in about 30 seconds. The time depends on document size and length, but our engine is optimised for speed without sacrificing accuracy.",
   },
   {
     question: "Can I collaborate with my team?",

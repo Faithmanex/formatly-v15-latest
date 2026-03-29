@@ -2,10 +2,9 @@
 
 import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Zap, FileText, Shield, BookOpen, Users, Award } from 'lucide-react'
+import { Zap, FileText, FileCheck, BookOpen, Award, RefreshCw } from 'lucide-react'
 import { useState } from "react"
 
-// 3D Tilt Card Component
 const TiltCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
   return (
     <div className={className}>
@@ -21,44 +20,44 @@ export const Features = () => {
     {
       icon: Zap,
       title: "Lightning Fast",
-      description: "Format in under 60 seconds.",
+      description: "Upload and format complete documents in about 30 seconds — no manual tweaking needed.",
       color: "text-yellow-600 dark:text-yellow-400",
       bgColor: "bg-yellow-50 dark:bg-yellow-950/50",
     },
     {
       icon: FileText,
       title: "All Citation Styles",
-      description: "APA, MLA, Chicago, Harvard, and Turabian — proper references and document structure",
+      description: "APA 7th, MLA 9th, Chicago, Harvard & Turabian — with automatic in-text citations, reference lists, hanging indents, and DOI formatting.",
       color: "text-blue-600 dark:text-blue-400",
       bgColor: "bg-blue-50 dark:bg-blue-950/50",
     },
     {
-      icon: Shield,
-      title: "Enterprise-Grade Security",
-      description: "Your documents are secure with end-to-end encryption",
+      icon: FileCheck,
+      title: "Tracked Changes",
+      description: "Full transparency on every adjustment. Compare original vs. formatted side by side, and download the tracked changes document alongside your final version.",
       color: "text-green-600 dark:text-green-400",
       bgColor: "bg-green-50 dark:bg-green-950/50",
     },
     {
       icon: BookOpen,
       title: "Smart AI Assistant",
-      description: "Get intelligent suggestions and guidance on all formatting styles",
+      description: "Real-time guidance that catches formatting and structure issues, suggests improvements, and helps organise your heading hierarchy and flow.",
       color: "text-purple-600 dark:text-purple-400",
       bgColor: "bg-purple-50 dark:bg-purple-950/50",
     },
     {
-      icon: Users,
-      title: "Collaborative Workspace",
-      description: "Work with co-authors and editors in real time",
-      color: "text-indigo-600 dark:text-indigo-400",
-      bgColor: "bg-indigo-50 dark:bg-indigo-950/50",
-    },
-    {
       icon: Award,
       title: "Publisher-Ready Output",
-      description: "Meets strict journal and institutions requirements.",
+      description: "Meets strict journal and institutional requirements. Create custom styles for specific journals or departments and submit with confidence.",
       color: "text-red-600 dark:text-red-400",
       bgColor: "bg-red-50 dark:bg-red-950/50",
+    },
+    {
+      icon: RefreshCw,
+      title: "Instant Style Conversion",
+      description: "Convert between APA, MLA, Chicago, Harvard & Turabian in one click. Headings, citations, and references adjust automatically — no need to re-upload.",
+      color: "text-indigo-600 dark:text-indigo-400",
+      bgColor: "bg-indigo-50 dark:bg-indigo-950/50",
     },
   ]
 
@@ -94,7 +93,7 @@ export const Features = () => {
                 <CardTitle className="text-lg sm:text-xl">{feature.title}</CardTitle>
               </CardHeader>
               <CardContent className="p-4 sm:p-6 pt-0">
-                <CardDescription className="text-sm sm:text-base leading-relaxed">
+                <CardDescription className="text-base sm:text-lg leading-relaxed">
                   {feature.description}
                 </CardDescription>
               </CardContent>
