@@ -130,14 +130,14 @@ const Navigation = () => {
             {!isLoading && user ? (
               <div className="flex items-center gap-2 sm:gap-4">
                 <span className="text-xs sm:text-sm text-muted-foreground hidden lg:block">Welcome back!</span>
-                <Button variant="ghost" size="sm" className="hidden sm:flex rounded-full" title="Go to Dashboard" asChild>
+                <Button variant="ghost" size="sm" className="hidden sm:flex rounded-full" asChild>
                   <Link href="/dashboard">
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     Dashboard
                   </Link>
                 </Button>
                 {profile?.role === "admin" && (
-                  <Button variant="outline" size="sm" className="hidden sm:flex rounded-full border-primary/50 text-primary hover:bg-primary/10" title="Go to Admin Panel" asChild>
+                  <Button variant="outline" size="sm" className="hidden sm:flex rounded-full border-primary/50 text-primary hover:bg-primary/10" asChild>
                     <Link href="/dashboard/admin">
                       <Shield className="mr-2 h-4 w-4" />
                       Admin
@@ -147,10 +147,10 @@ const Navigation = () => {
               </div>
             ) : (
               <>
-                <Button variant="ghost" size="sm" className="text-xs sm:text-sm rounded-full" title="Sign In" asChild>
+                <Button variant="ghost" size="sm" className="text-xs sm:text-sm rounded-full" asChild>
                   <Link href="/auth/login">Sign In</Link>
                 </Button>
-                <Button size="sm" className="bg-primary hover:bg-primary/90 text-xs sm:text-sm rounded-full" title="Get Started" asChild>
+                <Button size="sm" className="bg-primary hover:bg-primary/90 text-xs sm:text-sm rounded-full" asChild>
                   <Link href="/auth/register">Get Started</Link>
                 </Button>
               </>
@@ -161,7 +161,7 @@ const Navigation = () => {
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-muted/80 transition-colors" title="Open Menu">
+                <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-muted/80 transition-colors">
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Toggle menu</span>
                 </Button>
@@ -220,18 +220,17 @@ const Navigation = () => {
                             <p className="text-xs text-muted-foreground">Signed in as</p>
                             <p className="text-sm font-medium text-foreground truncate">{user.email}</p>
                           </div>
-                            <Button
-                              asChild
-                              variant="ghost"
-                              className="w-full h-11 mb-2 justify-start px-4"
-                              size="lg"
-                              title="Go to Dashboard"
-                            >
-                              <Link href="/dashboard" className="flex items-center gap-2">
-                                <LayoutDashboard className="h-5 w-5" />
-                                Dashboard
-                              </Link>
-                            </Button>
+                          <Button
+                            asChild
+                            variant="ghost"
+                            className="w-full h-11 mb-2 justify-start px-4"
+                            size="lg"
+                          >
+                            <Link href="/dashboard" className="flex items-center gap-2">
+                              <LayoutDashboard className="h-5 w-5" />
+                              Dashboard
+                            </Link>
+                          </Button>
                           {profile?.role === "admin" && (
                             <Button
                               asChild
@@ -285,7 +284,7 @@ const Navigation = () => {
 }
 
 
-// Flip Card Carousel Component - Enhanced with Floating Navigation and Premium Dark Aesthetic
+// Flip Card Carousel Component - Enhanced with Momentum Scrolling, Keyboard Nav, Auto-Pause
 const FlipCardCarousel = () => {
   const [currentCard, setCurrentCard] = useState(1)
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
@@ -336,7 +335,7 @@ const FlipCardCarousel = () => {
     const startAutoPlay = () => {
       autoPlayIntervalRef.current = setInterval(() => {
         setCurrentCard((prev) => (prev + 1) % cards.length)
-      }, 5000)
+      }, 3000)
     }
 
     const stopAutoPlay = () => {
@@ -357,68 +356,141 @@ const FlipCardCarousel = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") handlePrevious()
-      else if (e.key === "ArrowRight") handleNext()
+      if (e.key === "ArrowLeft") {
+        handlePrevious()
+      } else if (e.key === "ArrowRight") {
+        handleNext()
+      }
     }
+
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [])
 
-  const handlePrevious = () => setCurrentCard((prev) => (prev - 1 + cards.length) % cards.length)
-  const handleNext = () => setCurrentCard((prev) => (prev + 1) % cards.length)
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    setIsDragging(true)
+    dragStartRef.current = e.clientX
+    lastTimeRef.current = Date.now()
+    dragVelocityRef.current = 0
+    dragOffset.set(0)
+  }
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDragging) return
+
+    const offset = e.clientX - dragStartRef.current
+    const now = Date.now()
+    const deltaTime = Math.max(now - lastTimeRef.current, 16) // At least 16ms
+    dragVelocityRef.current = offset / deltaTime
+
+    dragOffset.set(offset)
+    lastTimeRef.current = now
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+    const offset = dragOffset.get()
+
+    const thresholdDistance = 50
+    const minVelocity = 0.5
+
+    if (Math.abs(dragVelocityRef.current) > minVelocity || Math.abs(offset) > thresholdDistance) {
+      if (offset > 0 || dragVelocityRef.current > minVelocity) {
+        handlePrevious()
+      } else {
+        handleNext()
+      }
+    }
+
+    dragOffset.set(0)
+  }
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    setIsDragging(true)
+    dragStartRef.current = e.touches[0].clientX
+    lastTimeRef.current = Date.now()
+    dragVelocityRef.current = 0
+    dragOffset.set(0)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!isDragging) return
+
+    const offset = e.touches[0].clientX - dragStartRef.current
+    const now = Date.now()
+    const deltaTime = Math.max(now - lastTimeRef.current, 16)
+    dragVelocityRef.current = offset / deltaTime
+
+    dragOffset.set(offset)
+    lastTimeRef.current = now
+  }
+
+  const handleTouchEnd = () => {
+    setIsDragging(false)
+    const offset = dragOffset.get()
+
+    const thresholdDistance = 50
+    const minVelocity = 0.5
+
+    if (Math.abs(dragVelocityRef.current) > minVelocity || Math.abs(offset) > thresholdDistance) {
+      if (offset > 0 || dragVelocityRef.current > minVelocity) {
+        handlePrevious()
+      } else {
+        handleNext()
+      }
+    }
+
+    dragOffset.set(0)
+  }
+
+  const handlePrevious = () => {
+    setCurrentCard((prev) => (prev - 1 + cards.length) % cards.length)
+  }
+
+  const handleNext = () => {
+    setCurrentCard((prev) => (prev + 1) % cards.length)
+  }
+
+  const handleModalPrevious = () => {
+    if (selectedImageIndex !== null) {
+      setSelectedImageIndex((prev) => (prev! - 1 + cards.length) % cards.length)
+    }
+  }
+
+  const handleModalNext = () => {
+    if (selectedImageIndex !== null) {
+      setSelectedImageIndex((prev) => (prev! + 1) % cards.length)
+    }
+  }
 
   const getCardPosition = (index: number) => {
     const diff = index - currentCard
-    const xOffset = typeof window !== "undefined" && window.innerWidth < 768 ? 220 : 420
+    const xOffset = typeof window !== "undefined" && window.innerWidth < 768 ? 200 : 350
 
-    if (diff === 0) return { x: 0, scale: 1, opacity: 1, zIndex: 30, filter: "blur(0px)" }
-    if (diff === -1 || diff === cards.length - 1) return { x: -xOffset, scale: 0.8, opacity: 0.4, zIndex: 20, filter: "blur(2px)" }
-    if (diff === 1 || diff === -(cards.length - 1)) return { x: xOffset, scale: 0.8, opacity: 0.4, zIndex: 20, filter: "blur(2px)" }
-    return { x: 0, scale: 0.6, opacity: 0, zIndex: 10, filter: "blur(4px)" }
+    if (diff === 0) return { x: 0, scale: 1, opacity: 1, zIndex: 30 }
+    if (diff === -1 || diff === cards.length - 1) return { x: -xOffset, scale: 0.7, opacity: 0.5, zIndex: 20 }
+    if (diff === 1 || diff === -(cards.length - 1)) return { x: xOffset, scale: 0.7, opacity: 0.5, zIndex: 20 }
+    return { x: 0, scale: 0.7, opacity: 0, zIndex: 10 }
   }
 
   return (
-    <div className="relative w-full max-w-[1600px] mx-auto group">
-      {/* Floating Navigation Arrows */}
-      <div className="absolute top-1/2 left-4 sm:left-8 -translate-y-1/2 z-40 hidden sm:block">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handlePrevious}
-          title="Previous slide"
-          className="h-12 w-12 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 text-white transition-all hover:scale-110 active:scale-95"
-        >
-          <motion.span whileHover={{ x: -2 }}>
-            <span className="text-2xl font-light">‹</span>
-          </motion.span>
-        </Button>
-      </div>
-
-      <div className="absolute top-1/2 right-4 sm:right-8 -translate-y-1/2 z-40 hidden sm:block">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleNext}
-          title="Next slide"
-          className="h-12 w-12 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 text-white transition-all hover:scale-110 active:scale-95"
-        >
-          <motion.span whileHover={{ x: 2 }}>
-            <span className="text-2xl font-light">›</span>
-          </motion.span>
-        </Button>
-      </div>
-
-      {/* Main Carousel Area */}
+    <>
       <div
         ref={carouselRef}
-        className="relative w-full h-[450px] sm:h-[550px] md:h-[650px] lg:h-[750px] flex items-center justify-center overflow-visible cursor-grab active:cursor-grabbing select-none"
+        className="relative w-full max-w-7xl mx-auto h-[400px] sm:h-[480px] md:h-[550px] flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 cursor-grab active:cursor-grabbing select-none"
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
         onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
+        onMouseLeave={() => {
+          handleMouseUp()
+          setIsHovering(false)
+        }}
       >
-        <div className="relative w-full h-full flex items-center justify-center">
+        <div className="relative w-full h-80 sm:h-96 md:h-[420px] flex items-center justify-center">
           {cards.map((card, index) => {
             const position = getCardPosition(index)
-            const isActive = currentCard === index
+            const currentDragOffset = isDragging && currentCard === index ? dragOffset : 0
 
             return (
               <motion.div
@@ -429,72 +501,97 @@ const FlipCardCarousel = () => {
                   scale: position.scale,
                   opacity: position.opacity,
                   zIndex: position.zIndex,
-                  filter: position.filter,
                 }}
                 transition={{
-                  duration: 0.7,
-                  ease: [0.32, 0.72, 0, 1],
+                  duration: isDragging ? 0 : 0.5,
+                  ease: "easeInOut",
                 }}
                 className="absolute"
-                onClick={() => {
-                  if (!isActive) setCurrentCard(index)
-                  else setSelectedImageIndex(index)
-                }}
               >
-                <div className={`relative transition-all duration-700 ${isActive ? "drop-shadow-[0_0_50px_rgba(139,92,246,0.3)]" : ""}`}>
-                  <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm shadow-2xl">
-                    <div className="relative w-[300px] h-[200px] sm:w-[450px] sm:h-[300px] md:w-[650px] md:h-[420px] lg:w-[850px] lg:h-[550px]">
-                      <Image
-                        src={card.imageUrl || "/placeholder.svg"}
-                        alt={card.title}
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        draggable={false}
-                        priority={isActive}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                      
-                      {/* Number Indicator */}
-                      <div className="absolute top-4 left-6 text-6xl md:text-8xl lg:text-9xl font-bold text-white/5 select-none font-sans">
-                        0{card.number}
-                      </div>
-
-                      {/* Content Overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 text-white">
-                        <motion.div
-                          initial={false}
-                          animate={{ opacity: isActive ? 1 : 0, y: isActive ? 0 : 20 }}
-                          transition={{ delay: 0.2 }}
-                        >
-                          <h3 className="text-xl md:text-3xl lg:text-4xl font-bold mb-2 tracking-tight">
+                <motion.div style={{ x: currentDragOffset }}>
+                  <TiltCard className={currentCard === index ? "" : ""}>
+                    <Card
+                      className={`w-[280px] h-64 sm:w-[380px] sm:h-72 md:w-[500px] md:h-[380px] lg:w-[550px] lg:h-[400px] bg-muted/40 backdrop-blur border-2 shadow-2xl overflow-hidden cursor-pointer transition-transform hover:scale-105 ${currentCard !== index ? "opacity-70" : ""}`}
+                      onClick={() => {
+                        if (currentCard === index) {
+                          setSelectedImageIndex(index)
+                        } else {
+                          setCurrentCard(index)
+                        }
+                      }}
+                    >
+                      <CardContent className="h-full p-0 relative">
+                        <div className="absolute top-2 left-3 sm:top-3 sm:left-4 md:top-4 md:left-6 text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white/20 z-10">
+                          {card.number}
+                        </div>
+                        <Image
+                          src={card.imageUrl || "/placeholder.svg"}
+                          alt={card.title}
+                          fill
+                          className="object-cover"
+                          draggable={false}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                        <div className="absolute inset-0 bg-black/30 hover:bg-black/10 transition-colors shadow-none opacity-50" />
+                        <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 md:p-6 text-white z-20">
+                          <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-0.5 sm:mb-1">
                             {card.title}
                           </h3>
-                          <p className="text-sm md:text-lg text-white/60 max-w-xl">
-                            {card.subtitle}
-                          </p>
-                        </motion.div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                          <p className="text-xs sm:text-sm text-white/80">{card.subtitle}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TiltCard>
+                </motion.div>
               </motion.div>
             )
           })}
         </div>
-      </div>
 
-      {/* Bottom Indicators */}
-      <div className="absolute bottom-4 sm:bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-3 z-40 bg-black/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/5">
-        {cards.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentCard(index)}
-            title={`Go to slide ${index + 1}`}
-            className={`h-1.5 rounded-full transition-all duration-500 ${
-              currentCard === index ? "w-8 bg-primary shadow-[0_0_10px_rgba(139,92,246,0.5)]" : "w-2 bg-white/20 hover:bg-white/40"
-            }`}
-          />
-        ))}
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex items-center gap-3 sm:gap-4 md:gap-6">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handlePrevious}
+            className="bg-background/80 backdrop-blur text-xs sm:text-sm px-2 sm:px-3 hover:bg-primary hover:text-primary-foreground transition-colors rounded-full"
+            title="Previous slide (or press ←)"
+          >
+            <motion.span whileHover={{ x: -2 }} className="flex items-center gap-1 sm:gap-2">
+              <span className="text-base sm:text-lg">‹</span>
+              <span className="hidden sm:inline">Previous</span>
+            </motion.span>
+          </Button>
+
+          <div className="flex gap-2 sm:gap-3">
+            {cards.map((_, index) => (
+              <motion.button
+                key={index}
+                onClick={() => setCurrentCard(index)}
+                whileHover={{ scale: 1.3 }}
+                whileTap={{ scale: 0.95 }}
+                className={`rounded-full transition-all ${
+                  currentCard === index
+                    ? "bg-foreground w-3 h-3 sm:w-3.5 sm:h-3.5"
+                    : "bg-muted-foreground/30 w-2.5 h-2.5 sm:w-3 sm:h-3 hover:bg-muted-foreground/60"
+                }`}
+                title={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleNext}
+            className="bg-background/80 backdrop-blur text-xs sm:text-sm px-2 sm:px-3 hover:bg-primary hover:text-primary-foreground transition-colors rounded-full"
+            title="Next slide (or press →)"
+          >
+            <motion.span whileHover={{ x: 2 }} className="flex items-center gap-1 sm:gap-2">
+              <span className="hidden sm:inline">Next</span>
+              <span className="text-base sm:text-lg">›</span>
+            </motion.span>
+          </Button>
+        </div>
       </div>
 
       {selectedImageIndex !== null && (
@@ -503,13 +600,13 @@ const FlipCardCarousel = () => {
           imageUrl={cards[selectedImageIndex].imageUrl}
           title={cards[selectedImageIndex].title}
           onClose={() => setSelectedImageIndex(null)}
-          onPrevious={() => setSelectedImageIndex((prev) => (prev! - 1 + cards.length) % cards.length)}
-          onNext={() => setSelectedImageIndex((prev) => (prev! + 1) % cards.length)}
-          canNavigatePrevious={true}
-          canNavigateNext={true}
+          onPrevious={handleModalPrevious}
+          onNext={handleModalNext}
+          canNavigatePrevious={selectedImageIndex > 0 || selectedImageIndex === cards.length - 1}
+          canNavigateNext={selectedImageIndex < cards.length - 1 || selectedImageIndex === 0}
         />
       )}
-    </div>
+    </>
   )
 }
 
@@ -628,30 +725,54 @@ export function LandingPage() {
   const { usage } = useSubscription()
 
   return (
-    <div className="min-h-screen bg-[#050505] relative overflow-hidden">
-      {/* Premium Background Elements */}
-      <div className="fixed inset-0 -z-10 bg-[#050505]">
-        {/* Deep Purple Bottom Glow */}
-        <div className="absolute bottom-0 left-0 right-0 h-[60vh] bg-gradient-to-t from-primary/25 via-primary/5 to-transparent pointer-events-none" />
-        
-        {/* Subtle radial glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(91,33,182,0.08)_0%,transparent_70%)] pointer-events-none" />
+    <div className="min-h-screen bg-background relative">
+      <div className="fixed inset-0 -z-10 bg-background">
+        {/* Dot pattern */}
+        <div className="absolute inset-0 bg-dot-pattern opacity-[0.15] dark:opacity-[0.08]" />
 
-        {/* Grid pattern with low opacity */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
-        
+        {/* Grid pattern */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] dark:opacity-[0.02]" />
+
+        {/* Subtle radial vignette */}
+        <div className="absolute inset-0 bg-radial-vignette" />
+
         {/* Animated accent areas */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[120px] animate-float-slow" />
-        <div className="absolute bottom-1/4 right-1/4 w-[32rem] h-[32rem] bg-secondary/5 rounded-full blur-[160px] animate-float-slower" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 dark:bg-primary/3 rounded-full blur-3xl animate-float-slow" />
+        <div className="absolute bottom-0 right-1/4 w-[32rem] h-[32rem] bg-secondary/5 dark:bg-secondary/3 rounded-full blur-3xl animate-float-slower" />
       </div>
 
       {/* Updated Navigation */}
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative pt-20 pb-32 sm:pt-24 sm:pb-40 md:pt-32 md:pb-48 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+      <section className="relative py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 -z-10">
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [0, 90, 0],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "linear",
+            }}
+            className="absolute top-20 left-10 w-48 h-48 sm:w-72 sm:h-72 bg-primary/5 rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              scale: [1.2, 1, 1.2],
+              rotate: [90, 0, 90],
+            }}
+            transition={{
+              duration: 15,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "linear",
+            }}
+            className="absolute bottom-20 right-10 w-64 h-64 sm:w-96 sm:h-96 bg-secondary/5 rounded-full blur-3xl"
+          />
+        </div>
 
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
@@ -787,10 +908,10 @@ export function LandingPage() {
           {/* Demo Preview */}
           {isInitialized && (
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="mb-24 sm:mb-32 md:mb-40"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="mb-12 sm:mb-20"
             >
               <FlipCardCarousel />
             </motion.div>
