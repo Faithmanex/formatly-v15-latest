@@ -20,73 +20,42 @@ export const Features = () => {
     {
       icon: Zap,
       title: "Lightning Fast",
-      description: "Format complete documents in about 30 seconds.",
-      details: [
-        "Upload and format in one step",
-        "Process multiple documents at once",
-        "No manual tweaking needed",
-      ],
+      description: "Upload and format complete documents in about 30 seconds — no manual tweaking needed.",
       color: "text-yellow-600 dark:text-yellow-400",
       bgColor: "bg-yellow-50 dark:bg-yellow-950/50",
     },
     {
       icon: FileText,
       title: "All Citation Styles",
-      description: "Every major academic style, done right.",
-      details: [
-        "APA 7th, MLA 9th, Chicago, Harvard & Turabian",
-        "Automatic in-text citations & reference lists",
-        "Hanging indents, italics, and DOI formatting",
-      ],
+      description: "APA 7th, MLA 9th, Chicago, Harvard & Turabian — with automatic in-text citations, reference lists, hanging indents, and DOI formatting.",
       color: "text-blue-600 dark:text-blue-400",
       bgColor: "bg-blue-50 dark:bg-blue-950/50",
     },
     {
       icon: FileCheck,
       title: "Tracked Changes",
-      description: "See every change, clearly marked.",
-      details: [
-        "Full transparency on every adjustment",
-        "Compare original vs. formatted side by side",
-        "Download tracked changes document alongside the final version",
-      ],
+      description: "Full transparency on every adjustment. Compare original vs. formatted side by side, and download the tracked changes document alongside your final version.",
       color: "text-green-600 dark:text-green-400",
       bgColor: "bg-green-50 dark:bg-green-950/50",
     },
     {
       icon: BookOpen,
       title: "Smart AI Assistant",
-      description: "Real-time guidance to refine your document.",
-      details: [
-        "Smart suggestions as you work",
-        "Catches formatting and structure issues",
-        "Helps organise heading hierarchy and flow",
-      ],
+      description: "Real-time guidance that catches formatting and structure issues, suggests improvements, and helps organise your heading hierarchy and flow.",
       color: "text-purple-600 dark:text-purple-400",
       bgColor: "bg-purple-50 dark:bg-purple-950/50",
     },
-
     {
       icon: Award,
       title: "Publisher-Ready Output",
-      description: "Submit with confidence.",
-      details: [
-        "Meets strict journal and institutional requirements",
-        "Shows every adjustment made to your document",
-        "Create custom styles for specific journals or departments",
-      ],
+      description: "Meets strict journal and institutional requirements. Create custom styles for specific journals or departments and submit with confidence.",
       color: "text-red-600 dark:text-red-400",
       bgColor: "bg-red-50 dark:bg-red-950/50",
     },
     {
       icon: RefreshCw,
       title: "Instant Style Conversion",
-      description: "Reformat your document to any citation style in one click.",
-      details: [
-        "Convert between APA, MLA, Chicago, Harvard & Turabian instantly",
-        "Headings, citations, and references adjust automatically",
-        "Reformat the same document for different journals without re-uploading",
-      ],
+      description: "Convert between APA, MLA, Chicago, Harvard & Turabian in one click. Headings, citations, and references adjust automatically — no need to re-upload.",
       color: "text-indigo-600 dark:text-indigo-400",
       bgColor: "bg-indigo-50 dark:bg-indigo-950/50",
     },
@@ -122,19 +91,11 @@ export const Features = () => {
                   <feature.icon className={`h-6 w-6 sm:h-7 sm:w-7 ${feature.color}`} />
                 </motion.div>
                 <CardTitle className="text-lg sm:text-xl">{feature.title}</CardTitle>
-                <CardDescription className="text-sm sm:text-base leading-relaxed mt-1">
-                  {feature.description}
-                </CardDescription>
               </CardHeader>
               <CardContent className="p-4 sm:p-6 pt-0">
-                <ul className="space-y-2">
-                  {feature.details.map((detail, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className={`mt-1.5 h-1.5 w-1.5 rounded-full shrink-0 ${feature.bgColor}`} />
-                      {detail}
-                    </li>
-                  ))}
-                </ul>
+                <CardDescription className="text-base sm:text-lg leading-relaxed">
+                  {feature.description}
+                </CardDescription>
               </CardContent>
             </Card>
           </TiltCard>
