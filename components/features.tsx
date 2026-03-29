@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Zap, FileText, Shield, BookOpen, Users, Award } from 'lucide-react'
+import { Zap, FileText, FileCheck, BookOpen, Users, Award } from 'lucide-react'
 import { useState } from "react"
 
 const TiltCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
@@ -42,13 +42,13 @@ export const Features = () => {
       bgColor: "bg-blue-50 dark:bg-blue-950/50",
     },
     {
-      icon: Shield,
-      title: "Enterprise-Grade Security",
-      description: "Your research stays yours.",
+      icon: FileCheck,
+      title: "Tracked Changes",
+      description: "See every change, clearly marked.",
       details: [
-        "All documents fully encrypted",
-        "Compliant with major data protection laws",
-        "Documents deleted after processing",
+        "Full transparency on every adjustment",
+        "Compare original vs. formatted side by side",
+        "Download tracked changes document alongside the final version",
       ],
       color: "text-green-600 dark:text-green-400",
       bgColor: "bg-green-50 dark:bg-green-950/50",
