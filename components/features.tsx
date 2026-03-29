@@ -75,22 +75,22 @@ export const Features = () => {
         >
           <TiltCard>
             <Card
-              className={`h-full transition-all duration-300 hover:shadow-2xl ${
+              className={`h-full transition-all duration-300 hover:shadow-2xl gap-2 ${
                 hoveredFeature === index ? "scale-105 border-primary" : ""
               }`}
             >
-              <CardHeader className="p-4 sm:p-6">
+              <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-3">
                 <motion.div
                   animate={{
                     scale: hoveredFeature === index ? 1.1 : 1,
                     rotate: hoveredFeature === index ? 360 : 0,
                   }}
                   transition={{ duration: 0.5 }}
-                  className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl ${feature.bgColor} flex items-center justify-center mb-3 sm:mb-4`}
+                  className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl ${feature.bgColor} flex items-center justify-center mb-2 sm:mb-3`}
                 >
                   <feature.icon className={`h-6 w-6 sm:h-7 sm:w-7 ${feature.color}`} />
                 </motion.div>
-                <CardTitle className="text-lg sm:text-xl">{feature.title}</CardTitle>
+                <CardTitle className="text-lg sm:text-xl lg:text-2xl">{feature.title}</CardTitle>
               </CardHeader>
               <CardContent className="p-4 sm:p-6 pt-0">
                 <CardDescription className="text-base sm:text-lg leading-relaxed">
