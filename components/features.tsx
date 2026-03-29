@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Zap, FileText, FileCheck, BookOpen, Award } from 'lucide-react'
+import { Zap, FileText, FileCheck, BookOpen, Award, RefreshCw } from 'lucide-react'
 import { useState } from "react"
 
 const TiltCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
@@ -77,6 +77,18 @@ export const Features = () => {
       ],
       color: "text-red-600 dark:text-red-400",
       bgColor: "bg-red-50 dark:bg-red-950/50",
+    },
+    {
+      icon: RefreshCw,
+      title: "Style Switching",
+      description: "One click to change your entire formatting style.",
+      details: [
+        "Switch between APA, MLA, Chicago, Harvard & Turabian instantly",
+        "All headings, citations, and references update automatically",
+        "No need to re-upload — reformat the same document multiple ways",
+      ],
+      color: "text-indigo-600 dark:text-indigo-400",
+      bgColor: "bg-indigo-50 dark:bg-indigo-950/50",
     },
   ]
 
