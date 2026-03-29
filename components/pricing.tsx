@@ -311,7 +311,7 @@ export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }
                           )}
                         >
                           <Link href={(user && plan.name !== "Business") ? "/dashboard" : (plan.name === "Business" ? "#" : "/auth/register")}>
-                            {(plan as any).buttonText || (plan.name === "Business" ? "Coming soon..." : (plan.name === "Free" ? "Get Started" : "Buy Now"))}
+                            {(plan as any).buttonText || (plan.name === "Business" ? "Coming soon..." : "Get Started")}
                           </Link>
                         </Button>
                       )}
