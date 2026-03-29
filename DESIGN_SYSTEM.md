@@ -24,7 +24,7 @@
 
 | Token               | Light Mode        | Dark Mode         |
 |---------------------|-------------------|-------------------|
-| Primary             | `#006ee5` (500)   | `#2890ff` (400)   |
+| Primary             | `#002a57` (logo)  | `#4d8fd9`         |
 | Primary Foreground  | `#ffffff`         | `#ffffff`         |
 | Background          | `#ffffff`         | `#0d1117`         |
 | Foreground          | `#0a0a0a`         | `#f0f0f0`         |
@@ -62,7 +62,7 @@
 
 | Variant  | Background     | Text    | Hover            |
 |----------|----------------|---------|------------------|
-| Primary  | `#006ee5`      | white   | `#0056b2`        |
+| Primary  | `#002a57`      | white   | `#003d7f`        |
 | Secondary| `#f5f5f5`      | `#0a0a0a` | `#e5e5e5`     |
 | Outline  | transparent    | `#006ee5` | `#eff7ff` bg |
 | Destructive | `#dc2626`  | white   | `#b91c1c`        |
