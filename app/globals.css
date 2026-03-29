@@ -565,6 +565,16 @@ html[data-theme="light"] {
   );
 }
 
+/* Custom hero glow for redesign - flipped upside down at the top */
+.bg-hero-glow-flipped {
+  background: radial-gradient(
+    ellipse at top,
+    oklch(0.55 0.28 285 / 0.45) 0%,
+    oklch(0.55 0.28 285 / 0.15) 35%,
+    transparent 100%
+  );
+}
+
 /* Floating animations for background elements */
 @keyframes float-slow {
   0%,
