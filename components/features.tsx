@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Zap, FileText, FileCheck, BookOpen, Users, Award } from 'lucide-react'
+import { Zap, FileText, FileCheck, BookOpen, Award } from 'lucide-react'
 import { useState } from "react"
 
 const TiltCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
@@ -65,18 +65,7 @@ export const Features = () => {
       color: "text-purple-600 dark:text-purple-400",
       bgColor: "bg-purple-50 dark:bg-purple-950/50",
     },
-    {
-      icon: Users,
-      title: "Collaborative Workspace",
-      description: "Work with co-authors and editors in real time.",
-      details: [
-        "Share styles and templates across your team",
-        "See every change with full transparency",
-        "Centralised billing and seat management",
-      ],
-      color: "text-indigo-600 dark:text-indigo-400",
-      bgColor: "bg-indigo-50 dark:bg-indigo-950/50",
-    },
+
     {
       icon: Award,
       title: "Publisher-Ready Output",
