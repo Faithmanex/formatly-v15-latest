@@ -16,7 +16,7 @@ export const features = [
   {
     icon: Zap,
     title: "Lightning Fast",
-    description: "Format in under 60 seconds.",
+    description: "Format in about 30 seconds.",
     color: "text-yellow-600 dark:text-yellow-400",
     bgColor: "bg-yellow-50 dark:bg-yellow-950/50",
   },
@@ -203,7 +203,7 @@ export const faqs = [
   {
     question: "How long does formatting take?",
     answer:
-      "Most documents are formatted in under 60 seconds. The time depends on document size and length, but our AI-powered engine is optimized for speed without sacrificing accuracy.",
+      "Most documents are formatted in about 30 seconds. The time depends on document size and length, but our engine is optimised for speed without sacrificing accuracy.",
   },
   {
     question: "Can I collaborate with my team?",

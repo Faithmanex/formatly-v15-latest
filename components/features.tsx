@@ -20,7 +20,7 @@ export const Features = () => {
     {
       icon: Zap,
       title: "Lightning Fast",
-      description: "Format complete documents in under 60 seconds.",
+      description: "Format complete documents in about 30 seconds.",
       details: [
         "Upload and format in one step",
         "Process multiple documents at once",

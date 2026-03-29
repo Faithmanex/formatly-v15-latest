@@ -52,7 +52,7 @@ const faqData = [
     questions: [
       {
         question: "How long does processing take?",
-        answer: "Most documents are processed within 30-60 seconds, depending on length and complexity. You'll see real-time progress updates during processing."
+        answer: "Most documents are processed within 30 seconds, depending on length and complexity. You'll see real-time progress updates during processing."
       },
       {
         question: "What happens if processing fails?",
