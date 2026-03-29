@@ -57,7 +57,7 @@ export function formatCurrency(amount: number, currency = "USD"): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currency,
-  }).format(amount / 100)
+  }).format(amount)
 }
 
 export function truncateText(text: string, maxLength: number): string {
