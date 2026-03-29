@@ -80,12 +80,12 @@ export const Features = () => {
     },
     {
       icon: RefreshCw,
-      title: "Style Switching",
-      description: "One click to change your entire formatting style.",
+      title: "Instant Style Conversion",
+      description: "Reformat your document to any citation style in one click.",
       details: [
-        "Switch between APA, MLA, Chicago, Harvard & Turabian instantly",
-        "All headings, citations, and references update automatically",
-        "No need to re-upload — reformat the same document multiple ways",
+        "Convert between APA, MLA, Chicago, Harvard & Turabian instantly",
+        "Headings, citations, and references adjust automatically",
+        "Reformat the same document for different journals without re-uploading",
       ],
       color: "text-indigo-600 dark:text-indigo-400",
       bgColor: "bg-indigo-50 dark:bg-indigo-950/50",
