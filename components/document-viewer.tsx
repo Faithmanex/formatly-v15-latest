@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Loader2, Download, Printer, X, FileText, AlertCircle, Eye, EyeOff, ChevronLeft, ChevronRight } from "lucide-react"
-import mammoth from "mammoth"
+import * as docx from "docx-preview"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
 
@@ -21,8 +21,8 @@ interface DocumentViewerProps {
 }
 
 export function DocumentViewer({ documentId, filename, onClose }: DocumentViewerProps) {
-  const [content, setContent] = useState<string>("")
-  const [trackedContent, setTrackedContent] = useState<string>("")
+  const [finalBlob, setFinalBlob] = useState<Blob | null>(null)
+  const [trackedBlob, setTrackedBlob] = useState<Blob | null>(null)
   const [currentView, setCurrentView] = useState<"final" | "tracked">("final")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -37,17 +37,59 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
   useEffect(() => {
     if (documentId) {
       loadDocument()
-      // Auto-adjust zoom for small screens
       if (window.innerWidth < 1000) {
+        // docx-preview tends to scale itself well, but we can set a zoom preference
         setZoom(Math.floor((window.innerWidth / 1000) * 80))
       }
     } else {
-      setContent("")
-      setTrackedContent("")
+      setFinalBlob(null)
+      setTrackedBlob(null)
       setCurrentView("final")
       setError(null)
     }
   }, [documentId])
+
+  useEffect(() => {
+    // Re-render when view changes or blobs load
+    const renderCurrentDoc = async () => {
+        if (!viewerRef.current) return
+        
+        const activeBlob = currentView === "final" ? finalBlob : trackedBlob
+        
+        if (activeBlob) {
+            try {
+                // Clear the container first
+                viewerRef.current.innerHTML = ""
+                await docx.renderAsync(activeBlob, viewerRef.current, viewerRef.current, {
+                    className: "docx", 
+                    inWrapper: true, 
+                    breakPages: true
+                })
+                
+                // Adjust zoom
+                const wrapper = viewerRef.current.querySelector('.docx-wrapper') as HTMLElement
+                if (wrapper) {
+                    wrapper.style.transform = `scale(${zoom / 100})`
+                    wrapper.style.transformOrigin = "top center"
+                    // Add smooth transition for zooming
+                    wrapper.style.transition = "transform 0.2s ease"
+                }
+
+                // Update pages
+                setTimeout(() => {
+                    const pages = viewerRef.current?.querySelectorAll('.docx')
+                    if (pages && pages.length > 0) {
+                        setTotalPages(pages.length)
+                    }
+                }, 100)
+            } catch (err) {
+                console.error("Error rendering docx:", err)
+            }
+        }
+    }
+    
+    renderCurrentDoc()
+  }, [currentView, finalBlob, trackedBlob, zoom])
 
   const loadDocument = async () => {
     try {
@@ -68,36 +110,23 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
         throw new Error(data.error || "No content found")
       }
 
-      const convertToHtml = async (base64: string) => {
+      const createBlob = (base64: string) => {
           const binaryString = atob(base64)
           const bytes = new Uint8Array(binaryString.length)
           for (let i = 0; i < binaryString.length; i++) {
             bytes[i] = binaryString.charCodeAt(i)
           }
-          const result = await mammoth.convertToHtml(
-            { arrayBuffer: bytes.buffer },
-            { 
-              styleMap: [
-                "p[style-name='Title'] => h1:fresh",
-                "p[style-name='Heading 1'] => h2:fresh",
-                "p[style-name='Heading 2'] => h3:fresh",
-              ]
-            }
-          )
-          return result.value
+          return new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" })
       }
 
       if (data.content) {
-          const mainHtml = await convertToHtml(data.content)
-          setContent(mainHtml)
+          setFinalBlob(createBlob(data.content))
       }
       
       if (data.tracked_changes_content) {
-          const trackedHtml = await convertToHtml(data.tracked_changes_content)
-          setTrackedContent(trackedHtml)
-          // If we have tracked changes, maybe default to that? No, final is better.
+          setTrackedBlob(createBlob(data.tracked_changes_content))
       } else {
-          setTrackedContent("")
+          setTrackedBlob(null)
           setCurrentView("final")
       }
       
@@ -123,12 +152,21 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
   }
 
   const navigatePage = (direction: "next" | "prev") => {
-    if (!scrollContainerRef.current) return
+    if (!viewerRef.current || !scrollContainerRef.current) return
+    const pages = viewerRef.current.querySelectorAll('.docx')
+    if (pages.length === 0) return
+
+    // Each page is rendered as a section. Find the height of one page + its margins.
+    const firstPage = pages[0] as HTMLElement
+    // docx-preview wrapper adds padding, calculate effective scroll height per page
+    const style = window.getComputedStyle(firstPage)
+    const pageHeightWithMargins = firstPage.offsetHeight + parseInt(style.marginTop || '0') + parseInt(style.marginBottom || '0')
+    const zoomedHeight = pageHeightWithMargins * (zoom / 100)
+    
     const container = scrollContainerRef.current
-    const pageHeight = 1056 * (zoom / 100)
     const targetScroll = direction === "next" 
-      ? container.scrollTop + pageHeight
-      : container.scrollTop - pageHeight
+      ? container.scrollTop + zoomedHeight
+      : container.scrollTop - zoomedHeight
     
     container.scrollTo({
       top: targetScroll,
@@ -138,9 +176,9 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
 
   // Same print logic but uses current view
   const handlePrint = () => {
-    const htmlToPrint = currentView === "tracked" && trackedContent ? trackedContent : content
+    // Trigger print window, docx-preview output needs to be styled for printing
     const printWindow = window.open("", "_blank")
-    if (!printWindow) {
+    if (!printWindow || !viewerRef.current) {
       toast({
         title: "Error",
         description: "Please allow popups to print the document",
@@ -154,17 +192,20 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
         <head>
           <title>${filename} - ${currentView === "tracked" ? "Tracked Changes" : "Final"}</title>
           <style>
-             /* Same styles as before */
-            body { font-family: 'Times New Roman', serif; padding: 40px; line-height: 1.6; max-width: 800px; margin: 0 auto; color: #000; background: #fff; }
-            h1, h2, h3 { color: #000; }
-            h1 { font-size: 20pt; text-align: center; margin-bottom: 24pt; }
-            @media print { body { padding: 0; } @page { margin: 1in; } }
-            ins { text-decoration: none; background-color: #d4edda; color: #155724; }
-            del { text-decoration: line-through; background-color: #f8d7da; color: #721c24; }
+             /* Print styles for docx-preview content */
+            body { font-family: 'Times New Roman', serif; margin: 0; padding: 0; background: #fff; }
+            .docx-wrapper { padding: 0 !important; background: transparent !important; }
+            .docx { box-shadow: none !important; margin: 0 auto !important; width: 100% !important; min-height: auto !important; }
+            @media print { 
+                body { padding: 0; margin: 0; } 
+                .docx { page-break-after: always; break-after: page; max-width: 100% !important;}
+                /* Ensure no background colors get printed unless requested */
+                * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; print-color-adjust: exact !important; }
+            }
           </style>
         </head>
         <body>
-          ${htmlToPrint}
+          ${viewerRef.current.innerHTML}
         </body>
       </html>
     `)
@@ -202,7 +243,7 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2 mr-6 sm:mr-8">
-            {!loading && !error && content && (
+            {!loading && !error && finalBlob && (
               <div className="flex items-center gap-1 bg-muted/30 px-2 py-1 rounded-full border border-border mr-1 sm:mr-2">
                 <Button variant="ghost" size="icon" onClick={() => navigatePage("prev")} disabled={page <= 1} className="h-6 w-6 rounded-full"><ChevronLeft className="h-4 w-4" /></Button>
                 <div className="text-[10px] font-bold min-w-[50px] text-center">Page {page} of {totalPages}</div>
@@ -210,7 +251,7 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
               </div>
             )}
 
-            {trackedContent && !loading && !error && (
+            {trackedBlob && !loading && !error && (
                 <div className="hidden md:flex items-center bg-muted/30 p-0.5 rounded-lg border border-border mr-2">
                     <Button 
                         variant={currentView === "final" ? "secondary" : "ghost"} 
@@ -241,7 +282,7 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
                 variant="default" 
                 size="sm" 
                 onClick={handlePrint} 
-                disabled={loading || !!error || (!content && !trackedContent)}
+                disabled={loading || !!error || (!finalBlob && !trackedBlob)}
                 className="gap-2 shadow-sm h-8 px-3"
             >
               <Printer className="h-3.5 w-3.5" />
@@ -283,82 +324,33 @@ export function DocumentViewer({ documentId, filename, onClose }: DocumentViewer
             </div>
           ) : (
             <div 
-              className="flex-shrink-0 origin-top transition-transform duration-300 ease-in-out"
-              style={{
-                transform: `scale(${zoom / 100})`,
-                marginBottom: `${(11 * 96 * (zoom / 100)) / 2}px`
-              }}
-            >
-              <div 
-               className="bg-white text-black shadow-[0_0_20px_rgba(0,0,0,0.4)] mx-auto relative overflow-hidden"
-                 style={{
-                   width: "816px",
-                   minHeight: "1056px",
-                   padding: "72px",
-                   borderRadius: "2px",
-                   position: 'relative'
-                 }}
-              >
-                {/* Visual Page Overlays to show breaks */}
-                <div className="absolute inset-0 pointer-events-none z-0">
-                    {Array.from({ length: totalPages }).map((_, i) => (
-                        <div 
-                            key={i} 
-                            className="w-full border-b-[1px] border-dashed border-slate-300/30" 
-                            style={{ 
-                                position: 'absolute', 
-                                top: `${(i + 1) * 1056}px`, 
-                                left: 0 
-                            }} 
-                        />
-                    ))}
-                </div>
-
-                <div 
-                  ref={viewerRef}
-                  className="h-full w-full preview-content select-text relative z-10"
-                  dangerouslySetInnerHTML={{ __html: currentView === "tracked" && trackedContent ? trackedContent : content }}
-                />
-                
-                <style dangerouslySetInnerHTML={{ __html: `
-                  .preview-content {
-                    font-family: 'Times New Roman', Times, serif;
-                    line-height: 2.0; /* Increased for better page-by-page readability in Word style */
-                    font-size: 12pt;
-                    color: black;
-                  }
-                  .preview-content h1 { font-size: 20pt; font-weight: bold; text-align: center; margin-bottom: 24pt; line-height: 1.2; }
-                  .preview-content h2 { font-size: 14pt; font-weight: bold; margin-top: 24pt; margin-bottom: 12pt; border-bottom: 0.5pt solid #eee; padding-bottom: 4pt; }
-                  .preview-content h3 { font-size: 12pt; font-weight: bold; margin-top: 18pt; margin-bottom: 8pt; }
-                  .preview-content p { margin-bottom: 24pt; text-align: justify; Orphans: 3; Widows: 3; }
-                  
-                  /* Page break lines in the document itself to simulate sheets */
-                  .preview-content > * { position: relative; }
-                  
-                  .preview-content table { border-collapse: collapse; width: 100%; margin: 12pt 0; background: white; }
-                  .preview-content td, .preview-content th { border: 1px solid black; padding: 12pt; text-align: left; font-size: 11pt; }
-                  .preview-content img { max-width: 100%; height: auto; display: block; margin: 24pt auto; }
-                  
-                  /* Word-like spacing for lists */
-                  .preview-content ul, .preview-content ol { margin-bottom: 12pt; padding-left: 24pt; }
-                  .preview-content li { margin-bottom: 6pt; }
-                  
-                  .preview-content blockquote { border-left: 3pt solid #ddd; padding-left: 12pt; font-style: italic; color: #555; margin: 12pt 0; }
-                  
-                  /* Specific styles for tracked changes in HTML */
-                  ins, .mammoth-inserted { text-decoration: none; background-color: #d4edda; color: #155724; border-bottom: 1px solid #c3e6cb; }
-                  del, .mammoth-deleted { text-decoration: line-through; background-color: #f8d7da; color: #721c24; border-bottom: 1px solid #f5c6cb; }
-
-                  /* Scrollbar styling for a cleaner look */
-                  ::-webkit-scrollbar { width: 8px; height: 8px; }
-                  ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-                  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-                  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
-                `}} />
-              </div>
-            </div>
+              ref={viewerRef}
+              className="flex-shrink-0 origin-top transition-transform duration-300 ease-in-out w-full docx-preview-container"
+            />
           )}
         </div>
+        
+        {/* Custom scrollbar styles for the preview container */}
+        <style dangerouslySetInnerHTML={{ __html: `
+            .docx-preview-container .docx-wrapper {
+                background: transparent !important;
+                padding: 0 !important;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 24px;
+                padding-bottom: 60px !important;
+                margin: 0 auto;
+            }
+            .docx-preview-container .docx {
+                box-shadow: 0 0 20px rgba(0,0,0,0.4) !important;
+                border-radius: 2px !important;
+            }
+            ::-webkit-scrollbar { width: 8px; height: 8px; }
+            ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+            ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+            ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+        `}} />
       </DialogContent>
     </Dialog>
   )
