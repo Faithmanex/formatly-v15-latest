@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Zap, FileText, Shield, BookOpen, Users, Award } from 'lucide-react'
 import { useState } from "react"
 
-// 3D Tilt Card Component
 const TiltCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
   return (
     <div className={className}>
@@ -21,42 +20,72 @@ export const Features = () => {
     {
       icon: Zap,
       title: "Lightning Fast",
-      description: "Format in under 60 seconds.",
+      description: "Format complete documents in under 60 seconds.",
+      details: [
+        "AI-powered engine optimised for speed",
+        "Batch processing for multiple documents",
+        "Instant style application — no manual tweaking",
+      ],
       color: "text-yellow-600 dark:text-yellow-400",
       bgColor: "bg-yellow-50 dark:bg-yellow-950/50",
     },
     {
       icon: FileText,
       title: "All Citation Styles",
-      description: "APA, MLA, Chicago, Harvard, and Turabian — proper references and document structure",
+      description: "Every major academic style, done right.",
+      details: [
+        "APA 7th, MLA 9th, Chicago, Harvard & Turabian",
+        "Automatic in-text citations & reference lists",
+        "Hanging indents, italics, and DOI formatting",
+      ],
       color: "text-blue-600 dark:text-blue-400",
       bgColor: "bg-blue-50 dark:bg-blue-950/50",
     },
     {
       icon: Shield,
       title: "Enterprise-Grade Security",
-      description: "Your documents are secure with end-to-end encryption",
+      description: "Your research stays yours.",
+      details: [
+        "End-to-end encryption for all documents",
+        "GDPR & CCPA compliant",
+        "Documents deleted after processing — no long-term storage",
+      ],
       color: "text-green-600 dark:text-green-400",
       bgColor: "bg-green-50 dark:bg-green-950/50",
     },
     {
       icon: BookOpen,
       title: "Smart AI Assistant",
-      description: "Get intelligent suggestions and guidance on all formatting styles",
+      description: "Real-time guidance to refine your document.",
+      details: [
+        "Style-aware suggestions as you work",
+        "Detects structural and formatting issues",
+        "Helps with heading hierarchy and flow",
+      ],
       color: "text-purple-600 dark:text-purple-400",
       bgColor: "bg-purple-50 dark:bg-purple-950/50",
     },
     {
       icon: Users,
       title: "Collaborative Workspace",
-      description: "Work with co-authors and editors in real time",
+      description: "Work with co-authors and editors in real time.",
+      details: [
+        "Share styles and templates across your team",
+        "Track changes with full transparency",
+        "Centralised billing and seat management",
+      ],
       color: "text-indigo-600 dark:text-indigo-400",
       bgColor: "bg-indigo-50 dark:bg-indigo-950/50",
     },
     {
       icon: Award,
       title: "Publisher-Ready Output",
-      description: "Meets strict journal and institutions requirements.",
+      description: "Submit with confidence.",
+      details: [
+        "Meets strict journal and institutional requirements",
+        "Tracked Changes shows every structural adjustment",
+        "Custom styles for specific journals or departments",
+      ],
       color: "text-red-600 dark:text-red-400",
       bgColor: "bg-red-50 dark:bg-red-950/50",
     },
@@ -92,11 +121,19 @@ export const Features = () => {
                   <feature.icon className={`h-6 w-6 sm:h-7 sm:w-7 ${feature.color}`} />
                 </motion.div>
                 <CardTitle className="text-lg sm:text-xl">{feature.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6 pt-0">
-                <CardDescription className="text-sm sm:text-base leading-relaxed">
+                <CardDescription className="text-sm sm:text-base leading-relaxed mt-1">
                   {feature.description}
                 </CardDescription>
+              </CardHeader>
+              <CardContent className="p-4 sm:p-6 pt-0">
+                <ul className="space-y-2">
+                  {feature.details.map((detail, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <span className={`mt-1.5 h-1.5 w-1.5 rounded-full shrink-0 ${feature.bgColor}`} />
+                      {detail}
+                    </li>
+                  ))}
+                </ul>
               </CardContent>
             </Card>
           </TiltCard>
