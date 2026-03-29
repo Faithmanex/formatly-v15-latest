@@ -39,6 +39,13 @@ export const Features = () => {
       bgColor: "bg-green-50 dark:bg-green-950/50",
     },
     {
+      icon: RefreshCw,
+      title: "Instant Style Conversion",
+      description: "Convert between APA, MLA, Chicago, Harvard & Turabian in one click. Headings, citations, and references adjust automatically, no need to re-upload.",
+      color: "text-indigo-600 dark:text-indigo-400",
+      bgColor: "bg-indigo-50 dark:bg-indigo-950/50",
+    },
+    {
       icon: Sparkles,
       title: "Smart AI Assistant",
       description: "Real-time guidance to help refine your document's structure, flow, and overall presentation.",
@@ -51,13 +58,6 @@ export const Features = () => {
       description: "Meets strict journal and institutional requirements. Create custom styles for specific journals or departments and submit with confidence.",
       color: "text-red-600 dark:text-red-400",
       bgColor: "bg-red-50 dark:bg-red-950/50",
-    },
-    {
-      icon: RefreshCw,
-      title: "Instant Style Conversion",
-      description: "Convert between APA, MLA, Chicago, Harvard & Turabian in one click. Headings, citations, and references adjust automatically, no need to re-upload.",
-      color: "text-indigo-600 dark:text-indigo-400",
-      bgColor: "bg-indigo-50 dark:bg-indigo-950/50",
     },
   ]
 
