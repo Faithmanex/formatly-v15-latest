@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Shield, Users, FileText, Activity, Key, Settings, AlertTriangle, CheckCircle, Clock, Copy, Trash2, RefreshCw, Loader2 } from 'lucide-react'
+import { Shield, Users, FileText, Activity, Key, Settings, AlertTriangle, CheckCircle, Clock, Copy, Trash2, RefreshCw, Loader2, LifeBuoy, MessageSquare, ExternalLink } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { useEffect, useCallback } from "react"
 import { getSupabase } from "@/lib/supabase"
@@ -32,6 +32,19 @@ interface SystemStats {
   avg_processing_time: number
   system_health: number
   storage_used: number
+}
+
+interface SupportTicket {
+  id: string
+  user_id: string | null
+  full_name: string
+  email: string
+  subject: string
+  message: string
+  status: "open" | "in-progress" | "closed"
+  priority: "low" | "medium" | "high" | "urgent"
+  created_at: string
+  updated_at: string
 }
 
 // Mock data for other sections (remaining placeholders)
@@ -83,16 +96,6 @@ const users = [
     quota: 100,
     lastActive: "2024-01-14",
     status: "active"
-  },
-  {
-    id: 3,
-    name: "Guest User",
-    email: "guest@temp.com",
-    role: "guest",
-    documentsUsed: 1,
-    quota: 1,
-    lastActive: "2024-01-15",
-    status: "active"
   }
 ]
 
@@ -117,7 +120,9 @@ const apiKeys = [
 
 export function AdminPanel() {
   const [systemStats, setSystemStats] = useState<SystemStats | null>(null)
+  const [tickets, setTickets] = useState<SupportTicket[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isTicketsLoading, setIsTicketsLoading] = useState(false)
   const [maintenanceMode, setMaintenanceMode] = useState(false)
   const [newApiKeyName, setNewApiKeyName] = useState("")
   const { toast } = useToast()
@@ -140,9 +145,27 @@ export function AdminPanel() {
     }
   }, [toast])
 
+  const fetchTickets = useCallback(async () => {
+    try {
+      setIsTicketsLoading(true)
+      const { data, error } = await getSupabase()
+        .from('support_tickets')
+        .select('*')
+        .order('created_at', { ascending: false })
+      
+      if (error) throw error
+      setTickets(data || [])
+    } catch (error) {
+      console.error('Error fetching tickets:', error)
+    } finally {
+      setIsTicketsLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
     fetchSystemStats()
-  }, [fetchSystemStats])
+    fetchTickets()
+  }, [fetchSystemStats, fetchTickets])
 
   const handleToggleMaintenance = () => {
     setMaintenanceMode(!maintenanceMode)
@@ -170,6 +193,56 @@ export function AdminPanel() {
       title: "Copied",
       description: "API key copied to clipboard",
     })
+  }
+
+  const updateTicketStatus = async (ticketId: string, newStatus: "open" | "in-progress" | "closed") => {
+    try {
+      const { error } = await getSupabase()
+        .from('support_tickets')
+        .update({ status: newStatus, updated_at: new Date().toISOString() })
+        .eq('id', ticketId)
+      
+      if (error) throw error
+      
+      setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, status: newStatus } : t))
+      toast({
+        title: "Status Updated",
+        description: `Ticket status changed to ${newStatus}`
+      })
+    } catch (error) {
+      console.error('Error updating ticket status:', error)
+      toast({
+        title: "Error",
+        description: "Failed to update ticket status",
+        variant: "destructive"
+      })
+    }
+  }
+
+  const deleteTicket = async (ticketId: string) => {
+    if (!confirm("Are you sure you want to delete this ticket?")) return
+    
+    try {
+      const { error } = await getSupabase()
+        .from('support_tickets')
+        .delete()
+        .eq('id', ticketId)
+      
+      if (error) throw error
+      
+      setTickets(prev => prev.filter(t => t.id !== ticketId))
+      toast({
+        title: "Ticket Deleted",
+        description: "The support ticket has been removed"
+      })
+    } catch (error) {
+      console.error('Error deleting ticket:', error)
+      toast({
+        title: "Error",
+        description: "Failed to delete ticket",
+        variant: "destructive"
+      })
+    }
   }
 
   const getLevelColor = (level: string) => {
@@ -222,6 +295,14 @@ export function AdminPanel() {
         <TabsList>
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="support" className="relative">
+            Support
+            {tickets.filter(t => t.status === 'open').length > 0 && (
+              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] flex items-center justify-center text-primary-foreground animate-pulse">
+                {tickets.filter(t => t.status === 'open').length}
+              </span>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="logs">Logs</TabsTrigger>
           <TabsTrigger value="api-keys">API Keys</TabsTrigger>
           <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
@@ -428,6 +509,127 @@ export function AdminPanel() {
                   ))}
                 </TableBody>
               </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="support" className="space-y-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Support Tickets</CardTitle>
+                <CardDescription>
+                  Manage user inquiries and support requests
+                </CardDescription>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={fetchTickets}
+                disabled={isTicketsLoading}
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${isTicketsLoading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {tickets.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed rounded-xl">
+                  <LifeBuoy className="h-12 w-12 text-muted-foreground mb-4 opacity-20" />
+                  <h3 className="text-lg font-medium">No tickets found</h3>
+                  <p className="text-muted-foreground max-w-xs mx-auto">
+                    When users submit the contact form, their inquiries will appear here.
+                  </p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User / Contact</TableHead>
+                      <TableHead>Subject & Message</TableHead>
+                      <TableHead>Priority</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {tickets.map((ticket) => (
+                      <TableRow key={ticket.id} className={ticket.status === 'open' ? 'bg-primary/5' : ''}>
+                        <TableCell>
+                          <div className="space-y-1">
+                            <p className="font-medium flex items-center gap-2">
+                              {ticket.full_name}
+                              {ticket.user_id && <Badge variant="outline" className="text-[10px] h-4">User</Badge>}
+                            </p>
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Mail className="h-3 w-3" />
+                              {ticket.email}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell className="max-w-md">
+                          <div className="space-y-1">
+                            <p className="font-semibold text-sm">{ticket.subject}</p>
+                            <p className="text-xs text-muted-foreground line-clamp-2 italic">
+                              "{ticket.message}"
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className={
+                            ticket.priority === 'urgent' ? 'border-red-500 text-red-500' :
+                            ticket.priority === 'high' ? 'border-orange-500 text-orange-500' :
+                            'border-muted-foreground/30'
+                          }>
+                            {ticket.priority}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <select 
+                            className={`text-xs font-medium bg-transparent border-none focus:ring-0 cursor-pointer ${
+                              ticket.status === 'open' ? 'text-blue-600' :
+                              ticket.status === 'in-progress' ? 'text-orange-600' :
+                              'text-green-600'
+                            }`}
+                            value={ticket.status}
+                            onChange={(e) => updateTicketStatus(ticket.id, e.target.value as any)}
+                            aria-label="Change ticket status"
+                          >
+                            <option value="open">Open</option>
+                            <option value="in-progress">In-Progress</option>
+                            <option value="closed">Closed</option>
+                          </select>
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground">
+                          {new Date(ticket.created_at).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-1">
+                            <Button variant="ghost" size="sm" asChild>
+                              <a 
+                                href={`mailto:${ticket.email}?subject=Re: ${ticket.subject}`}
+                                aria-label={`Reply to ${ticket.full_name} via email`}
+                                title={`Reply to ${ticket.email}`}
+                              >
+                                <Mail className="h-4 w-4" />
+                              </a>
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                              onClick={() => deleteTicket(ticket.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

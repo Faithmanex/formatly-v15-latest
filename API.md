@@ -1,3 +1,9 @@
+# [DRAFT] API Documentation
+
+> [!NOTE]
+> This documentation is currently commented out. It will be used when we are integrating the API.
+
+<!--
 # API Documentation
 
 This document describes the API endpoints available in the Formatly application.
@@ -364,3 +370,4 @@ const uploadUrl = await client.documents.getUploadUrl({
 
 
 This API documentation provides comprehensive coverage of all available endpoints in the Formatly application.
+-->

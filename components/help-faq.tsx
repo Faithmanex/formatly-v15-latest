@@ -21,10 +21,6 @@ const faqData = [
       {
         question: "What file formats are supported?",
         answer: "Currently, we support Microsoft Word documents (.docx format). We do not support .doc, .pdf, or .txt files at this time."
-      },
-      {
-        question: "What is guest mode?",
-        answer: "Guest mode allows you to try Formatly without creating an account. You can process 1 document for free to see how our formatting works. Create an account for unlimited access."
       }
     ]
   },
@@ -74,7 +70,7 @@ const faqData = [
     questions: [
       {
         question: "Is Formatly free to use?",
-        answer: "We offer a free tier with limited document processing. Guest users can process 1 document, while registered users get more generous limits. Premium plans offer unlimited processing."
+        answer: "We offer a free tier for registered users with limited document processing. Premium plans offer unlimited processing and advanced features."
       },
       {
         question: "How do I upgrade my account?",
@@ -277,7 +273,8 @@ export function HelpFAQ() {
               <CardHeader>
                 <CardTitle>Documentation</CardTitle>
                 <CardDescription>
-                  Detailed guides and API documentation
+                  Detailed guides and helpful resources
+                  {/* Detailed guides and API documentation */}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -286,10 +283,10 @@ export function HelpFAQ() {
                     <FileText className="h-4 w-4 mr-2" />
                     User Guide
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
+                  {/* <Button variant="outline" className="w-full justify-start">
                     <FileText className="h-4 w-4 mr-2" />
                     API Documentation
-                  </Button>
+                  </Button> */}
                   <Button variant="outline" className="w-full justify-start">
                     <FileText className="h-4 w-4 mr-2" />
                     Style Guide Reference

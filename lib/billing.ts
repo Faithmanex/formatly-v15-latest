@@ -49,7 +49,7 @@ export interface Invoice {
   amount_paid?: number
   full_name: string | null
   avatar_url: string | null
-  role: "guest" | "user" | "admin" | "uncollectible"
+  role: "user" | "admin" | "uncollectible"
   currency: string
   status: "draft" | "open" | "paid" | "void" | "uncollectible"
   description?: string

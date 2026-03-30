@@ -11,7 +11,7 @@ export interface Profile {
   email: string
   full_name: string | null
   avatar_url: string | null
-  role: "guest" | "user" | "admin"
+  role: "user" | "admin"
   formatting_preferences?: any
   created_at: string
   updated_at: string

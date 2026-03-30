@@ -1,3 +1,9 @@
+# [DRAFT] Formatly FastAPI Backend
+
+> [!NOTE]
+> This documentation is currently commented out. It will be used when we are integrating the API.
+
+<!--
 # Formatly FastAPI Backend
 
 This is a FastAPI backend for the Formatly document formatting application with full Supabase integration. It provides real JWT authentication, signed URL generation for secure file uploads, and database integration for job tracking.
@@ -84,10 +90,10 @@ The backend implements the correct Supabase signed upload flow:
 
 #### **Step 3: Confirm Upload**
 - `POST /api/documents/upload-complete` - **Webhook Endpoint**
-  - Webhook called after successful file upload
-  - Updates document status to PROCESSING
-  - Starts background document processing
-  - Returns confirmation and job status
+- Webhook called after successful file upload
+- Updates document status to PROCESSING
+- Starts background document processing
+- Returns confirmation and job status
 
 ### Legacy Endpoints (Maintained for Compatibility)
 - `POST /api/documents/upload` - Generate signed upload URL (legacy)
@@ -279,13 +285,6 @@ curl -X GET "https://your-service.onrender.com/api/documents/status/JOB_ID" \
 
 ## Production Considerations
 
-The backend is production-ready with the new signed upload flow:
-
-### Production Ready:
-- **Secure Upload Flow** - Direct to Supabase Storage with signed URLs
-- **JWT authentication and authorization** - Real Supabase integration
-- **Database integration** with proper error handling
-- **Webhook system** for upload confirmation
 - **Proper logging** and error handling throughout
 - **CORS configuration** for frontend integration
 - **Environment variable** configuration

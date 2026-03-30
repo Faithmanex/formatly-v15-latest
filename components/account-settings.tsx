@@ -458,10 +458,10 @@ export function AccountSettings() {
                 <div>
                   <h3 className="text-sm sm:text-base font-medium">Account Type</h3>
                   <p className="text-xs sm:text-sm text-muted-foreground">
-                    {planName} {profile?.role === "guest" ? "Guest Account" : ""}
+                    {planName}
                   </p>
                 </div>
-                <Badge variant={profile?.role === "guest" ? "secondary" : "default"}>{planName}</Badge>
+                <Badge variant="default">{planName}</Badge>
               </div>
 
               {usage && (

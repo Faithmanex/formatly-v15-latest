@@ -9,25 +9,85 @@ import { Textarea } from "@/components/ui/textarea"
 import { Mail, MessageSquare, Send, ArrowLeft, CheckCircle2, Loader2, MapPin, Phone } from "lucide-react"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
+import { getSupabase } from "@/lib/supabase"
+import { useSubscription } from "@/contexts/subscription-context"
 
 export default function ContactPage() {
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const { user } = useAuth()
   const { toast } = useToast()
+  const { planName } = useSubscription()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    const formData = new FormData(e.currentTarget)
+    const subject = "Contact Form Submission"
+    const message = formData.get("message") as string
     
-    setLoading(false)
-    setSubmitted(true)
-    toast({
-      title: "Message sent!",
-      description: "We'll get back to you as soon as possible.",
-    })
+    let aiPriority = "medium"
+    
+    // AI Urgency Classification
+    try {
+      const response = await fetch("/api/support/classify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          subject, 
+          message,
+          planName 
+        })
+      })
+      const result = await response.json()
+      if (result.priority) {
+        aiPriority = result.priority
+      }
+    } catch (error) {
+      console.error("AI classification error:", error)
+    }
+
+    // Apply Plan-based priority floor (Validation of "Priority support" promise)
+    let finalPriority = aiPriority as "low" | "medium" | "high" | "urgent"
+    if (planName === "Business") {
+      // Business users always get top-tier support
+      if (finalPriority !== "urgent") finalPriority = "urgent"
+    } else if (planName === "Pro") {
+      // Pro users get high priority support
+      if (finalPriority === "low" || finalPriority === "medium") finalPriority = "high"
+    }
+
+    const data = {
+      full_name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      message,
+      subject,
+      user_id: user?.id || null,
+      status: "open" as const,
+      priority: finalPriority
+    }
+
+    try {
+      const { error } = await getSupabase().from("support_tickets").insert(data)
+      
+      if (error) throw error
+      
+      setSubmitted(true)
+      toast({
+        title: "Message sent!",
+        description: "We'll get back to you as soon as possible.",
+      })
+    } catch (error) {
+      console.error("Error submitting contact form:", error)
+      toast({
+        title: "Submission failed",
+        description: "There was an error sending your message. Please try again.",
+        variant: "destructive"
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

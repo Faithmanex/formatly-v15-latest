@@ -609,7 +609,7 @@ export function LandingPage() {
                 </motion.div>
               </>
             ) : (
-              // Guest hero - shown immediately on load, no waiting for auth
+              // Default hero - shown immediately on load, no waiting for auth
               <>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}

@@ -9,7 +9,7 @@ export type Database = {
           email: string
           full_name: string | null
           avatar_url: string | null
-          role: "guest" | "user" | "admin"
+          role: "user" | "admin"
           created_at: string
           updated_at: string
           subscription_id: string | null
@@ -535,6 +535,35 @@ export type Database = {
           description?: string | null
           is_active?: boolean | null
           sort_order?: number | null
+        }
+        Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
+      }
+      support_tickets: {
+        Row: {
+          id: string
+          user_id: string | null
+          full_name: string
+          email: string
+          subject: string
+          message: string
+          status: "open" | "in-progress" | "closed"
+          priority: "low" | "medium" | "high" | "urgent"
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          user_id?: string | null
+          full_name: string
+          email: string
+          subject: string
+          message: string
+          status?: "open" | "in-progress" | "closed"
+          priority?: "low" | "medium" | "high" | "urgent"
+        }
+        Update: {
+          status?: "open" | "in-progress" | "closed"
+          priority?: "low" | "medium" | "high" | "urgent"
+          updated_at?: string
         }
         Relationships: Array<{ foreignKeyName: string; columns: string[]; isOneToOne?: boolean; referencedRelation: string; referencedColumns: string[] }>
       }

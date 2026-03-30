@@ -5,6 +5,7 @@ import "./globals.css"
 import { SWRConfig } from "swr"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
+import { SupportWidget } from "@/components/support-widget"
 import { AuthProvider } from "@/components/auth-provider"
 import { RealtimeProvider } from "@/contexts/realtime-context"
 import { SubscriptionProvider } from "@/contexts/subscription-context"
@@ -121,6 +122,7 @@ export default function RootLayout({
                 <RealtimeProvider>
                   {children}
                   <Toaster />
+                  <SupportWidget />
                 </RealtimeProvider>
               </SubscriptionProvider>
             </AuthProvider>
