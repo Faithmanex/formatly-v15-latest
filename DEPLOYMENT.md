@@ -6,7 +6,7 @@ This guide covers deploying Formatly to production environments.
 
 ### Prerequisites
 - Vercel account
-- GitHub repository
+- Git repository
 - Supabase project
 - FastAPI backend service
 
@@ -134,7 +134,7 @@ volumes:
 
 ### Using AWS Amplify
 
-1. Connect GitHub repository to AWS Amplify
+1. Connect Git repository to AWS Amplify
 2. Configure build settings:
 
 ```yaml

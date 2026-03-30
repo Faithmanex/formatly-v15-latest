@@ -12,32 +12,12 @@ import { useSubscription } from "@/contexts/subscription-context";
 import {
   FileText,
   Zap,
-  Shield,
-  CheckCircle,
-  Star,
   ArrowRight,
-  BookOpen,
-  Users,
-  Award,
-  LayoutDashboard,
-  TrendingUp,
-  Target,
-  Twitter,
-  Linkedin,
-  Github,
-  Mail,
-  GraduationCap,
-  FileCheck,
-  BookMarked,
-  ChevronDown,
-  Menu,
 } from "lucide-react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
 import { useAuth } from "@/components/auth-provider"
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 import { ImageModal } from "@/components/image-modal"
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { features, stats, testimonials, pricingPlans, useCases, faqs } from "@/lib/landing-data"
 
 const Features = dynamic(() => import("@/components/features").then((mod) => mod.Features), {

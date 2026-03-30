@@ -45,6 +45,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Formatly | Format APA, MLA, Chicago & Turabian in Seconds",
     description: "Instantly format your academic and professional research papers. Auto-apply APA, MLA, Chicago, Harvard, and Turabian styles in seconds.",
+    site: "@formatlyapp",
+    creator: "@formatlyapp",
     images: [
       {
         url: "/twitter-card-light.svg",
