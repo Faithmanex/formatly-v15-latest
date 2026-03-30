@@ -5,8 +5,7 @@ import { useAuth } from "@/components/auth-provider"
 import { useToast } from "@/hooks/use-toast"
 import { useSubscription } from "@/contexts/subscription-context"
 
-const PAYPAL_SDK_SRC =
-  "https://www.paypal.com/sdk/js?client-id=AQk7S24Sc2iKHeIuA93BP-3MN3fPOumFejN4lxJmku14oGkjT_T7l8lYgaS9ohmMf8YZl4M1aHLLS_H3&vault=true&intent=subscription"
+const PAYPAL_SDK_SRC = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&vault=true&intent=subscription`
 
 let paypalSdkPromise: Promise<void> | null = null
 
@@ -143,14 +142,35 @@ export function PayPalButton({ planId, planName, billingCycle, disabled = false 
                 custom_id: profile.id,
               })
             },
-            onApprove: async (data: any, actions: any) => {
-              toast({
-                title: "Subscription Successful",
-                description: `Your ${planName} subscription has been activated.`,
-              })
-              // Refresh subscription data
-              await refreshAll()
-              window.dispatchEvent(new Event("subscription-changed"))
+            onApprove: async (data: any) => {
+              try {
+                const res = await fetch("/api/subscriptions/activate", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    paypalSubscriptionId: data.subscriptionID,
+                    paypalPlanId,
+                    billingCycle,
+                  }),
+                })
+
+                if (!res.ok) {
+                  throw new Error("Activation failed")
+                }
+
+                toast({
+                  title: "Subscription Activated",
+                  description: `You're now on the ${planName} plan.`,
+                })
+                await refreshAll()
+                window.dispatchEvent(new Event("subscription-changed"))
+              } catch {
+                toast({
+                  title: "Activation Error",
+                  description: "Payment was received but your plan could not be updated. Please contact support.",
+                  variant: "destructive",
+                })
+              }
             },
             onError: (err: any) => {
               console.error("PayPal subscription flow failed:", err)
