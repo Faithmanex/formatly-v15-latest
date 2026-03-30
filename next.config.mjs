@@ -21,6 +21,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'ladyknightediting.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.paypal.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.sandbox.paypal.com',
+      },
     ],
   },
   webpack: (config, { isServer }) => {
@@ -70,12 +78,12 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.paypal.com https://www.sandbox.paypal.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.paypal.com https://www.sandbox.paypal.com https://*.paypal.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "img-src 'self' data: blob: https://res.cloudinary.com https://ladyknightediting.com https://www.paypal.com https://*.supabase.co",
+              "img-src 'self' data: blob: https://res.cloudinary.com https://ladyknightediting.com https://www.paypal.com https://www.sandbox.paypal.com https://*.paypal.com https://*.supabase.co https://lh3.googleusercontent.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.paypal.com https://api.formatlyapp.com ws://localhost:* ws://127.0.0.1:*",
-              "frame-src https://www.paypal.com https://www.sandbox.paypal.com",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.paypal.com https://www.sandbox.paypal.com https://*.paypal.com https://api.formatlyapp.com ws://localhost:* ws://127.0.0.1:*",
+              "frame-src https://www.paypal.com https://www.sandbox.paypal.com https://*.paypal.com",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
