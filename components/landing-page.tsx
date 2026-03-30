@@ -321,13 +321,13 @@ const FlipCardCarousel = () => {
       title: "Export Instantly",
       subtitle: "Download clean, publication-ready files.",
       number: 4,
-      imageUrl: "https://ladyknightediting.com/wp-content/uploads/2018/04/track-changes.png",
+      imageUrl: "https://images.unsplash.com/photo-1606857521015-7f9fdf423740?auto=format&fit=crop&q=80&w=800&h=600",
     },
     {
       title: "Share & Collaborate",
       subtitle: "Share, review, and finalize with your team.",
       number: 5,
-      imageUrl: "https://ladyknightediting.com/wp-content/uploads/2018/04/track-changes.png",
+      imageUrl: "https://images.unsplash.com/photo-1522071823991-b99c5517d815?auto=format&fit=crop&q=80&w=800&h=600",
     },
   ]
 

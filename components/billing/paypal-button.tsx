@@ -5,7 +5,17 @@ import { useAuth } from "@/components/auth-provider"
 import { useToast } from "@/hooks/use-toast"
 import { useSubscription } from "@/contexts/subscription-context"
 
-const PAYPAL_SDK_SRC = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&vault=true&intent=subscription`
+const getPayPalSdkUrl = () => {
+  const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID
+  if (!clientId) return null
+  
+  // You can set NEXT_PUBLIC_PAYPAL_ENV to 'sandbox' or 'live'
+  // If not set, we default to live but allow a simple check
+  const isSandbox = process.env.NEXT_PUBLIC_PAYPAL_ENV === 'sandbox' || clientId.startsWith('sb-')
+  const baseUrl = isSandbox ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com'
+  
+  return `${baseUrl}/sdk/js?client-id=${clientId}&vault=true&intent=subscription`
+}
 
 let paypalSdkPromise: Promise<void> | null = null
 
@@ -53,8 +63,14 @@ function loadPayPalSdk(): Promise<void> {
       }
     }
 
+    const sdkUrl = getPayPalSdkUrl()
+    if (!sdkUrl) {
+      reject(new Error("PayPal Client ID is not configured."))
+      return
+    }
+
     const script = document.createElement("script")
-    script.src = PAYPAL_SDK_SRC
+    script.src = sdkUrl
     script.async = true
     script.dataset.paypalSdk = "true"
 
