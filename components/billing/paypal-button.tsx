@@ -5,10 +5,7 @@ import { useAuth } from "@/components/auth-provider"
 import { useToast } from "@/hooks/use-toast"
 import { useSubscription } from "@/contexts/subscription-context"
 
-const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID
-const PAYPAL_ENV = process.env.NEXT_PUBLIC_PAYPAL_ENV || "sandbox"
-const PAYPAL_DOMAIN = PAYPAL_ENV === "production" ? "www.paypal.com" : "www.sandbox.paypal.com"
-const PAYPAL_SDK_SRC = `https://${PAYPAL_DOMAIN}/sdk/js?client-id=${PAYPAL_CLIENT_ID}&vault=true&intent=subscription`
+const PAYPAL_SDK_SRC = `https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&vault=true&intent=subscription`
 
 let paypalSdkPromise: Promise<void> | null = null
 
@@ -19,10 +16,6 @@ function loadPayPalSdk(): Promise<void> {
 
   if (window.paypal) {
     return Promise.resolve()
-  }
-
-  if (!PAYPAL_CLIENT_ID) {
-    return Promise.reject(new Error("PayPal Client ID is missing. Check your environment variables."))
   }
 
   if (paypalSdkPromise) {
