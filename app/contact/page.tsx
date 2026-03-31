@@ -11,6 +11,7 @@ import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 import { getSupabase } from "@/lib/supabase"
 import { useSubscription } from "@/contexts/subscription-context"
+import { useAuth } from "@/components/auth-provider"
 
 export default function ContactPage() {
   const [loading, setLoading] = useState(false)
