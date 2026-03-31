@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, ChevronDown, ChevronRight, HelpCircle, FileText, Upload, Settings, MessageSquare } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 const faqData = [
   {
@@ -116,7 +116,6 @@ const troubleshootingSteps = [
 ]
 
 export function HelpFAQ() {
-  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
   const [openItems, setOpenItems] = useState<string[]>([])
 
@@ -260,9 +259,11 @@ export function HelpFAQ() {
                   <p className="text-sm text-muted-foreground mb-4">
                     Need help with something specific? Our support team is here to help.
                   </p>
-                  <Button className="w-full" onClick={() => router.push('/contact')}>
-                    Open Support Ticket
-                  </Button>
+                  <Link href="/contact" className="block w-full">
+                    <Button className="w-full">
+                      Open Support Ticket
+                    </Button>
+                  </Link>
                 </div>
                 <div className="text-sm text-muted-foreground">
                   <p><strong>Response Time:</strong> Usually within 24 hours</p>
