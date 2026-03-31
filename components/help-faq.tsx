@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, ChevronDown, ChevronRight, HelpCircle, FileText, Upload, Settings, MessageSquare } from 'lucide-react'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const faqData = [
   {
@@ -116,6 +116,7 @@ const troubleshootingSteps = [
 ]
 
 export function HelpFAQ() {
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
   const [openItems, setOpenItems] = useState<string[]>([])
 
@@ -259,8 +260,8 @@ export function HelpFAQ() {
                   <p className="text-sm text-muted-foreground mb-4">
                     Need help with something specific? Our support team is here to help.
                   </p>
-                  <Button className="w-full" asChild>
-                    <Link href="/contact">Open Support Ticket</Link>
+                  <Button className="w-full" onClick={() => router.push('/contact')}>
+                    Open Support Ticket
                   </Button>
                 </div>
                 <div className="text-sm text-muted-foreground">
