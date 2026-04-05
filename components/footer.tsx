@@ -12,7 +12,6 @@ export const Footer = () => {
           <div className="flex items-center gap-2">
             <img src="/logo-dark.svg" alt="Formatly" className="h-8 sm:h-9 dark:hidden" />
             <img src="/logo-white.svg" alt="Formatly" className="h-8 sm:h-9 hidden dark:block" />
-            <span className="text-xl sm:text-2xl font-bold text-foreground">Formatly</span>
           </div>
 
           <div className="flex items-center gap-4 sm:gap-6">
