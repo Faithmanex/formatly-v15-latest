@@ -9,10 +9,10 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { pricingPlans } from "@/lib/landing-data"
 import { useAuth } from "@/components/auth-provider"
-import { useSubscription, useSubscriptionStatus } from "@/contexts/subscription-context"
+import useSWR from "swr"
+import { getUserSubscription, getSubscriptionPlans, isPlanUpgrade, getPlanChangePreview } from "@/lib/billing"
 import { PayPalButton } from "@/components/billing/paypal-button"
 import { cn } from "@/lib/utils"
-import { isPlanUpgrade, getPlanChangePreview } from "@/lib/billing"
 import { useToast } from "@/hooks/use-toast"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
@@ -61,8 +61,22 @@ function BillingToggle({ billingCycle, onChange, showSavings = true }: BillingTo
 export function Pricing({ mode = "landing" }: { mode?: "landing" | "dashboard" }) {
   const { user, profile } = useAuth()
   const { toast } = useToast()
-  const { subscription: currentSubscription, plans: dbPlans } = useSubscription()
-  const { isSubscribed, planName } = useSubscriptionStatus()
+
+  const SWR_OPTS = { revalidateOnFocus: false, dedupingInterval: 30_000 }
+
+  const { data: currentSubscription } = useSWR(
+    user?.id ? ["subscription", user.id] : null,
+    ([, id]: [string, string]) => getUserSubscription(id),
+    SWR_OPTS,
+  )
+  const { data: dbPlans } = useSWR(
+    "plans",
+    () => getSubscriptionPlans(),
+    { ...SWR_OPTS, dedupingInterval: 10 * 60 * 1000 },
+  )
+
+  const isSubscribed = currentSubscription?.status === "active"
+  const planName = currentSubscription?.plan?.name ?? "Free"
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly")
   const [isComparisonOpen, setIsComparisonOpen] = useState(false)
