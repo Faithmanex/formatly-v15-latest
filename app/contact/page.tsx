@@ -160,7 +160,7 @@ export default function ContactPage() {
                 Check our Status page or visit the documentation for quick troubleshooting steps.
               </p>
               <Button variant="outline" size="sm" className="rounded-xl w-full" asChild>
-                <Link href="/faq">Visit FAQ</Link>
+                <Link href="/help">Visit FAQ</Link>
               </Button>
             </div>
           </div>
