@@ -10,7 +10,8 @@ import { Mail, MessageSquare, Send, ArrowLeft, CheckCircle2, Loader2, MapPin, Ph
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 import { getSupabase } from "@/lib/supabase"
-import { useSubscription } from "@/contexts/subscription-context"
+import { getUserSubscription } from "@/lib/billing"
+import useSWR from "swr"
 import { useAuth } from "@/components/auth-provider"
 
 export default function ContactPage() {
@@ -18,7 +19,12 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false)
   const { user } = useAuth()
   const { toast } = useToast()
-  const { planName } = useSubscription()
+  const { data: subscription } = useSWR(
+    user?.id ? ["subscription", user.id] : null,
+    ([, id]: [string, string]) => getUserSubscription(id),
+    { revalidateOnFocus: false, dedupingInterval: 30_000 }
+  )
+  const planName = subscription?.plan?.name ?? "Free"
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

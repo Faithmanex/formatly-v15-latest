@@ -86,6 +86,7 @@ export function RealtimeProvider({
   const mountedRef = useRef(true)
   const subscriptionsSetup = useRef(false)
   const lastUserId = useRef<string | null>(null)
+  const intervalCleanupRef = useRef<(() => void) | null>(null)
 
   const loadInitialDocuments = useCallback(async () => {
     if (!user?.id || !mountedRef.current) return
@@ -421,9 +422,14 @@ export function RealtimeProvider({
         loadInitialProfile(),
         loadInitialSubscription(),
       ]).then(() => {
+        // Clean up any previous interval before setting up new subscriptions
+        if (intervalCleanupRef.current) {
+          intervalCleanupRef.current()
+          intervalCleanupRef.current = null
+        }
         // Then setup real-time subscriptions
         const cleanup = setupRealtimeSubscriptions()
-        return cleanup
+        if (cleanup) intervalCleanupRef.current = cleanup
       })
     } else if (!user?.id) {
       // Reset state when user logs out
@@ -441,7 +447,13 @@ export function RealtimeProvider({
       cleanupSubscriptions()
     }
 
-    return cleanupSubscriptions
+    return () => {
+      if (intervalCleanupRef.current) {
+        intervalCleanupRef.current()
+        intervalCleanupRef.current = null
+      }
+      cleanupSubscriptions()
+    }
   }, [
     user?.id,
     loadInitialDocuments,

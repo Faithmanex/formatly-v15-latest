@@ -7,8 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { SupportWidget } from "@/components/support-widget"
 import { AuthProvider } from "@/components/auth-provider"
-import { RealtimeProvider } from "@/contexts/realtime-context"
-import { SubscriptionProvider } from "@/contexts/subscription-context"
+
 import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({
@@ -118,13 +117,9 @@ export default function RootLayout({
         >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <AuthProvider>
-              <SubscriptionProvider>
-                <RealtimeProvider>
-                  {children}
-                  <Toaster />
-                  <SupportWidget />
-                </RealtimeProvider>
-              </SubscriptionProvider>
+              {children}
+              <Toaster />
+              <SupportWidget />
             </AuthProvider>
           </ThemeProvider>
         </SWRConfig>

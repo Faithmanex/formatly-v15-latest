@@ -2,8 +2,6 @@
 
 import { motion } from "framer-motion"
 import { Navigation } from "@/components/navigation"
-import { Features } from "@/components/features"
-import { Testimonials } from "@/components/testimonials"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"

@@ -9,6 +9,8 @@ import { useAuth } from "@/components/auth-provider"
 import { Skeleton } from "@/components/ui/skeleton"
 import { AnimatePresence, motion } from "framer-motion"
 import { usePathname } from "next/navigation"
+import { RealtimeProvider } from "@/contexts/realtime-context"
+import { SubscriptionProvider } from "@/contexts/subscription-context"
 
 function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const { isInitialized, isLoading, user } = useAuth()
@@ -58,5 +60,11 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <DashboardLayoutContent>{children}</DashboardLayoutContent>
+  return (
+    <SubscriptionProvider>
+      <RealtimeProvider>
+        <DashboardLayoutContent>{children}</DashboardLayoutContent>
+      </RealtimeProvider>
+    </SubscriptionProvider>
+  )
 }
