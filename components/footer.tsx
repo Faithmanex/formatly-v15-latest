@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Twitter, Linkedin, Mail } from "lucide-react"
+import { Twitter, Mail } from "lucide-react"
 
 export const Footer = () => {
   return (
@@ -22,13 +22,6 @@ export const Footer = () => {
                 <Twitter className="h-5 w-5 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-primary-foreground transition-colors" />
               </div>
             </Link>
-
-            <Link href="https://linkedin.com/company/formatly" target="_blank" rel="noopener noreferrer" className="group">
-              <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-muted hover:bg-primary transition-colors">
-                <Linkedin className="h-5 w-5 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-primary-foreground transition-colors" />
-              </div>
-            </Link>
-
 
             <Link href="mailto:formatlyapp@gmail.com" className="group">
               <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-muted hover:bg-primary transition-colors">
