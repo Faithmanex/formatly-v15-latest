@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Shield, Users, FileText, Activity, Key, Settings, AlertTriangle, CheckCircle, Clock, Copy, Trash2, RefreshCw, Loader2, LifeBuoy, MessageSquare, ExternalLink } from 'lucide-react'
+import { Shield, Users, FileText, Activity, Key, Settings, AlertTriangle, CheckCircle, Clock, Copy, Trash2, RefreshCw, Loader2, LifeBuoy, MessageSquare, ExternalLink, Mail } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { useEffect, useCallback } from "react"
 import { getSupabase } from "@/lib/supabase"
