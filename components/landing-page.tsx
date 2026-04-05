@@ -422,7 +422,6 @@ const AnimatedCounter = ({ value, label }: { value: string; label: string }) => 
 const TypewriterHeadline = () => {
   const headlines = useMemo(() => [
     "Flawless Research Formatting",
-    "Perfect Citations & Referencing",
     "Tailored Style Guide Compliance",
     "Publication-Ready Documents"
   ], [])
