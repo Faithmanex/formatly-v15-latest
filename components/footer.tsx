@@ -1,7 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { Twitter, Mail } from "lucide-react"
+import Image from "next/image"
+import TwitterIcon from "@/public/logo-white.svg"
 
 export const Footer = () => {
   return (
@@ -9,23 +10,57 @@ export const Footer = () => {
       <div className="absolute inset-0 bg-dot-pattern opacity-[0.05] dark:opacity-[0.03]" />
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="flex flex-col items-center gap-6 mb-8">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg">
-              <span className="text-base sm:text-lg font-bold">F</span>
-            </div>
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/logo-dark.svg"
+              alt="Formatly Logo"
+              className="h-8 sm:h-9 dark:hidden"
+              width={36}
+              height={36}
+            />
+            <Image
+              src="/logo-white.svg"
+              alt="Formatly Logo"
+              className="h-8 sm:h-9 hidden dark:block"
+              width={36}
+              height={36}
+            />
             <span className="text-xl sm:text-2xl font-bold text-foreground">Formatly</span>
-          </div>
+          </Link>
 
           <div className="flex items-center gap-4 sm:gap-6">
             <Link href="https://twitter.com/formatlyapp" target="_blank" rel="noopener noreferrer" className="group">
-              <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-muted hover:bg-primary transition-colors">
-                <Twitter className="h-5 w-5 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-primary-foreground transition-colors" />
+              <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-muted hover:bg-primary transition-colors group-hover:text-primary-foreground">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="text-muted-foreground group-hover:text-primary-foreground transition-colors"
+                >
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
               </div>
             </Link>
 
             <Link href="mailto:formatlyapp@gmail.com" className="group">
-              <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-muted hover:bg-primary transition-colors">
-                <Mail className="h-5 w-5 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-primary-foreground transition-colors" />
+              <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-muted hover:bg-primary transition-colors group-hover:text-primary-foreground">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-muted-foreground group-hover:text-primary-foreground transition-colors"
+                >
+                  <rect width="20" height="16" x="2" y="4" rx="2" />
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
               </div>
             </Link>
           </div>
@@ -33,7 +68,7 @@ export const Footer = () => {
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-muted-foreground pt-6 border-t">
           <div className="text-center md:text-left">
-            <span>&copy; {new Date().getFullYear()} Formatly. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} Formatly. All rights reserved.</span>
           </div>
           <div className="flex flex-wrap gap-4 sm:gap-6 justify-center">
             <Link href="/privacy" className="hover:text-foreground transition-colors">
