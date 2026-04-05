@@ -1,18 +1,9 @@
-import { Metadata } from "next"
-import { Navigation } from "@/components/navigation"
-import { Features } from "@/components/features"
-import { Testimonials } from "@/components/testimonials"
-import { Footer } from "@/components/footer"
-
-export const metadata: Metadata = {
-  title: "About Us | Formatly",
-  description: "Learn about Formatly's mission to revolutionize academic formatting and research efficiency.",
-}
-
 'use client'
 
 import { motion } from "framer-motion"
 import { Navigation } from "@/components/navigation"
+import { Features } from "@/components/features"
+import { Testimonials } from "@/components/testimonials"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
