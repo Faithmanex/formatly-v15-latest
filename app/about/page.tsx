@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles, ArrowRight } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 const stats = [
   { label: "Processing Time", value: "~30s" },
@@ -20,22 +21,26 @@ const values = [
   {
     title: "Speed Without Compromise",
     description: "Format documents in about 30 seconds — APA, MLA, Chicago, Harvard, and Turabian. Every heading, citation, and reference handled properly.",
-    image: "https://res.cloudinary.com/dtbdixfgf/image/upload/v1760632904/Original_Doc_i1mb8f.png"
+    image: "/logo-dark.svg",
+    imageAlt: "Formatly"
   },
   {
     title: "AI-Powered, Human-Reviewed",
     description: "Powered by Google Gemini AI for context-aware formatting, with tracked revisions so you can review every change before it goes in your document.",
-    image: "https://res.cloudinary.com/dtbdixfgf/image/upload/v1760632903/Neat_Copy_dsu2yd.png"
+    image: "https://res.cloudinary.com/dtbdixfgf/image/upload/v1760632903/Tracked_Changes_vsgmpt.png",
+    imageAlt: "Tracked revisions"
   },
   {
     title: "Your Documents Stay Yours",
     description: "End-to-end encryption, Supabase-backed storage, and strict access controls. Your research isn't our training data.",
-    image: "https://res.cloudinary.com/dtbdixfgf/image/upload/v1760632904/Original_Doc_i1mb8f.png"
+    image: "/logo-dark.svg",
+    imageAlt: "Formatly security"
   },
   {
     title: "Built for Real Academic Work",
     description: "DOC, DOCX, PDF, TXT, RTF support. Batch up to 5 documents. Publisher-ready output that meets journal and institutional requirements.",
-    image: "https://res.cloudinary.com/dtbdixfgf/image/upload/v1760632903/Neat_Copy_dsu2yd.png"
+    image: "https://res.cloudinary.com/dtbdixfgf/image/upload/v1760632903/Neat_Copy_dsu2yd.png",
+    imageAlt: "Neat formatting"
   }
 ]
 
@@ -94,8 +99,8 @@ export default function AboutPage() {
               >
                 <Card className="bg-card/50 backdrop-blur-xl border-border/50 hover:border-primary/30 transition-all group">
                   <CardContent className="p-8 text-center space-y-4">
-                    <div className="p-4 rounded-2xl bg-primary/10 text-primary inline-block group-hover:scale-110 transition-transform">
-                      <img src="/logo-icon.svg" alt="Formatly" className="h-6 w-6" />
+                    <div className="p-4 rounded-2xl bg-primary/10 text-primary inline-block group-hover:scale-110 transition-transform flex items-center justify-center">
+                      <Image src="/logo-icon.svg" alt="Formatly" width={24} height={24} />
                     </div>
                     <div>
                       <div className="text-4xl font-black">{stat.value}</div>
@@ -146,7 +151,13 @@ export default function AboutPage() {
               {values.map((value, i) => (
                 <div key={i} className="p-6 bg-card border rounded-3xl space-y-4 group hover:shadow-xl transition-shadow">
                   <div className="p-3 bg-primary/10 rounded-xl inline-block group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    <img src={value.image} alt={value.title} className="h-8 w-8 object-contain" />
+                    <Image 
+                      src={value.image} 
+                      alt={value.imageAlt}
+                      width={32}
+                      height={32}
+                      className="object-contain"
+                    />
                   </div>
                   <h4 className="font-bold text-xl">{value.title}</h4>
                   <p className="text-sm text-muted-foreground leading-relaxed">
