@@ -259,7 +259,7 @@ export function HelpFAQ() {
                   <p className="text-sm text-muted-foreground mb-4">
                     Need help with something specific? Our support team is here to help.
                   </p>
-                  <Link href="/contact" className="block w-full">
+                  <Link href="/contact" className="w-full">
                     <Button className="w-full">
                       Open Support Ticket
                     </Button>
