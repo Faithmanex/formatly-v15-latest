@@ -147,7 +147,7 @@ export default function AboutPage() {
                   <p>
                     Formatly was built out of frustration. Researchers spend countless hours 
                     nudging margins and standardizing citations instead of analyzing their 
-                    discoveries. Our AI engine safely automates this exhaustive process, 
+                    discoveries. Our is designed to AI safely automates this exhaustive process, 
                     leaving you with a publisher-ready document.
                   </p>
                 </div>

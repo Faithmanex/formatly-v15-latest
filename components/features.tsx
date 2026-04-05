@@ -1,63 +1,52 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Zap, FileText, FileCheck, Sparkles, Award, RefreshCw } from 'lucide-react'
-import { useState } from "react"
-
-const TiltCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
-  return (
-    <div className={className}>
-      {children}
-    </div>
-  )
-}
 
 export const Features = () => {
-  const [hoveredFeature, setHoveredFeature] = useState<number | null>(null)
-
   const features = [
     {
       icon: Zap,
       title: "Lightning Fast",
       description: "Upload and format complete documents in about 30 seconds.",
-      color: "text-yellow-600 dark:text-yellow-400",
-      bgColor: "bg-yellow-50 dark:bg-yellow-950/50",
+      color: "text-amber-500",
+      bg: "bg-amber-500/10",
     },
     {
       icon: FileText,
       title: "All Citation Styles",
       description: "APA 7th, MLA 9th, Chicago, Harvard & Turabian. Reference lists, hanging indents, and DOI formatting handled for you.",
-      color: "text-blue-600 dark:text-blue-400",
-      bgColor: "bg-blue-50 dark:bg-blue-950/50",
+      color: "text-blue-500",
+      bg: "bg-blue-500/10",
     },
     {
       icon: FileCheck,
       title: "Tracked Changes",
       description: "Full transparency on every adjustment. Compare original vs. formatted side by side, and download the tracked changes document alongside your final version.",
-      color: "text-green-600 dark:text-green-400",
-      bgColor: "bg-green-50 dark:bg-green-950/50",
+      color: "text-green-500",
+      bg: "bg-green-500/10",
     },
     {
       icon: RefreshCw,
       title: "Instant Style Conversion",
       description: "Convert between APA, MLA, Chicago, Harvard & Turabian in one click. Headings, citations, and references adjust automatically, no need to re-upload.",
-      color: "text-indigo-600 dark:text-indigo-400",
-      bgColor: "bg-indigo-50 dark:bg-indigo-950/50",
+      color: "text-indigo-500",
+      bg: "bg-indigo-500/10",
     },
     {
       icon: Sparkles,
       title: "Smart AI Assistant",
       description: "Real-time guidance to help refine your document's structure, flow, and overall presentation.",
-      color: "text-purple-600 dark:text-purple-400",
-      bgColor: "bg-purple-50 dark:bg-purple-950/50",
+      color: "text-purple-500",
+      bg: "bg-purple-500/10",
     },
     {
       icon: Award,
       title: "Publisher-Ready Output",
       description: "Meets strict journal and institutional requirements. Create custom styles for specific journals or departments and submit with confidence.",
-      color: "text-red-600 dark:text-red-400",
-      bgColor: "bg-red-50 dark:bg-red-950/50",
+      color: "text-rose-500",
+      bg: "bg-rose-500/10",
     },
   ]
 
@@ -70,35 +59,20 @@ export const Features = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: index * 0.1 }}
-          onMouseEnter={() => setHoveredFeature(index)}
-          onMouseLeave={() => setHoveredFeature(null)}
+          className="transition-base hover-lift group h-full"
         >
-          <TiltCard>
-            <Card
-              className={`h-full transition-all duration-300 hover:shadow-2xl gap-2 ${
-                hoveredFeature === index ? "scale-105 border-primary" : ""
-              }`}
-            >
-              <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-3">
-                <motion.div
-                  animate={{
-                    scale: hoveredFeature === index ? 1.1 : 1,
-                    rotate: hoveredFeature === index ? 360 : 0,
-                  }}
-                  transition={{ duration: 0.5 }}
-                  className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl ${feature.bgColor} flex items-center justify-center mb-2 sm:mb-3`}
-                >
-                  <feature.icon className={`h-6 w-6 sm:h-7 sm:w-7 ${feature.color}`} />
-                </motion.div>
-                <CardTitle className="text-lg sm:text-xl lg:text-2xl">{feature.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6 pt-0">
-                <CardDescription className="text-base sm:text-lg leading-relaxed">
-                  {feature.description}
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </TiltCard>
+          <Card className="h-full bg-card/60 backdrop-blur-md border border-border/50 hover:border-primary/30 transition-all overflow-hidden relative shadow-md hover:shadow-xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <CardContent className="p-6 md:p-8 space-y-4 relative z-10">
+              <div className={`p-4 w-fit rounded-2xl ${feature.bg} ${feature.color} group-hover:scale-110 transition-transform shadow-inner`}>
+                <feature.icon className="w-8 h-8" />
+              </div>
+              <h3 className="font-bold text-xl sm:text-2xl leading-tight">{feature.title}</h3>
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                {feature.description}
+              </p>
+            </CardContent>
+          </Card>
         </motion.div>
       ))}
     </div>

@@ -35,22 +35,25 @@ export function Testimonials() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <TiltCard>
-                <Card className="h-full hover:shadow-xl transition-shadow border-2">
-                  <CardContent className="p-4 sm:p-6">
-                    <div className="flex mb-3 sm:mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 sm:h-5 sm:w-5 fill-yellow-400 text-yellow-400" />
-                      ))}
+                <Card className="h-full bg-card/60 backdrop-blur-md border border-border/50 hover:border-primary/30 transition-all shadow-md hover:shadow-xl overflow-hidden relative group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CardContent className="p-6 sm:p-8 relative z-10 flex flex-col justify-between h-full">
+                    <div>
+                      <div className="flex mb-4 sm:mb-6">
+                        {[...Array(testimonial.rating)].map((_, i) => (
+                          <Star key={i} className="h-4 w-4 sm:h-5 sm:w-5 fill-amber-400 text-amber-400" />
+                        ))}
+                      </div>
+                      <p className="text-base sm:text-lg text-foreground mb-6 leading-relaxed font-medium italic">
+                        "{testimonial.content}"
+                      </p>
                     </div>
-                    <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
-                      "{testimonial.content}"
-                    </p>
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm sm:text-base">
+                    <div className="flex items-center gap-3 sm:gap-4 mt-auto pt-4 border-t border-border/50">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm sm:text-base group-hover:bg-primary group-hover:text-primary-foreground transition-all shadow-inner">
                         {testimonial.avatar}
                       </div>
                       <div>
-                        <p className="font-semibold text-sm sm:text-base">{testimonial.name}</p>
+                        <p className="font-bold text-sm sm:text-base">{testimonial.name}</p>
                         <p className="text-xs sm:text-sm text-muted-foreground">{testimonial.role}</p>
                       </div>
                     </div>

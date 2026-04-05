@@ -274,7 +274,7 @@ const FlipCardCarousel = () => {
                 <motion.div style={{ x: currentDragOffset }}>
                   <TiltCard className={currentCard === index ? "" : ""}>
                     <Card
-                      className={`w-[280px] h-64 sm:w-[380px] sm:h-72 md:w-[500px] md:h-[380px] lg:w-[550px] lg:h-[400px] bg-muted/40 backdrop-blur border-2 shadow-2xl overflow-hidden cursor-pointer transition-transform hover:scale-105 ${currentCard !== index ? "opacity-70" : ""}`}
+                      className={`group w-[280px] h-64 sm:w-[380px] sm:h-72 md:w-[500px] md:h-[380px] lg:w-[550px] lg:h-[400px] bg-card backdrop-blur-xl border border-border/50 shadow-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-105 ${currentCard !== index ? "opacity-60 saturate-50" : "ring-1 ring-primary/30"}`}
                       onClick={() => {
                         if (currentCard === index) {
                           setSelectedImageIndex(index)
@@ -284,23 +284,24 @@ const FlipCardCarousel = () => {
                       }}
                     >
                       <CardContent className="h-full p-0 relative">
-                        <div className="absolute top-2 left-3 sm:top-3 sm:left-4 md:top-4 md:left-6 text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white/20 z-10">
+                        <div className="absolute top-2 left-3 sm:top-4 sm:left-6 text-6xl sm:text-8xl md:text-9xl font-black text-white/20 z-10 select-none drop-shadow-xl">
                           {card.number}
                         </div>
                         <Image
                           src={card.imageUrl || "/placeholder.svg"}
                           alt={card.title}
                           fill
-                          className="object-cover"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
                           draggable={false}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
-                        <div className="absolute inset-0 bg-black/30 hover:bg-black/10 transition-colors shadow-none opacity-50" />
-                        <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 md:p-6 text-white z-20">
-                          <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-0.5 sm:mb-1">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10" />
+                        <div className="absolute inset-0 bg-primary/10 mix-blend-overlay z-10" />
+                        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 text-white z-20">
+                          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2 text-white/95">
                             {card.title}
                           </h3>
-                          <p className="text-xs sm:text-sm text-white/80">{card.subtitle}</p>
+                          <p className="text-sm sm:text-base text-white/80 font-medium">{card.subtitle}</p>
                         </div>
                       </CardContent>
                     </Card>
@@ -738,33 +739,33 @@ export function LandingPage() {
       <FAQ />
 
       {/* CTA Section */}
-      <section className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 relative">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center p-6 sm:p-8 md:p-12 rounded-xl border bg-card"
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 px-2">
-              Focus on Research, Not Formatting
-            </h2>
-            <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
+      <section className="py-12 sm:py-16 md:py-24 px-4 text-center max-w-5xl mx-auto relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="p-8 sm:p-12 md:p-16 rounded-[2.5rem] bg-card/80 backdrop-blur-2xl border shadow-2xl relative overflow-hidden group"
+        >
+          <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-secondary/5 opacity-50" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 transition-transform duration-700 group-hover:scale-110" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 transition-transform duration-700 group-hover:scale-110" />
+          
+          <div className="relative z-10 max-w-2xl mx-auto space-y-8">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">Focus on Research, Not Formatting</h2>
+            <p className="text-muted-foreground text-lg sm:text-xl px-4">
               Formatly takes care of every citation, margin, and reference—so you can spend your time pushing
               boundaries, not fixing styles.
             </p>
-            <Button
-              size="lg"
-              className="text-base sm:text-lg px-6 py-5 sm:px-8 sm:py-6 bg-primary hover:bg-primary/90 rounded-full"
-              asChild
-            >
-              <Link href="/auth/register">
-                Try Formatly Now
-                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-              </Link>
-            </Button>
-          </motion.div>
-        </div>
+            <div className="pt-4">
+              <Button size="lg" className="rounded-full shadow-lg h-14 px-8 text-lg font-semibold transition-transform hover:scale-105" asChild>
+                <Link href="/auth/register">
+                  Try Formatly Now
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       <Footer />
