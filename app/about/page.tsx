@@ -6,31 +6,36 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Shield, Sparkles, Zap, Users, GraduationCap, FileCheck, ArrowRight, Lightbulb, Heart, Target } from "lucide-react"
+import { Zap, FileText, Shield, BookOpen, Sparkles, ArrowRight, Lightbulb, Target, Heart } from "lucide-react"
 import Link from "next/link"
 
 const stats = [
-  { label: "Processing Time", value: "30s", icon: Zap, color: "text-yellow-500", bg: "bg-yellow-500/10" },
-  { label: "Major Formats", value: "5+", icon: FileCheck, color: "text-green-500", bg: "bg-green-500/10" },
-  { label: "Researchers Helping", value: "10k+", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
-  { label: "Accuracy Rate", value: "100%", icon: Shield, color: "text-purple-500", bg: "bg-purple-500/10" }
+  { label: "Processing Time", value: "~30s", icon: Zap, color: "text-yellow-500", bg: "bg-yellow-500/10" },
+  { label: "Citation Styles", value: "5+", icon: FileText, color: "text-green-500", bg: "bg-green-500/10" },
+  { label: "Supported Formats", value: "5", icon: BookOpen, color: "text-blue-500", bg: "bg-blue-500/10" },
+  { label: "Faster Than Manual", value: "25x", icon: Shield, color: "text-purple-500", bg: "bg-purple-500/10" }
 ]
 
 const values = [
   {
-    title: "Intelligence First",
-    description: "We leverage cutting-edge AI to understand document context, ensuring citation accuracy that rules-based systems miss.",
+    title: "Speed Without Compromise",
+    description: "Format documents in about 30 seconds — APA, MLA, Chicago, Harvard, and Turabian. Every heading, citation, and reference handled properly.",
+    icon: Zap
+  },
+  {
+    title: "AI-Powered, Human-Reviewed",
+    description: "Powered by Google Gemini AI for context-aware formatting, with tracked revisions so you can review every change before it goes in your document.",
     icon: Lightbulb
   },
   {
-    title: "Mission Centric",
-    description: "Our goal is simple: eliminate formatting friction to accelerate scientific discovery across the globe.",
-    icon: Target
+    title: "Your Documents Stay Yours",
+    description: "End-to-end encryption, Supabase-backed storage, and strict access controls. Your research isn't our training data.",
+    icon: Shield
   },
   {
-    title: "User Empathy",
-    description: "Built by researchers for researchers. We understand the high-stakes pressure of publication deadlines.",
-    icon: Heart
+    title: "Built for Real Academic Work",
+    description: "DOC, DOCX, PDF, TXT, RTF support. Batch up to 5 documents. Publisher-ready output that meets journal and institutional requirements.",
+    icon: Target
   }
 ]
 
@@ -40,7 +45,7 @@ export default function AboutPage() {
       <Navigation />
       
       {/* Decorative background blobs */}
-      <div className="absolute top-0 right-0 -z-10 translate-x-1/2 -translate-y-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-0 right-0 -z-10 translate-x/2 -translate-y-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 -z-10 -translate-x-1/4 translate-y-1/4 w-[800px] h-[800px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
 
       <main className="relative pt-20 pb-32">
@@ -53,7 +58,7 @@ export default function AboutPage() {
           >
             <Badge variant="outline" className="px-4 py-1.5 rounded-full bg-primary/5 text-primary border-primary/20 backdrop-blur-sm mb-4">
               <Sparkles className="h-3.5 w-3.5 mr-2 inline" />
-              Our Mission
+              About Formatly
             </Badge>
           </motion.div>
           <motion.h1 
@@ -61,8 +66,8 @@ export default function AboutPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-5xl md:text-7xl font-black tracking-tight"
           >
-            Empowering Minds to <br /> 
-            <span className="text-primary italic">Focus on Discovery</span>
+            Format Smarter, <br /> 
+            <span className="text-primary italic">Not Harder</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -70,9 +75,9 @@ export default function AboutPage() {
             transition={{ delay: 0.1 }}
             className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto"
           >
-            Formatly was founded with a clear vision: to eradicate the manual burden 
-            of academic formatting. We believe researchers should spend their time 
-            innovating, not fighting citation indents.
+            Formatly is an AI-powered academic formatting platform built to handle 
+            APA, MLA, Chicago, Harvard, and Turabian styles — automatically. 
+            Upload your document, get it back properly formatted in about 30 seconds.
           </motion.p>
         </section>
 
@@ -105,21 +110,23 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* The Problem & Solution */}
+        {/* What Formatly Does */}
         <section className="px-4 mb-32 bg-primary/5 py-24 relative">
           <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">
-              <h2 className="text-4xl font-bold">Why we built Formatly</h2>
+              <h2 className="text-4xl font-bold">What Formatly Does</h2>
               <div className="space-y-6">
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  Academic writing is a high-stakes endeavor. Between complex citations, strictly mandated 
-                  reference lists, and evolving institutional style guides, researchers often lose days 
-                  of productivity during the final stages of document preparation.
+                  Academic formatting rules are strict and time-consuming. APA 7th edition 
+                  has specific heading levels, reference formats, and hanging indents. 
+                  Chicago requires footnotes and bibliographies done right. Formatly 
+                  handles all of it automatically.
                 </p>
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  We saw brilliant scholars struggling with manual formatting when they could be pushing 
-                  the boundaries of human knowledge. We decided to bridge that gap with intelligent 
-                  automation that understands style as well as the rules.
+                  Upload your draft in DOC, DOCX, PDF, TXT, or RTF — up to 5 files 
+                  at once. Formatly's AI engine applies the correct style, catches 
+                  formatting errors you didn't know existed, and returns a 
+                  publisher-ready document with tracked revisions.
                 </p>
               </div>
               <div className="flex gap-4">
@@ -155,14 +162,14 @@ export default function AboutPage() {
         <section className="px-4 text-center">
           <div className="max-w-3xl mx-auto space-y-8 p-12 rounded-[40px] bg-primary text-primary-foreground relative overflow-hidden shadow-2xl shadow-primary/20">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <h2 className="text-4xl font-bold relative z-10">Ready to accelerate your research?</h2>
+            <h2 className="text-4xl font-bold relative z-10">Ready to stop fighting formatting?</h2>
             <p className="text-primary-foreground/90 text-lg max-w-xl mx-auto relative z-10">
-              Join thousands of doctoral students and researchers who have reclaimed 
-              their time with Formatly's intelligent formatting engine.
+              Upload your document and get a properly formatted result in about 30 seconds. 
+              Free plan includes 3 documents per month.
             </p>
             <div className="relative z-10">
               <Button size="lg" className="bg-white text-primary hover:bg-white/90 rounded-2xl h-14 px-8 font-bold text-lg shadow-xl" asChild>
-                <Link href="/auth/register">Join 10k+ Researchers</Link>
+                <Link href="/auth/register">Start Formatting Now</Link>
               </Button>
             </div>
           </div>
