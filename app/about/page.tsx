@@ -69,7 +69,7 @@ export default function AboutPage() {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black tracking-tight"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight"
           >
             Format Smarter, <br /> 
             <span className="text-primary italic">Not Harder</span>
@@ -103,7 +103,7 @@ export default function AboutPage() {
                       <Image src="/logo-icon.svg" alt="Formatly" width={24} height={24} />
                     </div>
                     <div>
-                      <div className="text-4xl font-black">{stat.value}</div>
+                      <div className="text-4xl font-bold">{stat.value}</div>
                       <div className="text-xs text-muted-foreground uppercase tracking-widest font-bold mt-1">
                         {stat.label}
                       </div>

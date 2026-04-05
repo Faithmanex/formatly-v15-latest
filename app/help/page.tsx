@@ -12,7 +12,7 @@ export default function HelpPage() {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
+
       <main>
         <HelpFAQ />
       </main>
