@@ -297,6 +297,7 @@ const FlipCardCarousel = () => {
                           src={card.imageUrl || "/placeholder.svg"}
                           alt={card.title}
                           fill
+                          priority={index <= 1}
                           className="object-cover transition-transform duration-700 group-hover:scale-105"
                           draggable={false}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -478,12 +479,10 @@ const TypewriterHeadline = () => {
   }, [subIndex, isDeleting, index, headlines, pause])
 
   return (
-    <span className="relative">
-      {headlines[index].substring(0, subIndex)}
       <motion.span
         animate={{ opacity: [1, 0, 1] }}
         transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
-        className="inline-block border-r-2 border-primary h-[1em] translate-y-1 ml-1"
+        className="inline-block w-[2px] bg-primary h-[1em] translate-y-1 ml-1"
       />
     </span>
   )
@@ -521,9 +520,9 @@ export function LandingPage() {
       {/* Hero Section */}
       <section className="relative py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 overflow-hidden">
         {/* Animated Background */}
-        <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 -z-10 overflow-hidden">
           <div className="absolute top-20 left-10 w-48 h-48 sm:w-72 sm:h-72 bg-primary/5 rounded-full blur-3xl animate-float-slow" />
-          <div className="absolute bottom-20 right-10 w-64 h-64 sm:w-96 sm:h-96 bg-secondary/5 rounded-full blur-3xl animate-float-slower" />
+          <div className="absolute top-2/3 right-10 w-64 h-64 sm:w-96 sm:h-96 bg-secondary/5 rounded-full blur-3xl animate-float-slower" />
         </div>
 
         <div className="max-w-7xl mx-auto">
@@ -658,16 +657,14 @@ export function LandingPage() {
           </div>
 
           {/* Demo Preview */}
-          {isInitialized && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="mb-12 sm:mb-20"
-            >
-              <FlipCardCarousel />
-            </motion.div>
-          )}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mb-12 sm:mb-20 px-2 sm:px-4"
+          >
+            <FlipCardCarousel />
+          </motion.div>
 
           {/* Trust Indicators */}
           <motion.div
