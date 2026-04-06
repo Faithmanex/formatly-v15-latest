@@ -12,8 +12,8 @@ import Image from "next/image"
 
 const stats = [
   { label: "Accuracy", value: "99%", icon: Target },
-  { label: "Style compliance", value: "98%", icon: FileCheck },
   { label: "Faster formatting", value: "480x", icon: Zap },
+  { label: "Style compliance", value: "98%", icon: FileCheck },
   { label: "Processing Time", value: "~30s", icon: Clock }
 ]
 

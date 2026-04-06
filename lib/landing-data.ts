@@ -59,8 +59,8 @@ export const features = [
 
 export const stats = [
   { icon: Target, value: "99%", label: "Accuracy" },
-  { icon: FileCheck, value: "98%", label: "Style compliance" },
   { icon: Zap, value: "480x", label: "Faster formatting" },
+  { icon: FileCheck, value: "98%", label: "Style compliance" },
 ]
 
 export const testimonials = [
