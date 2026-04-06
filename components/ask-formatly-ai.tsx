@@ -227,7 +227,7 @@ export function AskFormatlyAI() {
           </div>
           <div>
             <h1 className="text-xl font-semibold tracking-tight md:text-2xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Formatly AI</h1>
-            <p className="text-xs text-muted-foreground md:text-sm">Formatting help with live streaming responses</p>
+            <p className="text-xs text-muted-foreground md:text-sm">Your intelligent formatting and research assistant</p>
           </div>
         </div>
         <Button variant="outline" size="sm" onClick={handleNewChat} className="flex items-center gap-2 bg-transparent">
@@ -262,43 +262,49 @@ export function AskFormatlyAI() {
           </div>
         ) : (
           <ScrollArea className="h-full">
-            <div className="mx-auto max-w-4xl space-y-6 p-3 sm:p-4 lg:p-6">
+            <div className="mx-auto max-w-4xl space-y-6 md:space-y-8 p-4 sm:p-6 lg:p-8">
               {messages.map((message) => (
-                <div key={message.id} className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
+                <div key={message.id} className={`flex w-full ${message.type === "user" ? "justify-end" : "justify-start"}`}>
                   <div
-                    className={`flex gap-3 ${
+                    className={`flex gap-3 sm:gap-4 ${
                       message.type === "user"
-                        ? "max-w-[80%] flex-row-reverse sm:max-w-[70%]"
-                        : "max-w-[92%] flex-row sm:max-w-[86%]"
+                        ? "max-w-[85%] flex-row-reverse sm:max-w-[75%]"
+                        : "max-w-[95%] flex-row sm:max-w-[85%]"
                     }`}
                   >
-                    <div className="flex-shrink-0">
+                    {/* Avatar */}
+                    <div className="flex-shrink-0 mt-1">
                       {message.type === "user" ? (
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-                          <User className="h-4 w-4 text-primary-foreground" />
+                        <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
+                          <User className="h-4 w-4 sm:h-5 sm:w-5" />
                         </div>
                       ) : (
-                        <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 overflow-hidden shrink-0 shadow-sm">
-                          <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-indigo-500/20 opacity-50" />
-                          <FormatlyAIIcon size={18} className="relative z-10" />
+                        <div className="relative flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-[14px] bg-primary/5 border border-primary/20 shadow-sm overflow-hidden shrink-0">
+                          <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-indigo-500/10 opacity-50" />
+                          <FormatlyAIIcon size={20} className="relative z-10 text-primary" />
                         </div>
                       )}
                     </div>
-                    <div className={`flex min-w-0 flex-1 flex-col space-y-1 ${message.type === "user" ? "items-end" : "items-start"}`}>
-                      <div className="text-xs text-muted-foreground">{message.type === "user" ? "You" : "Formatly AI"}</div>
+                    
+                    {/* Message Content */}
+                    <div className={`flex min-w-0 flex-1 flex-col space-y-1.5 ${message.type === "user" ? "items-end" : "items-start"}`}>
+                      <div className="text-xs sm:text-sm font-medium text-muted-foreground/80 px-1 tracking-wide uppercase">
+                        {message.type === "user" ? "You" : "Formatly AI"}
+                      </div>
+                      
                       <div
-                        className={`rounded-2xl px-4 py-3 text-sm md:text-base ${
+                        className={`relative px-5 py-4 shadow-sm ${
                           message.type === "user"
-                            ? "bg-primary text-primary-foreground"
-                            : "border border-border/60 bg-card/80 text-foreground shadow-sm"
+                            ? "bg-primary text-primary-foreground rounded-2xl rounded-tr-sm"
+                            : "bg-card/70 backdrop-blur-xl border border-border/50 text-foreground rounded-2xl rounded-tl-sm ring-1 ring-inset ring-white/10 shadow-lg"
                         }`}
                       >
                         {message.type === "ai" ? (
-                          <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground [&>*]:break-words [&_code]:break-all [&_pre]:overflow-x-auto [&_pre]:whitespace-pre-wrap">
+                          <div className="prose prose-sm sm:prose-base max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-p:leading-relaxed prose-li:text-foreground prose-strong:text-foreground [&>*]:break-words [&_code]:break-all [&_pre]:overflow-x-auto [&_pre]:whitespace-pre-wrap">
                             <ReactMarkdown components={MarkdownComponents}>{message.content || "..."}</ReactMarkdown>
                           </div>
                         ) : (
-                          <div className="whitespace-pre-wrap break-words">{message.content}</div>
+                          <div className="whitespace-pre-wrap break-words text-sm sm:text-base leading-relaxed font-medium">{message.content}</div>
                         )}
                       </div>
                     </div>
@@ -307,12 +313,30 @@ export function AskFormatlyAI() {
               ))}
 
               {isLoading && streamingMessageId && (
-                <div className="flex items-center justify-start gap-2 px-11 text-xs text-muted-foreground">
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
-                  Streaming response...
+                <div className="flex w-full justify-start mt-4">
+                  <div className="flex gap-3 sm:gap-4 max-w-[95%] sm:max-w-[85%]">
+                    <div className="flex-shrink-0 mt-1">
+                      <div className="relative flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-[14px] bg-primary/5 border border-primary/20 shadow-sm overflow-hidden shrink-0">
+                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-indigo-500/10 opacity-50 animate-pulse" />
+                        <FormatlyAIIcon size={20} className="relative z-10 text-primary" />
+                      </div>
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col space-y-1.5 items-start">
+                      <div className="text-xs sm:text-sm font-medium text-muted-foreground/80 px-1 tracking-wide uppercase">
+                        Formatly AI
+                      </div>
+                      <div className="bg-card/70 backdrop-blur-xl border border-border/50 rounded-2xl rounded-tl-sm px-6 py-5 flex items-center shadow-lg ring-1 ring-inset ring-white/10 h-[58px]">
+                        <div className="flex gap-1.5 items-center">
+                          <span className="w-2 h-2 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: "0ms" }}></span>
+                          <span className="w-2 h-2 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: "150ms" }}></span>
+                          <span className="w-2 h-2 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: "300ms" }}></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
-              <div ref={endOfMessagesRef} />
+              <div ref={endOfMessagesRef} className="h-4" />
             </div>
           </ScrollArea>
         )}
