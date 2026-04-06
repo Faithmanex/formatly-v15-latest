@@ -209,11 +209,20 @@ export function AskFormatlyAI() {
     <div className="flex h-full flex-col bg-gradient-to-b from-background via-background to-muted/20">
       <div className="flex items-center justify-between border-b bg-background/80 px-4 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/70">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Sparkles className="h-5 w-5" />
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden bg-primary/10 text-primary group border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.2)]">
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-indigo-500/30 opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+            <svg width="22" height="22" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="relative z-10 transition-transform group-hover:scale-105 duration-500">
+              <rect width="200" height="200" rx="40" fill="currentColor" className="opacity-20"/>
+              <rect x="30" y="30" width="135" height="35" rx="10" fill="currentColor" className="animate-pulse" style={{ animationDuration: '2s' }}/>
+              <rect x="30" y="80" width="110" height="35" rx="10" fill="currentColor" className="animate-pulse" style={{ animationDuration: '2s', animationDelay: '200ms' }}/>
+              <rect x="30" y="130" width="70" height="35" rx="10" fill="currentColor" className="animate-pulse" style={{ animationDuration: '2s', animationDelay: '400ms' }}/>
+              {/* Agentic cyber core */}
+              <circle cx="145" cy="145" r="16" fill="currentColor" className="animate-ping opacity-80" style={{ animationDuration: '3s' }}/>
+              <circle cx="145" cy="145" r="10" fill="currentColor" />
+            </svg>
           </div>
           <div>
-            <h1 className="text-xl font-semibold md:text-2xl">Formatly AI</h1>
+            <h1 className="text-xl font-semibold tracking-tight md:text-2xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Formatly AI</h1>
             <p className="text-xs text-muted-foreground md:text-sm">Formatting help with live streaming responses</p>
           </div>
         </div>
