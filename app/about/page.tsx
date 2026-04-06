@@ -6,15 +6,15 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, ArrowRight, Zap, Shield, FileText, Clock, CheckCircle } from "lucide-react"
+import { Sparkles, ArrowRight, Zap, Shield, FileText, Clock, CheckCircle, Target, FileCheck } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 
 const stats = [
-  { label: "Processing Time", value: "~30s", icon: Clock },
-  { label: "Citation Styles", value: "5+", icon: FileText },
-  { label: "Supported Formats", value: "5", icon: Zap },
-  { label: "Faster Than Manual", value: "25x", icon: Sparkles }
+  { label: "Accuracy", value: "99%", icon: Target },
+  { label: "Style compliance", value: "98%", icon: FileCheck },
+  { label: "Faster formatting", value: "480x", icon: Zap },
+  { label: "Processing Time", value: "~30s", icon: Clock }
 ]
 
 const values = [
