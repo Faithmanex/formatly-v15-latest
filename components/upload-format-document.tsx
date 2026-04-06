@@ -83,8 +83,8 @@ export function UploadFormatDocument() {
           <Skeleton className="h-6 md:h-8 w-48 md:w-64" />
           <Skeleton className="h-3 md:h-4 w-64 md:w-96" />
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-          <Card>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 relative z-10">
+          <Card className="bg-card/60 backdrop-blur-xl border-border/50 shadow-xl">
             <CardHeader>
               <Skeleton className="h-5 md:h-6 w-36 md:w-48" />
               <Skeleton className="h-3 md:h-4 w-48 md:w-72" />
@@ -98,7 +98,7 @@ export function UploadFormatDocument() {
               ))}
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-card/60 backdrop-blur-xl border-border/50 shadow-xl">
             <CardHeader>
               <Skeleton className="h-5 md:h-6 w-36 md:w-48" />
               <Skeleton className="h-3 md:h-4 w-48 md:w-72" />
@@ -135,10 +135,11 @@ export function UploadFormatDocument() {
         </Alert>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 relative z-10">
         {/* Formatting Options */}
-        <Card>
-          <CardHeader className="px-4 pt-4 pb-2 md:px-6 md:pt-6 md:pb-2">
+        <Card className="bg-card/60 backdrop-blur-xl border border-border/50 shadow-2xl relative overflow-hidden group transition-all duration-300 hover:shadow-primary/5 hover:border-primary/20">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-duration-500 pointer-events-none" />
+          <CardHeader className="px-4 pt-4 pb-2 md:px-6 md:pt-6 md:pb-2 relative z-10">
             <CardTitle className="flex items-center gap-2 text-base md:text-lg">
               <Settings className="h-4 w-4 md:h-5 md:w-5" />
               Formatting Options
@@ -291,8 +292,9 @@ export function UploadFormatDocument() {
         </Card>
 
         {/* Document Upload */}
-        <Card>
-          <CardHeader className="px-4 pt-4 pb-2 md:px-6 md:pt-6 md:pb-2">
+        <Card className="bg-card/60 backdrop-blur-xl border border-border/50 shadow-2xl relative overflow-hidden group transition-all duration-300 hover:shadow-secondary/5 hover:border-secondary/20">
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-duration-500 pointer-events-none" />
+          <CardHeader className="px-4 pt-4 pb-2 md:px-6 md:pt-6 md:pb-2 relative z-10">
             <CardTitle className="flex items-center gap-2 text-base md:text-lg">
               <Upload className="h-4 w-4 md:h-5 md:w-5" />
               Upload Documents
@@ -311,8 +313,8 @@ export function UploadFormatDocument() {
         </Card>
       </div>
 
-      <Card className="border-none shadow-none bg-transparent">
-        <CardHeader className="px-0 pb-4">
+      <Card className="bg-card/60 backdrop-blur-xl border border-border/50 shadow-xl mt-8 relative overflow-hidden z-10">
+        <CardHeader className="px-6 pb-4 pt-6">
           <CardTitle className="flex items-center gap-2 text-base md:text-lg">
             <Palette className="h-4 w-4 md:h-5 md:w-5" />
             Style Management Information
@@ -321,7 +323,7 @@ export function UploadFormatDocument() {
             Reference guide for formatting styles and their definitions
           </CardDescription>
         </CardHeader>
-        <CardContent className="px-0">
+        <CardContent className="px-6 pb-6">
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="margins" className="border-b-0 mb-2">
               <AccordionTrigger className="py-2 px-4 bg-secondary/30 rounded-lg hover:bg-secondary/50 transition-colors no-underline hover:no-underline">
