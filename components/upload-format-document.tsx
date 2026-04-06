@@ -246,7 +246,7 @@ export function UploadFormatDocument() {
                 <div className="flex items-center justify-between p-3 md:p-4 border rounded-lg">
                   <div className="space-y-0.5">
                     <Label htmlFor="trackedChanges" className="text-xs md:text-sm">
-                      Tracked Changes
+                      Track changes
                     </Label>
                     <p className="text-xs text-muted-foreground">
                       Receive both a neat copy and a version showing all formatting changes
@@ -281,7 +281,7 @@ export function UploadFormatDocument() {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Tracked Changes:</span>
+                      <span>Track changes:</span>
                       <span className="font-medium">{formattingOptions.trackedChanges ? "Enabled" : "Disabled"}</span>
                     </div>
                   </div>

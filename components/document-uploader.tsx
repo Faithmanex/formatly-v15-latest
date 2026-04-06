@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useEffect, useMemo } from "react"
+import { useState, useCallback, useEffect, useMemo, useRef } from "react"
 import { useDropzone } from "react-dropzone"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -73,6 +73,13 @@ export function DocumentUploader({
   } | null>(null)
   const [pollingIntervals, setPollingIntervals] = useState<Map<string, NodeJS.Timeout>>(new Map())
   const [recentlyCompleted, setRecentlyCompleted] = useState<string[]>([])
+  const queueRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (files.length > 0 && queueRef.current) {
+      queueRef.current.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+  }, [files.length])
 
   useEffect(() => {
     return () => {
@@ -735,7 +742,7 @@ export function DocumentUploader({
           </div>
 
           {files.length > 0 && (
-            <div className="mt-6">
+            <div className="mt-6 scroll-m-24 transition-all duration-500 ease-in-out" ref={queueRef}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base sm:text-lg font-medium">Processing Queue</h3>
                 <div className="flex gap-2">

@@ -309,7 +309,7 @@ export function FormattingPreferences() {
           <div className="flex items-center justify-between p-3 md:p-4 border rounded-lg">
             <div className="space-y-0.5 flex-1 pr-3">
               <Label htmlFor="trackedChanges" className="text-xs md:text-sm">
-                Tracked Changes
+                Track changes
               </Label>
               <p className="text-xs text-muted-foreground">
                 Receive both a neat copy and a version showing all formatting changes
