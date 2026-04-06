@@ -37,7 +37,11 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
       <AppSidebar />
       <SidebarInset className="flex flex-col h-screen overflow-hidden">
         <TopBar />
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto relative">
+          {/* Subtle Dashboard Background for Glassmorphism */}
+          <div className="absolute inset-0 bg-dot-pattern opacity-[0.03] dark:opacity-[0.02] pointer-events-none" />
+          <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none fixed" />
+          
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={pathname}
@@ -45,6 +49,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
+              className="relative z-10"
             >
               {children}
             </motion.div>
