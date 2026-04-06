@@ -84,6 +84,18 @@ const MarkdownComponents = {
   },
 }
 
+const AgenticLogo = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <rect width="200" height="200" rx="40" fill="currentColor" className="opacity-20"/>
+    <rect x="30" y="30" width="135" height="35" rx="10" fill="currentColor" className="animate-pulse" style={{ animationDuration: '2s' }}/>
+    <rect x="30" y="80" width="110" height="35" rx="10" fill="currentColor" className="animate-pulse" style={{ animationDuration: '2s', animationDelay: '200ms' }}/>
+    <rect x="30" y="130" width="70" height="35" rx="10" fill="currentColor" className="animate-pulse" style={{ animationDuration: '2s', animationDelay: '400ms' }}/>
+    {/* Agentic cyber core */}
+    <circle cx="145" cy="145" r="16" fill="currentColor" className="animate-ping opacity-80" style={{ animationDuration: '3s' }}/>
+    <circle cx="145" cy="145" r="10" fill="currentColor" />
+  </svg>
+)
+
 export function AskFormatlyAI() {
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState("")
@@ -211,15 +223,7 @@ export function AskFormatlyAI() {
         <div className="flex items-center gap-3">
           <div className="relative flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden bg-primary/10 text-primary group border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.2)]">
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-indigo-500/30 opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
-            <svg width="22" height="22" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="relative z-10 transition-transform group-hover:scale-105 duration-500">
-              <rect width="200" height="200" rx="40" fill="currentColor" className="opacity-20"/>
-              <rect x="30" y="30" width="135" height="35" rx="10" fill="currentColor" className="animate-pulse" style={{ animationDuration: '2s' }}/>
-              <rect x="30" y="80" width="110" height="35" rx="10" fill="currentColor" className="animate-pulse" style={{ animationDuration: '2s', animationDelay: '200ms' }}/>
-              <rect x="30" y="130" width="70" height="35" rx="10" fill="currentColor" className="animate-pulse" style={{ animationDuration: '2s', animationDelay: '400ms' }}/>
-              {/* Agentic cyber core */}
-              <circle cx="145" cy="145" r="16" fill="currentColor" className="animate-ping opacity-80" style={{ animationDuration: '3s' }}/>
-              <circle cx="145" cy="145" r="10" fill="currentColor" />
-            </svg>
+            <AgenticLogo className="w-[22px] h-[22px] relative z-10 transition-transform group-hover:scale-105 duration-500" />
           </div>
           <div>
             <h1 className="text-xl font-semibold tracking-tight md:text-2xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Formatly AI</h1>
@@ -235,8 +239,9 @@ export function AskFormatlyAI() {
       <div className="flex-1 overflow-hidden">
         {messages.length === 0 ? (
           <div className="mx-auto flex h-full w-full max-w-4xl flex-col items-center justify-center p-6 text-center">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <Bot className="h-8 w-8" />
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary relative overflow-hidden group shadow-[0_0_20px_rgba(var(--primary),0.15)] border border-primary/20 transition-all duration-500 hover:shadow-[0_0_30px_rgba(var(--primary),0.3)] hover:scale-105 hover:border-primary/40">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-indigo-500/20 opacity-40 group-hover:opacity-100 transition-opacity duration-500" />
+              <AgenticLogo className="w-8 h-8 relative z-10" />
             </div>
             <h2 className="mb-2 text-lg font-medium md:text-xl">How can I help you today?</h2>
             <p className="mb-8 max-w-md text-sm text-muted-foreground md:text-base">
@@ -273,8 +278,9 @@ export function AskFormatlyAI() {
                           <User className="h-4 w-4 text-primary-foreground" />
                         </div>
                       ) : (
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-                          <Bot className="h-4 w-4 text-muted-foreground" />
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary border border-primary/20 relative overflow-hidden">
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent opacity-50" />
+                          <AgenticLogo className="h-4 w-4 relative z-10" />
                         </div>
                       )}
                     </div>
