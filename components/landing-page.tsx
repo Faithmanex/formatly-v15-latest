@@ -280,7 +280,7 @@ const FlipCardCarousel = () => {
                 <motion.div style={{ x: currentDragOffset }}>
                   <TiltCard className={currentCard === index ? "" : ""}>
                     <Card
-                      className={`group w-[280px] h-64 sm:w-[400px] sm:h-72 md:w-[500px] md:h-[380px] lg:w-[600px] lg:h-[420px] bg-[#050A15] rounded-2xl lg:rounded-[2rem] border border-white/10 overflow-hidden cursor-pointer transition-all duration-700 ease-out hover:scale-[1.02] ${currentCard !== index ? "opacity-30 blur-[2px] saturate-0 scale-[0.98]" : "shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] ring-1 ring-white/20 scale-100"}`}
+                      className={`group w-[280px] h-64 sm:w-[380px] sm:h-72 md:w-[500px] md:h-[380px] lg:w-[550px] lg:h-[400px] bg-card backdrop-blur-xl border border-border/50 shadow-2xl overflow-hidden cursor-pointer transition-all duration-500 hover:scale-105 ${currentCard !== index ? "opacity-60 saturate-50" : "ring-1 ring-primary/30"}`}
                       onClick={() => {
                         if (currentCard === index) {
                           setSelectedImageIndex(index)
@@ -289,36 +289,26 @@ const FlipCardCarousel = () => {
                         }
                       }}
                     >
-                      <CardContent className="h-full p-0 relative border-0">
-                        {/* Elegant modern step indicator */}
-                        <div className="absolute top-4 sm:top-6 left-4 sm:left-6 px-3 py-1 sm:px-4 sm:py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/20 text-white/90 text-xs sm:text-sm font-medium tracking-wide z-20 shadow-xl">
-                          Step {card.number}
+                      <CardContent className="h-full p-0 relative">
+                        <div className="absolute top-2 left-3 sm:top-4 sm:left-6 text-6xl sm:text-8xl md:text-9xl font-black text-white/20 z-10 select-none drop-shadow-xl">
+                          {card.number}
                         </div>
-                        
                         <Image
                           src={card.imageUrl || "/placeholder.svg"}
                           alt={card.title}
                           fill
                           priority={index <= 1}
-                          className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
                           draggable={false}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
-                        
-                        {/* Luxurious layered gradient overlays */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#02050A] via-[#02050A]/60 to-transparent opacity-90 z-10 transition-opacity duration-700 group-hover:opacity-100" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10" />
                         <div className="absolute inset-0 bg-primary/10 mix-blend-overlay z-10" />
-                        
-                        {/* Sophisticated typography layout */}
-                        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 md:p-10 z-20">
-                          <div className="transform transition-transform duration-500 translate-y-0">
-                            <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight mb-2 sm:mb-3 text-white drop-shadow-md">
-                              {card.title}
-                            </h3>
-                            <p className="text-sm sm:text-base md:text-lg text-white/70 font-light leading-relaxed max-w-[95%]">
-                              {card.subtitle}
-                            </p>
-                          </div>
+                        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 text-white z-20">
+                          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2 text-white/95">
+                            {card.title}
+                          </h3>
+                          <p className="text-sm sm:text-base text-white/80 font-medium">{card.subtitle}</p>
                         </div>
                       </CardContent>
                     </Card>
