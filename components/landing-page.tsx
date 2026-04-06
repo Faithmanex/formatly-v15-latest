@@ -238,9 +238,15 @@ const FlipCardCarousel = () => {
 
   return (
     <>
-      <div
-        ref={carouselRef}
-        className="relative w-full max-w-7xl mx-auto h-[400px] sm:h-[480px] md:h-[550px] flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 cursor-grab active:cursor-grabbing select-none"
+      <div className="relative w-full max-w-7xl mx-auto rounded-[2.5rem] sm:rounded-[3rem] p-4 sm:p-8 md:p-12 border border-border/60 overflow-hidden shadow-2xl transition-colors duration-700 bg-gradient-to-br from-[#f8f9fa] via-[#ffffff] to-[#e9ecef] dark:bg-gradient-to-tr dark:from-[#050B14] dark:via-[#0A162B] dark:to-[#050B14]">
+        {/* Light Mode Refined Texture */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.04] dark:opacity-0 mix-blend-multiply transition-opacity duration-700" />
+        {/* Dark Mode Luminous Depth */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-full bg-gradient-to-r from-blue-600/20 via-primary/20 to-indigo-600/20 blur-[120px] rounded-[100%] opacity-0 dark:opacity-100 transition-opacity duration-700 pointer-events-none" />
+        
+        <div
+          ref={carouselRef}
+          className="relative w-full h-[400px] sm:h-[480px] md:h-[550px] flex items-center justify-center cursor-grab active:cursor-grabbing select-none z-10"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -356,6 +362,7 @@ const FlipCardCarousel = () => {
             </motion.span>
           </Button>
         </div>
+      </div>
       </div>
 
       {selectedImageIndex !== null && (
