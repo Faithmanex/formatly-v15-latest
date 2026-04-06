@@ -58,9 +58,9 @@ export const features = [
 ]
 
 export const stats = [
-  { icon: TrendingUp, value: "25x", label: "Faster formatting" },
-  { icon: Users, value: "42x", label: "More accuracy" },
-  { icon: Target, value: "300%", label: "Productivity boost" },
+  { icon: Target, value: "99%", label: "Accuracy" },
+  { icon: FileCheck, value: "98%", label: "Style compliance" },
+  { icon: Zap, value: "480x", label: "Faster formatting" },
 ]
 
 export const testimonials = [
