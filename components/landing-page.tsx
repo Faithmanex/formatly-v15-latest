@@ -534,7 +534,7 @@ export function LandingPage() {
                     className="mb-4 sm:mb-6 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm rounded-full shadow-lg"
                   >
                     <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 inline" />
-                    Welcome back to Formatly
+                    New feature: Tracked changes
                   </Badge>
                 </motion.div>
 
@@ -744,20 +744,19 @@ export function LandingPage() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="p-8 sm:p-12 md:p-16 rounded-[2.5rem] bg-card/80 backdrop-blur-2xl border shadow-2xl relative overflow-hidden group"
+          className="max-w-4xl mx-auto space-y-8 p-8 sm:p-12 md:p-16 rounded-[40px] bg-primary text-primary-foreground relative overflow-hidden shadow-2xl shadow-primary/20"
         >
-          <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-secondary/5 opacity-50" />
-          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 transition-transform duration-700 group-hover:scale-110" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 transition-transform duration-700 group-hover:scale-110" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
           
-          <div className="relative z-10 max-w-2xl mx-auto space-y-8">
+          <div className="relative z-10 max-w-2xl mx-auto space-y-6 sm:space-y-8">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">Focus on Research, Not Formatting</h2>
-            <p className="text-muted-foreground text-lg sm:text-xl px-4">
+            <p className="text-primary-foreground/90 text-lg sm:text-xl">
               Formatly takes care of every citation, margin, and reference—so you can spend your time pushing
               boundaries, not fixing styles.
             </p>
             <div className="pt-4">
-              <Button size="lg" className="rounded-full shadow-lg h-14 px-8 text-lg font-semibold transition-transform hover:scale-105" asChild>
+              <Button size="lg" className="bg-white text-primary hover:bg-white/90 rounded-2xl h-14 px-8 font-bold text-lg shadow-xl" asChild>
                 <Link href="/auth/register">
                   Try Formatly Now
                   <ArrowRight className="ml-2 h-5 w-5" />
