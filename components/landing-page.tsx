@@ -238,15 +238,9 @@ const FlipCardCarousel = () => {
 
   return (
     <>
-      <div className="relative w-full max-w-7xl mx-auto rounded-[2.5rem] sm:rounded-[3rem] p-4 sm:p-8 md:p-12 border border-border/60 overflow-hidden shadow-2xl transition-colors duration-700 bg-gradient-to-br from-[#f8f9fa] via-[#ffffff] to-[#e9ecef] dark:bg-gradient-to-tr dark:from-[#050B14] dark:via-[#0A162B] dark:to-[#050B14]">
-        {/* Light Mode Refined Texture */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-[0.04] dark:opacity-0 mix-blend-multiply transition-opacity duration-700" />
-        {/* Dark Mode Luminous Depth */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-full bg-gradient-to-r from-blue-600/20 via-primary/20 to-indigo-600/20 blur-[120px] rounded-[100%] opacity-0 dark:opacity-100 transition-opacity duration-700 pointer-events-none" />
-        
-        <div
-          ref={carouselRef}
-          className="relative w-full h-[400px] sm:h-[480px] md:h-[550px] flex items-center justify-center cursor-grab active:cursor-grabbing select-none z-10"
+      <div
+        ref={carouselRef}
+        className="relative w-full max-w-7xl mx-auto h-[400px] sm:h-[480px] md:h-[550px] flex items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 cursor-grab active:cursor-grabbing select-none"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -297,7 +291,6 @@ const FlipCardCarousel = () => {
                           src={card.imageUrl || "/placeholder.svg"}
                           alt={card.title}
                           fill
-                          priority={index <= 1}
                           className="object-cover transition-transform duration-700 group-hover:scale-105"
                           draggable={false}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -363,7 +356,6 @@ const FlipCardCarousel = () => {
             </motion.span>
           </Button>
         </div>
-      </div>
       </div>
 
       {selectedImageIndex !== null && (
@@ -484,7 +476,7 @@ const TypewriterHeadline = () => {
       <motion.span
         animate={{ opacity: [1, 0, 1] }}
         transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
-        className="inline-block w-[2px] bg-primary h-[1em] translate-y-1 ml-1"
+        className="inline-block border-r-2 border-primary h-[1em] translate-y-1 ml-1"
       />
     </span>
   )
@@ -522,9 +514,9 @@ export function LandingPage() {
       {/* Hero Section */}
       <section className="relative py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 overflow-hidden">
         {/* Animated Background */}
-        <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 -z-10">
           <div className="absolute top-20 left-10 w-48 h-48 sm:w-72 sm:h-72 bg-primary/5 rounded-full blur-3xl animate-float-slow" />
-          <div className="absolute top-2/3 right-10 w-64 h-64 sm:w-96 sm:h-96 bg-secondary/5 rounded-full blur-3xl animate-float-slower" />
+          <div className="absolute bottom-20 right-10 w-64 h-64 sm:w-96 sm:h-96 bg-secondary/5 rounded-full blur-3xl animate-float-slower" />
         </div>
 
         <div className="max-w-7xl mx-auto">
@@ -659,14 +651,16 @@ export function LandingPage() {
           </div>
 
           {/* Demo Preview */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mb-12 sm:mb-20 px-2 sm:px-4"
-          >
-            <FlipCardCarousel />
-          </motion.div>
+          {isInitialized && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="mb-12 sm:mb-20"
+            >
+              <FlipCardCarousel />
+            </motion.div>
+          )}
 
           {/* Trust Indicators */}
           <motion.div
