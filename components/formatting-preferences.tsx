@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -9,12 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Save, RefreshCw, AlertCircle, Loader2 } from "lucide-react"
+import { Save, RefreshCw, AlertCircle, Loader2, Lock } from "lucide-react"
 import { motion } from "framer-motion"
 import { useAuth } from "@/components/auth-provider"
 import { useToast } from "@/hooks/use-toast"
 import { useFormattingData } from "@/hooks/use-formatting-data"
 import { useUserPreferences } from "@/hooks/use-user-preferences"
+import { useSubscription } from "@/contexts/subscription-context"
+import { getAllowedCitationStyles, canAccessFeature } from "@/lib/billing"
 
 interface FormattingPreferences {
   defaultStyle: string
@@ -32,6 +34,7 @@ interface FormattingPreferences {
 export function FormattingPreferences() {
   const { user } = useAuth()
   const { toast } = useToast()
+  const { planName, isPremium } = useSubscription()
 
   const {
     styles: formattingStyles,
@@ -50,6 +53,10 @@ export function FormattingPreferences() {
   const [preferences, setPreferences] = useState(userPreferences)
   const [isSaving, setIsSaving] = useState(false)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+
+  const allowedCitationStyles = useMemo(() => getAllowedCitationStyles(planName), [planName])
+  const canUseTrackedChanges = useMemo(() => canAccessFeature(planName, "tracked_changes"), [planName])
+  const canUseCustomStyles = useMemo(() => canAccessFeature(planName, "custom_styles"), [planName])
 
   const cardAnimation = {
     initial: { opacity: 0, y: 12 },
@@ -252,24 +259,35 @@ export function FormattingPreferences() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div className="space-y-1.5 md:space-y-2">
-              <Label htmlFor="citationStyle" className="text-xs md:text-sm">
+              <Label htmlFor="citationStyle" className="text-xs md:text-sm flex items-center gap-2">
                 Citation Style
+                {!isPremium && (
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Lock className="h-3 w-3" /> Pro
+                  </span>
+                )}
               </Label>
               <Select
                 value={preferences.citationStyle}
                 onValueChange={(value) => handlePreferenceChange("citationStyle", value)}
+                disabled={!isPremium}
               >
                 <SelectTrigger className="text-sm md:text-base">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="apa">APA Style</SelectItem>
-                  <SelectItem value="mla">MLA Style</SelectItem>
-                  <SelectItem value="chicago">Chicago Style</SelectItem>
-                  <SelectItem value="harvard">Harvard Style</SelectItem>
-                  <SelectItem value="ieee">IEEE Style</SelectItem>
+                  {allowedCitationStyles.includes("apa") && <SelectItem value="apa">APA Style</SelectItem>}
+                  {allowedCitationStyles.includes("mla") && <SelectItem value="mla">MLA Style</SelectItem>}
+                  {allowedCitationStyles.includes("chicago") && <SelectItem value="chicago">Chicago Style</SelectItem>}
+                  {allowedCitationStyles.includes("harvard") && <SelectItem value="harvard">Harvard Style</SelectItem>}
+                  {allowedCitationStyles.includes("ieee") && <SelectItem value="ieee">IEEE Style</SelectItem>}
                 </SelectContent>
               </Select>
+              {!isPremium && (
+                <p className="text-xs text-muted-foreground">
+                  Upgrade to Pro for all citation styles
+                </p>
+              )}
             </div>
 
             <div className="space-y-1.5 md:space-y-2">
@@ -308,17 +326,28 @@ export function FormattingPreferences() {
         <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6">
           <div className="flex items-center justify-between p-3 md:p-4 border rounded-lg">
             <div className="space-y-0.5 flex-1 pr-3">
-              <Label htmlFor="trackedChanges" className="text-xs md:text-sm">
+              <Label htmlFor="trackedChanges" className="text-xs md:text-sm flex items-center gap-2">
                 Track changes
+                {!canUseTrackedChanges && (
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Lock className="h-3 w-3" /> Pro
+                  </span>
+                )}
               </Label>
               <p className="text-xs text-muted-foreground">
                 Receive both a neat copy and a version showing all formatting changes
               </p>
+              {!canUseTrackedChanges && (
+                <p className="text-xs text-primary">
+                  Upgrade to Pro to enable tracked changes
+                </p>
+              )}
             </div>
             <Switch
               id="trackedChanges"
               checked={preferences.trackedChanges}
               onCheckedChange={(checked) => handlePreferenceChange("trackedChanges", checked)}
+              disabled={!canUseTrackedChanges}
             />
           </div>
         </CardContent>

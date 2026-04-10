@@ -721,3 +721,51 @@ export const subscriptionService = {
   isPlanUpgrade,
   getPlanChangePreview,
 }
+
+export type PlanFeature =
+  | "citation_styles_all"
+  | "tracked_changes"
+  | "custom_styles"
+  | "ai_assistant"
+  | "team_collaboration"
+  | "priority_support"
+  | "unlimited_documents"
+
+export const PLAN_FEATURE_REQUIREMENTS: Record<PlanFeature, { minPlan: string; styles?: string[] }> = {
+  citation_styles_all: { minPlan: "Pro" },
+  tracked_changes: { minPlan: "Pro" },
+  custom_styles: { minPlan: "Pro" },
+  ai_assistant: { minPlan: "Pro" },
+  team_collaboration: { minPlan: "Business" },
+  priority_support: { minPlan: "Pro" },
+  unlimited_documents: { minPlan: "Business" },
+}
+
+export function canAccessFeature(planName: string | null, feature: PlanFeature): boolean {
+  if (!planName) return false
+
+  const requirements = PLAN_FEATURE_REQUIREMENTS[feature]
+  if (!requirements) return false
+
+  const planOrder = ["Free", "Pro", "Business"]
+  const planLevel = planOrder.indexOf(planName)
+  const requiredLevel = planOrder.indexOf(requirements.minPlan)
+
+  return planLevel >= requiredLevel
+}
+
+export function getAllowedCitationStyles(planName: string | null): string[] {
+  const allStyles = ["apa", "mla", "chicago", "harvard", "ieee", "turabian"]
+  const proStyles = allStyles
+
+  if (!planName || planName === "Free") {
+    return ["apa"]
+  }
+
+  return proStyles
+}
+
+export function canUseCitationStyle(planName: string | null, style: string): boolean {
+  const allowedStyles = getAllowedCitationStyles(planName)
+  return allowedStyles.includes(style.toLowerCase())
+}

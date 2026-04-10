@@ -1,6 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { type NextRequest, NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
+import { getUserSubscription } from "@/lib/billing"
+import { canAccessFeature } from "@/lib/billing"
 
 export const dynamic = "force-dynamic"
 
@@ -16,6 +18,20 @@ export async function POST(request: NextRequest) {
 
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const subscription = await getUserSubscription(user.id)
+    const planName = subscription?.plan?.name || null
+
+    if (!canAccessFeature(planName, "ai_assistant")) {
+      return NextResponse.json(
+        {
+          error: "AI Assistant requires Pro subscription",
+          details: "The AI Assistant feature is available for Pro plan users. Please upgrade to access this feature.",
+          plan: planName,
+        },
+        { status: 403 }
+      )
     }
 
     const { message, context, temperature = 0.1, maxOutputTokens = 2000, topP = 0.3, topK = 40 } = await request.json()

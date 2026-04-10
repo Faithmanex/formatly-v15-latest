@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -13,7 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
 import { DocumentUploader } from "@/components/document-uploader"
-import { Upload, Settings, Palette, Globe, AlertCircle, RefreshCw, ChevronDown } from "lucide-react"
+import { Upload, Settings, Palette, Globe, AlertCircle, RefreshCw, ChevronDown, Lock } from "lucide-react"
 import {
   Accordion,
   AccordionContent,
@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/accordion"
 import { useFormattingData } from "@/hooks/use-formatting-data"
 import { useUserPreferences } from "@/hooks/use-user-preferences"
+import { useSubscription } from "@/contexts/subscription-context"
+import { canAccessFeature, getAllowedCitationStyles } from "@/lib/billing"
 
 interface FormattingOptions {
   style: string
@@ -38,6 +40,7 @@ const DEFAULT_OPTIONS: FormattingOptions = {
 export function UploadFormatDocument() {
   const { user } = useAuth()
   const { toast } = useToast()
+  const { planName, isPremium } = useSubscription()
 
   const {
     styles: formattingStyles,
@@ -48,6 +51,14 @@ export function UploadFormatDocument() {
     refresh,
   } = useFormattingData(user?.id)
   const { preferences: userPreferences, isLoading: isLoadingPreferences } = useUserPreferences(user?.id)
+
+  const allowedCitationStyles = useMemo(() => {
+    if (!planName || planName === "Free") return ["apa"]
+    return formattingStyles.map(s => s.code.toLowerCase())
+  }, [planName, formattingStyles])
+
+  const canUseTrackedChanges = useMemo(() => canAccessFeature(planName, "tracked_changes"), [planName])
+  const canUseCustomStyles = useMemo(() => canAccessFeature(planName, "custom_styles"), [planName])
 
   const [formattingOptions, setFormattingOptions] = useState<FormattingOptions>(DEFAULT_OPTIONS)
 
@@ -162,18 +173,22 @@ export function UploadFormatDocument() {
               <TabsContent value="basic" className="space-y-3 md:space-y-4 mt-3 md:mt-4">
                 {/* Academic Style */}
                 <div className="space-y-1.5 md:space-y-2">
-                  <Label htmlFor="style" className="text-xs md:text-sm">
+                  <Label htmlFor="style" className="text-xs md:text-sm flex items-center gap-2">
                     Academic Style
+                    {!isPremium && <Lock className="h-3 w-3 text-muted-foreground" />}
                   </Label>
                   <Select
                     value={formattingOptions.style}
                     onValueChange={(value) => updateFormattingOption("style", value)}
+                    disabled={!isPremium}
                   >
                     <SelectTrigger className="text-sm md:text-base">
                       <SelectValue placeholder="Select academic style" />
                     </SelectTrigger>
                     <SelectContent>
-                      {formattingStyles.map((style) => (
+                      {formattingStyles
+                        .filter(style => allowedCitationStyles.includes(style.code.toLowerCase()))
+                        .map((style) => (
                         <SelectItem key={style.id} value={style.code}>
                           <div className="flex flex-col">
                             <span className="text-sm md:text-base">{style.name}</span>
@@ -183,7 +198,7 @@ export function UploadFormatDocument() {
                           </div>
                         </SelectItem>
                       ))}
-                      {customStyles.length > 0 && (
+                      {canUseCustomStyles && customStyles.length > 0 && (
                         <>
                           <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-t">
                             Custom Styles
@@ -245,17 +260,22 @@ export function UploadFormatDocument() {
                 {/* Tracked Changes */}
                 <div className="flex items-center justify-between p-3 md:p-4 border rounded-lg">
                   <div className="space-y-0.5">
-                    <Label htmlFor="trackedChanges" className="text-xs md:text-sm">
+                    <Label htmlFor="trackedChanges" className="text-xs md:text-sm flex items-center gap-2">
                       Track changes
+                      {!canUseTrackedChanges && <Lock className="h-3 w-3 text-muted-foreground" />}
                     </Label>
                     <p className="text-xs text-muted-foreground">
                       Receive both a neat copy and a version showing all formatting changes
                     </p>
+                    {!canUseTrackedChanges && (
+                      <p className="text-xs text-primary">Upgrade to Pro to enable</p>
+                    )}
                   </div>
                   <Switch
                     id="trackedChanges"
                     checked={formattingOptions.trackedChanges}
                     onCheckedChange={(checked) => updateFormattingOption("trackedChanges", checked)}
+                    disabled={!canUseTrackedChanges}
                   />
                 </div>
               </TabsContent>

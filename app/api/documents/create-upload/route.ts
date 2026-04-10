@@ -1,5 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
+import { getUserSubscription } from "@/lib/billing"
+import { canUseCitationStyle, canAccessFeature } from "@/lib/billing"
 
 export const dynamic = "force-dynamic"
 
@@ -15,11 +17,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const subscription = await getUserSubscription(user.id)
+    const planName = subscription?.plan?.name || null
+
     const formData = await request.formData()
 
     const style = formData.get("style") as string
     if (style) {
-      formData.set("style", style.toLowerCase())
+      const styleLower = style.toLowerCase()
+      
+      if (!canUseCitationStyle(planName, styleLower)) {
+        return NextResponse.json(
+          {
+            error: "Citation style not available on your plan",
+            details: `The "${style}" citation style requires a Pro subscription. Your current plan (${planName || 'Free'}) only supports APA.`,
+            plan: planName,
+          },
+          { status: 403 }
+        )
+      }
+      
+      formData.set("style", styleLower)
+    }
+
+    const trackedChanges = formData.get("trackedChanges") === "true"
+    if (trackedChanges && !canAccessFeature(planName, "tracked_changes")) {
+      return NextResponse.json(
+        {
+          error: "Feature not available on your plan",
+          details: "Tracked changes requires a Pro subscription.",
+          plan: planName,
+        },
+        { status: 403 }
+      )
     }
 
     const fastApiUrl = process.env.FASTAPI_BASE_URL
