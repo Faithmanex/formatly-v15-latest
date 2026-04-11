@@ -18,7 +18,7 @@ import {
   Calendar
 } from "lucide-react"
 import { formatDistanceToNow, format } from "date-fns"
-import { toast } from "@/components/ui/use-toast"
+import { toast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
 
 export function JobHistory() {
