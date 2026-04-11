@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { motion } from "framer-motion"
+import { motion, type Variants } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -16,12 +16,17 @@ import { useAuth } from "@/components/auth-provider"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 
-const fadeUp = {
+// Explicit typing to resolve framer-motion variants issues during build
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, delay: i * 0.1, ease: "easeOut" as const },
+    transition: {
+      duration: 0.5,
+      delay: i * 0.1,
+      ease: "easeOut"
+    },
   }),
 }
 
@@ -73,8 +78,10 @@ export default function ContactPage() {
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    const subject = "Contact Form Submission"
-    const message = formData.get("message") as string
+    const nameValue = formData.get("full_name") as string
+    const emailValue = formData.get("email") as string
+    const subjectValue = formData.get("subject") as string || "Contact Form Submission"
+    const messageValue = formData.get("message") as string
 
     let aiPriority = "medium"
 
@@ -83,7 +90,11 @@ export default function ContactPage() {
       const response = await fetch("/api/support/classify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subject, message, planName }),
+        body: JSON.stringify({ 
+          subject: subjectValue, 
+          message: messageValue, 
+          planName 
+        }),
       })
       const result = await response.json()
       if (result.priority) {
@@ -93,7 +104,7 @@ export default function ContactPage() {
       console.error("AI classification error:", error)
     }
 
-    // Apply Plan-based priority floor (Validation of "Priority support" promise)
+    // Apply Plan-based priority floor
     let finalPriority = aiPriority as "low" | "medium" | "high" | "urgent"
     if (planName === "Business") {
       if (finalPriority !== "urgent") finalPriority = "urgent"
@@ -101,18 +112,18 @@ export default function ContactPage() {
       if (finalPriority === "low" || finalPriority === "medium") finalPriority = "high"
     }
 
-    const data = {
-      full_name: formData.get("name") as string,
-      email: formData.get("email") as string,
-      message,
-      subject,
+    const ticketData = {
+      full_name: nameValue,
+      email: emailValue,
+      message: messageValue,
+      subject: subjectValue,
       user_id: user?.id || null,
       status: "open" as const,
       priority: finalPriority,
     }
 
     try {
-      const { error } = await getSupabase().from("support_tickets").insert(data)
+      const { error } = await getSupabase().from("support_tickets").insert(ticketData)
       if (error) throw error
 
       setSubmitted(true)
@@ -191,13 +202,7 @@ export default function ContactPage() {
               custom={i + 3}
               variants={fadeUp}
             >
-              {method.href ? (
-                <Link href={method.href} className="block h-full">
-                  <ContactCard method={method} />
-                </Link>
-              ) : (
-                <ContactCard method={method} />
-              )}
+              <ContactCard method={method} />
             </motion.div>
           ))}
         </div>
@@ -256,7 +261,6 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Decorative quote */}
               <div className="hidden lg:block p-5 rounded-2xl bg-muted/40 border border-border/50 relative">
                 <div className="absolute -top-3 left-5 text-4xl text-primary/30 font-serif">"</div>
                 <p className="text-sm text-muted-foreground italic leading-relaxed pt-2">
@@ -275,7 +279,6 @@ export default function ContactPage() {
               className="lg:col-span-3"
             >
               <div className="bg-card/60 backdrop-blur-xl border border-border/50 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-primary/5 relative overflow-hidden">
-                {/* Subtle corner glow */}
                 <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
                 {submitted ? (
@@ -308,12 +311,12 @@ export default function ContactPage() {
                   <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
                     <div className="grid sm:grid-cols-2 gap-5">
                       <div className="space-y-2">
-                        <Label htmlFor="name" className="text-xs font-bold uppercase tracking-wider ml-1">
+                        <Label htmlFor="full_name" className="text-xs font-bold uppercase tracking-wider ml-1">
                           Full Name
                         </Label>
                         <Input
-                          id="name"
-                          name="name"
+                          id="full_name"
+                          name="full_name"
                           placeholder="Your name"
                           required
                           className="h-12 rounded-xl bg-background/50 border-border/60 focus:border-primary/50 transition-colors"
@@ -341,7 +344,7 @@ export default function ContactPage() {
                       </Label>
                       <Input
                         id="subject"
-                        name="subject_field"
+                        name="subject"
                         placeholder="What's this about?"
                         className="h-12 rounded-xl bg-background/50 border-border/60 focus:border-primary/50 transition-colors"
                       />
@@ -396,8 +399,8 @@ export default function ContactPage() {
   )
 }
 
-function ContactCard({ method }: { method: typeof contactMethods[number] }) {
-  return (
+function ContactCard({ method }: { method: any }) {
+  const CardContent = (
     <div className="group h-full p-5 sm:p-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-default">
       <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${method.gradient} mb-4`}>
         <method.icon className={`h-5 w-5 ${method.iconColor}`} />
@@ -417,4 +420,14 @@ function ContactCard({ method }: { method: typeof contactMethods[number] }) {
       )}
     </div>
   )
+
+  if (method.href) {
+    return (
+      <Link href={method.href} className="block h-full">
+        {CardContent}
+      </Link>
+    )
+  }
+
+  return CardContent
 }
