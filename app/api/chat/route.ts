@@ -76,12 +76,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Streaming not supported" }, { status: 500 })
     }
 
+    const responseBody = response.body
+
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder()
         
         try {
-          const reader = response.body.getReader()
+          const reader = responseBody.getReader()
           const decoder = new TextDecoder()
           
           while (true) {
