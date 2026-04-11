@@ -6,18 +6,55 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Mail, MessageSquare, Send, ArrowLeft, CheckCircle2, Loader2, MapPin, Phone } from "lucide-react"
+import { Mail, MessageSquare, Send, CheckCircle2, Loader2, Clock, Sparkles, BookOpen, HelpCircle, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 import { getSupabase } from "@/lib/supabase"
 import { getUserSubscription } from "@/lib/billing"
 import useSWR from "swr"
 import { useAuth } from "@/components/auth-provider"
+import { Navigation } from "@/components/navigation"
+import { Footer } from "@/components/footer"
 
-export const metadata: Metadata = {
-  title: "Contact | Formatly",
-  description: "Get in touch with the Formatly team. We're here to help with any questions about document formatting, pricing, or technical support.",
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, delay: i * 0.1, ease: [0.25, 0.46, 0.45, 0.94] },
+  }),
 }
+
+const contactMethods = [
+  {
+    icon: Mail,
+    title: "Email Us",
+    description: "Drop us a line anytime",
+    detail: "formatlyapp@gmail.com",
+    badge: "< 24hr response",
+    gradient: "from-blue-500/20 to-cyan-500/20",
+    iconColor: "text-blue-500",
+  },
+  {
+    icon: MessageSquare,
+    title: "Live Chat",
+    description: "Real-time help for Premium users",
+    detail: "Mon – Fri, 9am – 5pm GMT",
+    badge: "Premium",
+    gradient: "from-purple-500/20 to-pink-500/20",
+    iconColor: "text-purple-500",
+  },
+  {
+    icon: BookOpen,
+    title: "Help Center",
+    description: "Browse FAQs and guides",
+    detail: "Self-serve answers, 24/7",
+    badge: "Instant",
+    gradient: "from-emerald-500/20 to-teal-500/20",
+    iconColor: "text-emerald-500",
+    href: "/help",
+  },
+]
 
 export default function ContactPage() {
   const [loading, setLoading] = useState(false)
@@ -34,23 +71,19 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
-    
+
     const formData = new FormData(e.currentTarget)
     const subject = "Contact Form Submission"
     const message = formData.get("message") as string
-    
+
     let aiPriority = "medium"
-    
+
     // AI Urgency Classification
     try {
       const response = await fetch("/api/support/classify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          subject, 
-          message,
-          planName 
-        })
+        body: JSON.stringify({ subject, message, planName }),
       })
       const result = await response.json()
       if (result.priority) {
@@ -63,10 +96,8 @@ export default function ContactPage() {
     // Apply Plan-based priority floor (Validation of "Priority support" promise)
     let finalPriority = aiPriority as "low" | "medium" | "high" | "urgent"
     if (planName === "Business") {
-      // Business users always get top-tier support
       if (finalPriority !== "urgent") finalPriority = "urgent"
     } else if (planName === "Pro") {
-      // Pro users get high priority support
       if (finalPriority === "low" || finalPriority === "medium") finalPriority = "high"
     }
 
@@ -77,14 +108,13 @@ export default function ContactPage() {
       subject,
       user_id: user?.id || null,
       status: "open" as const,
-      priority: finalPriority
+      priority: finalPriority,
     }
 
     try {
       const { error } = await getSupabase().from("support_tickets").insert(data)
-      
       if (error) throw error
-      
+
       setSubmitted(true)
       toast({
         title: "Message sent!",
@@ -95,7 +125,7 @@ export default function ContactPage() {
       toast({
         title: "Submission failed",
         description: "There was an error sending your message. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       })
     } finally {
       setLoading(false)
@@ -103,132 +133,288 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Background patterns */}
-      <div className="absolute inset-0 -z-10 overflow-hidden opacity-20">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px]" />
-      </div>
+    <div className="min-h-screen bg-background flex flex-col">
+      <Navigation />
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-4xl z-10"
-      >
-        <div className="mb-8">
-          <Link 
-            href="/" 
-            className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors group"
+      {/* Hero */}
+      <section className="relative pt-16 pb-10 sm:pt-24 sm:pb-14 px-4 overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px]" />
+          <div className="absolute inset-0 bg-dot-pattern opacity-[0.08] dark:opacity-[0.04]" />
+        </div>
+
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            custom={0}
+            variants={fadeUp}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6"
           >
-            <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-            Back to home
-          </Link>
+            <Sparkles className="h-4 w-4" />
+            We typically respond within a few hours
+          </motion.div>
+
+          <motion.h1
+            initial="hidden"
+            animate="visible"
+            custom={1}
+            variants={fadeUp}
+            className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-5"
+          >
+            How can we{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">help you?</span>
+          </motion.h1>
+
+          <motion.p
+            initial="hidden"
+            animate="visible"
+            custom={2}
+            variants={fadeUp}
+            className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto"
+          >
+            Whether it's a question about formatting, your account, or feedback — we're here for you.
+          </motion.p>
         </div>
+      </section>
 
-        <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Left Column: Info */}
-          <div className="space-y-8">
-            <div>
-              <h1 className="text-4xl font-bold tracking-tight mb-4">Get in touch</h1>
-              <p className="text-lg text-muted-foreground">
-                Have questions or need assistance? Our team is here to help you get the most out of Formatly.
-              </p>
-            </div>
+      {/* Contact Methods */}
+      <section className="px-4 pb-12 sm:pb-16">
+        <div className="max-w-5xl mx-auto grid sm:grid-cols-3 gap-4 sm:gap-6">
+          {contactMethods.map((method, i) => (
+            <motion.div
+              key={method.title}
+              initial="hidden"
+              animate="visible"
+              custom={i + 3}
+              variants={fadeUp}
+            >
+              {method.href ? (
+                <Link href={method.href} className="block h-full">
+                  <ContactCard method={method} />
+                </Link>
+              ) : (
+                <ContactCard method={method} />
+              )}
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="p-3 rounded-2xl bg-primary/10 text-primary">
-                  <Mail className="h-6 w-6" />
-                </div>
-                <div>
-                  <h3 className="font-bold">Email us</h3>
-                  <p className="text-muted-foreground">formatlyapp@gmail.com</p>
-                  <p className="text-sm text-primary font-medium mt-1">Response time: &lt; 24 hours</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="p-3 rounded-2xl bg-primary/10 text-primary">
-                  <MessageSquare className="h-6 w-6" />
-                </div>
-                <div>
-                  <h3 className="font-bold">Live Support</h3>
-                  <p className="text-muted-foreground">Available for Premium users</p>
-                  <p className="text-sm text-primary font-medium mt-1">Mon - Fri, 9am - 5pm GMT</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-muted/30 border border-border/50">
-              <h4 className="font-bold mb-2">Technical Issues?</h4>
-              <p className="text-sm text-muted-foreground mb-4">
-                Check our Status page or visit the documentation for quick troubleshooting steps.
-              </p>
-              <Button variant="outline" size="sm" className="rounded-xl w-full" asChild>
-                <Link href="/help">Visit FAQ</Link>
-              </Button>
-            </div>
-          </div>
-
-          {/* Right Column: Form */}
-          <div className="bg-card/50 backdrop-blur-xl border border-border/50 rounded-3xl p-8 shadow-2xl relative">
-            {submitted ? (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="h-[400px] flex flex-col items-center justify-center text-center space-y-4"
-              >
-                <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mb-2">
-                  <CheckCircle2 className="h-8 w-8 text-green-500" />
-                </div>
-                <h2 className="text-2xl font-bold">Message Sent!</h2>
-                <p className="text-muted-foreground max-w-[250px]">
-                  Thank you for reaching out. We've received your message and will get back to you soon.
+      {/* Form Section */}
+      <section className="px-4 pb-20 sm:pb-28">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-5 gap-8 lg:gap-12 items-start">
+            {/* Left info panel */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              custom={6}
+              variants={fadeUp}
+              className="lg:col-span-2 space-y-8"
+            >
+              <div>
+                <h2 className="text-2xl sm:text-3xl font-bold mb-3">Send us a message</h2>
+                <p className="text-muted-foreground">
+                  Fill out the form and our team will get back to you within 24 hours. Pro and Business users get priority support.
                 </p>
-                <Button variant="outline" className="mt-4 rounded-xl" onClick={() => setSubmitted(false)}>
-                  Send another message
-                </Button>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-xs font-bold uppercase tracking-wider ml-1">Full Name</Label>
-                  <Input id="name" placeholder="Enter your name" required className="h-12 rounded-xl bg-background/50 border-border/60" />
+              </div>
+
+              <div className="space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 shrink-0">
+                    <Clock className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">Fast Response</p>
+                    <p className="text-xs text-muted-foreground">Average reply time under 6 hours</p>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider ml-1">Email Address</Label>
-                  <Input id="email" type="email" placeholder="name@example.com" required className="h-12 rounded-xl bg-background/50 border-border/60" />
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 shrink-0">
+                    <Sparkles className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">AI-Powered Routing</p>
+                    <p className="text-xs text-muted-foreground">Your message is prioritized intelligently</p>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="message" className="text-xs font-bold uppercase tracking-wider ml-1">Your Message</Label>
-                  <Textarea id="message" placeholder="How can we help you?" required className="min-h-[150px] rounded-xl bg-background/50 border-border/60 resize-none" />
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 shrink-0">
+                    <HelpCircle className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">Need quick answers?</p>
+                    <p className="text-xs text-muted-foreground">
+                      <Link href="/help" className="text-primary hover:underline">Visit our Help Center →</Link>
+                    </p>
+                  </div>
                 </div>
+              </div>
 
-                <Button 
-                  type="submit" 
-                  disabled={loading}
-                  className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold transition-all shadow-lg shadow-primary/20 group"
-                >
-                  {loading ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <div className="flex items-center justify-center gap-2 group-hover:translate-x-1 transition-transform">
-                      Send Message
-                      <Send className="h-4 w-4" />
+              {/* Decorative quote */}
+              <div className="hidden lg:block p-5 rounded-2xl bg-muted/40 border border-border/50 relative">
+                <div className="absolute -top-3 left-5 text-4xl text-primary/30 font-serif">"</div>
+                <p className="text-sm text-muted-foreground italic leading-relaxed pt-2">
+                  Formatly saved me hours of formatting work. When I had a question, their support team responded within minutes.
+                </p>
+                <p className="text-xs font-semibold mt-3">— Graduate Researcher, Stanford University</p>
+              </div>
+            </motion.div>
+
+            {/* Form */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              custom={7}
+              variants={fadeUp}
+              className="lg:col-span-3"
+            >
+              <div className="bg-card/60 backdrop-blur-xl border border-border/50 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-primary/5 relative overflow-hidden">
+                {/* Subtle corner glow */}
+                <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+
+                {submitted ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="min-h-[420px] flex flex-col items-center justify-center text-center space-y-5 relative z-10"
+                  >
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-green-500/20 rounded-full blur-xl animate-pulse" />
+                      <div className="relative w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center border border-green-500/20">
+                        <CheckCircle2 className="h-10 w-10 text-green-500" />
+                      </div>
                     </div>
-                  )}
-                </Button>
-              </form>
-            )}
+                    <div className="space-y-2">
+                      <h2 className="text-2xl font-bold">Message Sent!</h2>
+                      <p className="text-muted-foreground max-w-[300px] text-sm">
+                        Thank you for reaching out. We've received your message and our team will respond shortly.
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      className="mt-2 rounded-xl"
+                      onClick={() => setSubmitted(false)}
+                    >
+                      Send another message
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+                    <div className="grid sm:grid-cols-2 gap-5">
+                      <div className="space-y-2">
+                        <Label htmlFor="name" className="text-xs font-bold uppercase tracking-wider ml-1">
+                          Full Name
+                        </Label>
+                        <Input
+                          id="name"
+                          name="name"
+                          placeholder="Your name"
+                          required
+                          className="h-12 rounded-xl bg-background/50 border-border/60 focus:border-primary/50 transition-colors"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider ml-1">
+                          Email Address
+                        </Label>
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          placeholder="name@example.com"
+                          required
+                          className="h-12 rounded-xl bg-background/50 border-border/60 focus:border-primary/50 transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="subject" className="text-xs font-bold uppercase tracking-wider ml-1">
+                        Subject
+                      </Label>
+                      <Input
+                        id="subject"
+                        name="subject_field"
+                        placeholder="What's this about?"
+                        className="h-12 rounded-xl bg-background/50 border-border/60 focus:border-primary/50 transition-colors"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="message" className="text-xs font-bold uppercase tracking-wider ml-1">
+                        Your Message
+                      </Label>
+                      <Textarea
+                        id="message"
+                        name="message"
+                        placeholder="Tell us how we can help..."
+                        required
+                        className="min-h-[160px] rounded-xl bg-background/50 border-border/60 resize-none focus:border-primary/50 transition-colors"
+                      />
+                    </div>
+
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold transition-all shadow-lg shadow-primary/20 group"
+                    >
+                      {loading ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <span className="flex items-center justify-center gap-2">
+                          Send Message
+                          <Send className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                        </span>
+                      )}
+                    </Button>
+
+                    <p className="text-[11px] text-center text-muted-foreground">
+                      By submitting, you agree to our{" "}
+                      <Link href="/privacy" className="underline hover:text-foreground transition-colors">
+                        Privacy Policy
+                      </Link>
+                    </p>
+                  </form>
+                )}
+              </div>
+            </motion.div>
           </div>
         </div>
-      </motion.div>
+      </section>
 
-      <footer className="mt-20 text-center text-xs text-muted-foreground">
-        <p>&copy; {new Date().getFullYear()} Formatly. Built with precision for researchers.</p>
-      </footer>
+      <div className="mt-auto">
+        <Footer />
+      </div>
+    </div>
+  )
+}
+
+function ContactCard({ method }: { method: typeof contactMethods[number] }) {
+  return (
+    <div className="group h-full p-5 sm:p-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-default">
+      <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${method.gradient} mb-4`}>
+        <method.icon className={`h-5 w-5 ${method.iconColor}`} />
+      </div>
+      <div className="flex items-center gap-2 mb-1">
+        <h3 className="font-bold text-sm">{method.title}</h3>
+        <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+          {method.badge}
+        </span>
+      </div>
+      <p className="text-xs text-muted-foreground mb-2">{method.description}</p>
+      <p className="text-xs font-medium text-foreground/80">{method.detail}</p>
+      {method.href && (
+        <div className="flex items-center gap-1 mt-3 text-xs font-semibold text-primary group-hover:gap-2 transition-all">
+          Visit <ArrowRight className="h-3 w-3" />
+        </div>
+      )}
     </div>
   )
 }

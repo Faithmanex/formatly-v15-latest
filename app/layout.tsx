@@ -5,7 +5,7 @@ import "./globals.css"
 import { SWRConfig } from "swr"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
-import { SupportWidget } from "@/components/support-widget"
+
 import { AuthProvider } from "@/components/auth-provider"
 
 import { Analytics } from "@vercel/analytics/react"
@@ -126,7 +126,7 @@ export default function RootLayout({
             <AuthProvider>
               {children}
               <Toaster />
-              <SupportWidget />
+
             </AuthProvider>
           </ThemeProvider>
         </SWRConfig>
