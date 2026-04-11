@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Formatly | Format APA, MLA, Chicago & Turabian in Seconds",
     description: "Instantly format your academic and professional research papers. Auto-apply APA, MLA, Chicago, Harvard, and Turabian styles in seconds.",
-    url: "/",
+    url: "https://formatlyapp.com",
     siteName: "Formatly",
     type: "website",
     images: [
@@ -40,6 +40,12 @@ export const metadata: Metadata = {
         alt: "Formatly - Format APA, MLA, Chicago & Turabian in Seconds",
       },
     ],
+  },
+  alternates: {
+    canonical: "https://formatlyapp.com",
+    languages: {
+      en: "https://formatlyapp.com",
+    },
   },
   twitter: {
     card: "summary_large_image",
