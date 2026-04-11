@@ -45,6 +45,7 @@ const TiltCard = ({ children, className = "" }: { children: React.ReactNode; cla
 
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
+import { AIChatbotFAB } from "@/components/ai-chatbot-fab"
 
 
 // Flip Card Carousel Component - Enhanced with Momentum Scrolling, Keyboard Nav, Auto-Pause
@@ -768,6 +769,7 @@ export function LandingPage() {
       </section>
 
       <Footer />
+      <AIChatbotFAB position="bottom-right" />
     </div>
   )
 }
