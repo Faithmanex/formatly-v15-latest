@@ -14,6 +14,11 @@ import { getUserSubscription } from "@/lib/billing"
 import useSWR from "swr"
 import { useAuth } from "@/components/auth-provider"
 
+export const metadata: Metadata = {
+  title: "Contact | Formatly",
+  description: "Get in touch with the Formatly team. We're here to help with any questions about document formatting, pricing, or technical support.",
+}
+
 export default function ContactPage() {
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)

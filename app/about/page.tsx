@@ -1,5 +1,6 @@
 "use client"
 
+import { Metadata } from "next"
 import { motion } from "framer-motion"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
@@ -10,10 +11,15 @@ import { Sparkles, ArrowRight, Zap, Shield, FileText, Clock, CheckCircle, Target
 import Link from "next/link"
 import Image from "next/image"
 
+export const metadata: Metadata = {
+  title: "About | Formatly",
+  description: "Learn about Formatly - the AI-powered document formatting tool that formats APA, MLA, Chicago, Harvard, and Turabian styles in seconds.",
+}
+
 const stats = [
   { label: "Accuracy", value: "99%", icon: Target },
   { label: "Faster formatting", value: "480x", icon: Zap },
-  { label: "Style compliance", value: "98%", icon: FileCheck },
+  { label: "Style compliance", value: "100%", icon: FileCheck },
   { label: "Processing Time", value: "~30s", icon: Clock }
 ]
 

@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.png",
+        url: "https://formatlyapp.com/og-image.png",
         width: 1200,
         height: 630,
         alt: "Formatly - Format APA, MLA, Chicago & Turabian in Seconds",
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     creator: "@formatlyapp",
     images: [
       {
-        url: "/twitter-card-light.svg",
+        url: "https://formatlyapp.com/twitter-card-light.svg",
         width: 800,
         height: 418,
         alt: "Formatly - Format APA, MLA, Chicago & Turabian in Seconds",
