@@ -1,7 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { createSupabaseServerClient } from "@/lib/supabase-server"
-import { getUserSubscription } from "@/lib/billing"
-import { canAccessFeature } from "@/lib/billing"
 
 export const dynamic = "force-dynamic"
 
@@ -9,32 +6,6 @@ const NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createSupabaseServerClient()
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser()
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    const subscription = await getUserSubscription(user.id)
-    const planName = subscription?.plan?.name || null
-
-    if (!canAccessFeature(planName, "ai_assistant")) {
-      console.log("[CHAT] Subscription check - plan:", planName, "subscription:", subscription ? "found" : "null")
-      return NextResponse.json(
-        {
-          error: "AI Assistant requires Pro subscription",
-          details: "The AI Assistant feature is available for Pro plan users. Please upgrade to access this feature.",
-          plan: planName,
-          hasSubscription: !!subscription,
-        },
-        { status: 403 }
-      )
-    }
-
     const { message, context, temperature = 0.7, maxTokens = 2000 } = await request.json()
 
     const apiKey = process.env.NVIDIA_API_KEY
@@ -44,11 +15,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "NVIDIA API key not configured" }, { status: 500 })
     }
 
-    const systemPrompt = "You are Formatly AI, an expert assistant for academic formatting, citation styles (APA, MLA, Chicago, Turabian, Harvard), and document structure. Provide helpful, accurate, and concise information. Use markdown formatting for better readability, including code blocks for examples, bullet points for lists, and proper headings for organization."
-
-    const userPrompt = context 
-      ? `${context}\n\nUser Question: ${message}`
-      : message
+    const systemPrompt = context || "You are Formatly Support AI. Help users with general support questions about Formatly - how to use the app, uploading documents, formatting issues, account questions, billing, and troubleshooting. Keep responses brief and helpful."
 
     const response = await fetch(NVIDIA_API_URL, {
       method: "POST",
@@ -60,7 +27,7 @@ export async function POST(request: NextRequest) {
         model: model || "nvidia/nemotron-3-nano-30b-a3b",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
+          { role: "user", content: message },
         ],
         temperature,
         max_tokens: maxTokens,
@@ -74,11 +41,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to generate AI response" }, { status: 500 })
     }
 
-    if (!response.body) {
+    const responseBody = response.body
+    if (!responseBody) {
       return NextResponse.json({ error: "Streaming not supported" }, { status: 500 })
     }
-
-    const responseBody = response.body
 
     const stream = new ReadableStream({
       async start(controller) {

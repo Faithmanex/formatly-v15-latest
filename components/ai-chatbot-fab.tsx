@@ -191,7 +191,7 @@ export function AIChatbotFAB({ context = "You are Formatly Support AI. Help user
         ? `Relevant information from our knowledge base:\n${relevantInfo}\n\n${context}`
         : context
 
-      const response = await fetch("/api/chat", {
+      const response = await fetch("/api/chat/public", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
