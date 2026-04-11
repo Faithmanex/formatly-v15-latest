@@ -1,6 +1,5 @@
 "use client"
 
-import { Metadata } from "next"
 import { motion } from "framer-motion"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
@@ -10,11 +9,6 @@ import { Badge } from "@/components/ui/badge"
 import { Sparkles, ArrowRight, Zap, Shield, FileText, Clock, CheckCircle, Target, FileCheck } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-
-export const metadata: Metadata = {
-  title: "About | Formatly",
-  description: "Learn about Formatly - the AI-powered document formatting tool that formats APA, MLA, Chicago, Harvard, and Turabian styles in seconds.",
-}
 
 const stats = [
   { label: "Accuracy", value: "99%", icon: Target },
