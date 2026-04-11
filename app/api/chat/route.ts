@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai"
 import { type NextRequest, NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase-server"
 import { getUserSubscription } from "@/lib/billing"
@@ -6,7 +5,7 @@ import { canAccessFeature } from "@/lib/billing"
 
 export const dynamic = "force-dynamic"
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
+const NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,42 +33,81 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { message, context, temperature = 0.1, maxOutputTokens = 2000, topP = 0.3, topK = 40 } = await request.json()
+    const { message, context, temperature = 0.7, maxTokens = 2000 } = await request.json()
 
-    if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json({ error: "Gemini API key not configured" }, { status: 500 })
+    const apiKey = process.env.NVIDIA_API_KEY
+    const model = process.env.NVIDIA_MODEL
+    
+    if (!apiKey) {
+      return NextResponse.json({ error: "NVIDIA API key not configured" }, { status: 500 })
     }
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      systemInstruction: "Please provide a helpful, accurate, and concise response about academic formatting, citation styles, or document structure. Keep your answer brief and to the point and always include examples when relevant.",
-      generationConfig: {
-        temperature,
-        maxOutputTokens,
-        topP,
-        topK,
-      },
-    })
+    const systemPrompt = "You are Formatly AI, an expert assistant for academic formatting, citation styles (APA, MLA, Chicago, Turabian, Harvard), and document structure. Provide helpful, accurate, and concise information. Use markdown formatting for better readability, including code blocks for examples, bullet points for lists, and proper headings for organization."
 
     const userPrompt = context 
-      ? `Context information:\n${context}\n\nUser Question: ${message}`
+      ? `${context}\n\nUser Question: ${message}`
       : message
 
-    const result = await model.generateContentStream(userPrompt)
-    
-    // Create a streaming response
+    const response = await fetch(NVIDIA_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: model || "nvidia/nemotron-3-nano-30b-a3b",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        temperature,
+        max_tokens: maxTokens,
+        stream: true,
+      }),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error("NVIDIA API error:", response.status, errorText)
+      return NextResponse.json({ error: "Failed to generate AI response" }, { status: 500 })
+    }
+
+    if (!response.body) {
+      return NextResponse.json({ error: "Streaming not supported" }, { status: 500 })
+    }
+
     const stream = new ReadableStream({
       async start(controller) {
         const encoder = new TextEncoder()
         
         try {
-          for await (const chunk of result.stream) {
-            const chunkText = chunk.text()
-            if (chunkText) {
-              controller.enqueue(encoder.encode(chunkText))
+          const reader = response.body.getReader()
+          const decoder = new TextDecoder()
+          
+          while (true) {
+            const { done, value } = await reader.read()
+            if (done) break
+            
+            const chunk = decoder.decode(value, { stream: true })
+            if (!chunk) continue
+            
+            const lines = chunk.split("\n").filter(line => line.trim().startsWith("data: "))
+            
+            for (const line of lines) {
+              const data = line.slice(6).trim()
+              if (data === "[DONE]") continue
+              
+              try {
+                const parsed = JSON.parse(data)
+                const content = parsed.choices?.[0]?.delta?.content
+                if (content) {
+                  controller.enqueue(encoder.encode(content))
+                }
+              } catch {
+                // Skip invalid JSON
+              }
             }
           }
-          
           
           controller.close()
         } catch (error) {
@@ -87,7 +125,7 @@ export async function POST(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error("Error calling Gemini API:", error)
+    console.error("Error calling NVIDIA API:", error)
     return NextResponse.json({ error: "Failed to generate AI response" }, { status: 500 })
   }
 }

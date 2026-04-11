@@ -561,10 +561,11 @@ export function MyDocuments() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Search</label>
+                <label htmlFor="search-documents" className="text-sm font-medium mb-2 block">Search</label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
+                    id="search-documents"
                     placeholder="Search documents..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -574,9 +575,9 @@ export function MyDocuments() {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Status</label>
+                <label htmlFor="filter-status" className="text-sm font-medium mb-2 block">Status</label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger id="filter-status">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -590,9 +591,9 @@ export function MyDocuments() {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Style</label>
+                <label htmlFor="filter-style" className="text-sm font-medium mb-2 block">Style</label>
                 <Select value={styleFilter} onValueChange={setStyleFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger id="filter-style">
                     <SelectValue placeholder="Style" />
                   </SelectTrigger>
                   <SelectContent>
@@ -610,9 +611,9 @@ export function MyDocuments() {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Sort By</label>
+                <label htmlFor="sort-by" className="text-sm font-medium mb-2 block">Sort By</label>
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger>
+                  <SelectTrigger id="sort-by">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>

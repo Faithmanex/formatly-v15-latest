@@ -747,9 +747,12 @@ export function canAccessFeature(planName: string | null, feature: PlanFeature):
   const requirements = PLAN_FEATURE_REQUIREMENTS[feature]
   if (!requirements) return false
 
-  const planOrder = ["Free", "Pro", "Business"]
+  const planOrder = ["Free", "Pro", "Business", "Enterprise"]
   const planLevel = planOrder.indexOf(planName)
   const requiredLevel = planOrder.indexOf(requirements.minPlan)
+
+  // Plan not found in order - deny access to be safe
+  if (planLevel === -1) return false
 
   return planLevel >= requiredLevel
 }

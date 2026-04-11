@@ -134,15 +134,7 @@ interface AIChatbotFABProps {
   position?: "bottom-right" | "bottom-left"
 }
 
-declare global {
-  interface Window {
-    puter: {
-      ai: {
-        chat: (message: string, options?: { model?: string; stream?: boolean }) => Promise<any>
-      }
-    }
-  }
-}
+
 
 export function AIChatbotFAB({ context = "You are Formatly Support AI. Help users with general support questions about Formatly - how to use the app, uploading documents, formatting issues, account questions, billing, and troubleshooting. Keep responses brief and helpful.", position = "bottom-right" }: AIChatbotFABProps) {
   const [isOpen, setIsOpen] = useState(false)
@@ -167,7 +159,7 @@ export function AIChatbotFAB({ context = "You are Formatly Support AI. Help user
   }
 
   const handleSendMessage = useCallback(async (content: string) => {
-    if (!content.trim() || isLoading || !window.puter) return
+    if (!content.trim() || isLoading) return
 
     setError(null)
     const userMessage: Message = {
@@ -190,30 +182,47 @@ export function AIChatbotFAB({ context = "You are Formatly Support AI. Help user
     setIsLoading(true)
     setStreamingMessageId(aiMessageId)
 
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
     try {
       const relevantInfo = findRelevantInfo(content)
       const knowledgeContext = relevantInfo 
         ? `Relevant information from our knowledge base:\n${relevantInfo}\n\n${context}`
         : context
-      
-      const fullPrompt = `${knowledgeContext}\n\nUser question: ${content}\n\nProvide a helpful, concise response based on the knowledge base. Be friendly and helpful.`
 
-      const response = await window.puter.ai.chat(fullPrompt, {
-        model: "nvidia/nemotron-3-nano-30b-a3b:free",
-        stream: true,
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: content,
+          context: knowledgeContext,
+        }),
+        signal: controller.signal,
       })
 
+      if (!response.ok) {
+        throw new Error("Failed to get AI response")
+      }
+
+      if (!response.body) {
+        throw new Error("Streaming not supported")
+      }
+
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
       let accumulated = ""
 
-      if (response && typeof response[Symbol.asyncIterator] === "function") {
-        for await (const part of response) {
-          if (part?.text) {
-            accumulated += part.text
-            setMessages((prev) => prev.map((m) => (m.id === aiMessageId ? { ...m, content: accumulated } : m)))
-          }
-        }
-      } else if (typeof response === "string") {
-        accumulated = response
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const chunk = decoder.decode(value, { stream: true })
+        if (!chunk) continue
+
+        accumulated += chunk
         setMessages((prev) => prev.map((m) => (m.id === aiMessageId ? { ...m, content: accumulated } : m)))
       }
 
@@ -396,10 +405,17 @@ export function AIChatbotFAB({ context = "You are Formatly Support AI. Help user
                       <Input
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
-                        placeholder="Type your message..."
-                        onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage(inputValue)}
-                        disabled={isLoading || !window.puter}
+                        placeholder="Type your message... (Shift+Enter for new line)"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault()
+                            handleSendMessage(inputValue)
+                          }
+                        }}
+                        disabled={isLoading}
                         className="flex-1"
+                        aria-label="Type your message. Press Enter to send, Shift+Enter for new line."
+                        aria-describedby="input-hint"
                       />
                       {isLoading ? (
                         <Button onClick={handleStopStreaming} variant="outline" size="sm" className="px-3">
@@ -408,7 +424,7 @@ export function AIChatbotFAB({ context = "You are Formatly Support AI. Help user
                       ) : (
                         <Button
                           onClick={() => handleSendMessage(inputValue)}
-                          disabled={!inputValue.trim() || !window.puter}
+                          disabled={!inputValue.trim()}
                           size="sm"
                           className="px-3"
                         >
