@@ -575,9 +575,9 @@ export function MyDocuments() {
               </div>
 
               <div>
-                <label htmlFor="filter-status" className="text-sm font-medium mb-2 block">Status</label>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger id="filter-status">
+                <label id="filter-status-label" className="text-sm font-medium mb-2 block">Status</label>
+                <Select value={statusFilter} onValueChange={setStatusFilter} aria-labelledby="filter-status-label">
+                  <SelectTrigger>
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -591,9 +591,9 @@ export function MyDocuments() {
               </div>
 
               <div>
-                <label htmlFor="filter-style" className="text-sm font-medium mb-2 block">Style</label>
-                <Select value={styleFilter} onValueChange={setStyleFilter}>
-                  <SelectTrigger id="filter-style">
+                <label id="filter-style-label" className="text-sm font-medium mb-2 block">Style</label>
+                <Select value={styleFilter} onValueChange={setStyleFilter} aria-labelledby="filter-style-label">
+                  <SelectTrigger>
                     <SelectValue placeholder="Style" />
                   </SelectTrigger>
                   <SelectContent>
@@ -611,9 +611,9 @@ export function MyDocuments() {
               </div>
 
               <div>
-                <label htmlFor="sort-by" className="text-sm font-medium mb-2 block">Sort By</label>
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger id="sort-by">
+                <label id="sort-by-label" className="text-sm font-medium mb-2 block">Sort By</label>
+                <Select value={sortBy} onValueChange={setSortBy} aria-labelledby="sort-by-label">
+                  <SelectTrigger>
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
