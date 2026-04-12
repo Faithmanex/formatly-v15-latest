@@ -6,7 +6,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, ArrowRight, Zap, Shield, FileText, Clock, CheckCircle, Target, FileCheck } from "lucide-react"
+import { Sparkles, ArrowRight, Zap, Shield, FileText, Clock, CheckCircle, Target, FileCheck, Play } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -224,6 +224,44 @@ export default function AboutPage() {
                 </Card>
               </motion.div>
             ))}
+          </div>
+        </section>
+
+        {/* How It Works Video Section */}
+        <section className="px-4 mb-32 relative z-10">
+          <div className="max-w-5xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-8 sm:mb-12"
+            >
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">
+                See Formatly in Action
+              </h2>
+              <p className="text-muted-foreground text-lg sm:text-xl max-w-2xl mx-auto">
+                Watch how Formatly transforms your documents in seconds
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-border/50 group"
+            >
+              <video
+                className="w-full h-full object-cover"
+                controls
+                playsInline
+                preload="metadata"
+                poster="/og-image.png"
+              >
+                <source src="/formatly-demo.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </motion.div>
           </div>
         </section>
 

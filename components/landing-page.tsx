@@ -15,7 +15,6 @@ import {
   FileText,
   Zap,
   ArrowRight,
-  Play,
   Shield,
   Target,
 } from "lucide-react"
@@ -494,7 +493,6 @@ export function LandingPage() {
     ([, id]: [string, string]) => getUserUsageStats(id),
     { revalidateOnFocus: false, dedupingInterval: 60_000 }
   )
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -708,76 +706,6 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works Video Section */}
-      <section className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 relative">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-8 sm:mb-12 px-4"
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
-              See Formatly in Action
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Watch how Formatly transforms your documents in seconds
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-border/50"
-          >
-            <video
-              className="w-full h-full object-cover"
-              controls
-              preload="metadata"
-              poster="/og-image.png"
-            >
-              <source src="/formatly-demo.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </motion.div>
-
-          {/* How It Works Steps */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-8 sm:mt-12"
-          >
-            <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-8">
-              {[
-                { step: 1, label: "Create Account" },
-                { step: 2, label: "Select Style" },
-                { step: 3, label: "Input Text" },
-                { step: 4, label: "Preview" },
-                { step: 5, label: "Download" },
-              ].map((item, index) => (
-                <div key={item.step} className="flex items-center">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm sm:text-base font-bold">
-                      {item.step}
-                    </div>
-                    <span className="text-sm sm:text-base font-medium text-foreground">
-                      {item.label}
-                    </span>
-                  </div>
-                  {index < 4 && (
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 mx-2 sm:mx-3 text-muted-foreground" />
-                  )}
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* Stats Section - Updated with AnimatedCounter */}
       <section className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 bg-muted/20 backdrop-blur-sm relative">
         <div className="absolute inset-0 bg-dot-pattern dark:opacity-[0.04] opacity-40" />
@@ -857,20 +785,10 @@ export function LandingPage() {
               playsInline
               preload="metadata"
               poster="/og-image.png"
-              onPlay={() => setIsVideoPlaying(true)}
-              onPause={() => setIsVideoPlaying(false)}
-              onEnded={() => setIsVideoPlaying(false)}
             >
               <source src="/formatly-demo.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
-            {!isVideoPlaying && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/20 transition-colors pointer-events-none">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/90 flex items-center justify-center shadow-lg">
-                  <Play className="w-8 h-8 sm:w-10 sm:h-10 text-primary-foreground ml-1" />
-                </div>
-              </div>
-            )}
           </motion.div>
 
           {/* How It Works Steps */}
