@@ -522,33 +522,35 @@ export function LandingPage() {
           <div className="absolute bottom-20 right-10 w-64 h-64 sm:w-96 sm:h-96 bg-secondary/5 rounded-full blur-3xl animate-float-slower" />
           
           {/* Floating Citation Style Bubbles */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute inset-0 overflow-visible pointer-events-none">
             {[
-              { label: "APA", x: "10%", y: "15%", delay: "0s", duration: "15s" },
-              { label: "MLA", x: "85%", y: "20%", delay: "2s", duration: "18s" },
-              { label: "Chicago", x: "75%", y: "70%", delay: "4s", duration: "16s" },
-              { label: "Harvard", x: "5%", y: "75%", delay: "3s", duration: "20s" },
-              { label: "Turabian", x: "50%", y: "85%", delay: "5s", duration: "17s" },
-            ].map((style, index) => (
+              { label: "APA", x: "5%", y: "20%", delay: "0s", duration: "15s" },
+              { label: "MLA", x: "88%", y: "25%", delay: "2s", duration: "18s" },
+              { label: "Chicago", x: "80%", y: "65%", delay: "4s", duration: "16s" },
+              { label: "Harvard", x: "8%", y: "70%", delay: "3s", duration: "20s" },
+              { label: "Turabian", x: "50%", y: "90%", delay: "5s", duration: "17s" },
+            ].map((style) => (
               <motion.div
                 key={style.label}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ 
-                  opacity: [0.3, 0.6, 0.3],
-                  y: [0, -20, 0],
-                  x: [0, 10, 0],
+                  opacity: [0.5, 0.9, 0.5],
+                  y: [0, -25, 0],
+                  x: [0, 15, 0],
+                  scale: [1, 1.05, 1],
                 }}
                 transition={{
-                  opacity: { repeat: Infinity, duration: 3, ease: "easeInOut" },
+                  opacity: { repeat: Infinity, duration: 4, ease: "easeInOut" },
                   y: { repeat: Infinity, duration: parseFloat(style.duration), ease: "easeInOut" },
-                  x: { repeat: Infinity, duration: parseFloat(style.duration) * 1.2, ease: "easeInOut" },
+                  x: { repeat: Infinity, duration: parseFloat(style.duration) * 1.3, ease: "easeInOut" },
+                  scale: { repeat: Infinity, duration: 5, ease: "easeInOut" },
                   delay: parseFloat(style.delay),
                 }}
-                className="absolute"
+                className="absolute z-0"
                 style={{ left: style.x, top: style.y }}
               >
-                <div className="bg-card/80 backdrop-blur-sm border border-border/50 rounded-full px-4 sm:px-6 py-2 sm:py-3 shadow-lg">
-                  <span className="text-xs sm:text-sm font-semibold text-muted-foreground whitespace-nowrap">
+                <div className="bg-primary/15 dark:bg-primary/10 border border-primary/30 rounded-full px-5 py-2.5 shadow-lg backdrop-blur-md">
+                  <span className="text-sm font-bold text-primary whitespace-nowrap">
                     {style.label}
                   </span>
                 </div>
