@@ -854,10 +854,12 @@ export function LandingPage() {
             <video
               className="w-full h-full object-cover"
               controls
+              playsInline
               preload="metadata"
               poster="/og-image.png"
               onPlay={() => setIsVideoPlaying(true)}
               onPause={() => setIsVideoPlaying(false)}
+              onEnded={() => setIsVideoPlaying(false)}
             >
               <source src="/formatly-demo.mp4" type="video/mp4" />
               Your browser does not support the video tag.
