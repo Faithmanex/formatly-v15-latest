@@ -242,7 +242,20 @@ npm start
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+PROPRIETARY LICENSE - ALL RIGHTS RESERVED
+
+Copyright (c) 2026 Formatly
+
+NOTICE: This software and all associated documentation are proprietary and confidential. Unauthorized copying, distribution, modification, or use of this software, via any medium, is strictly prohibited.
+
+BY ACCESSING THIS CODE, YOU AGREE THAT:
+1. This software may not be used, copied, modified, distributed, or reproduced in any way
+2. Any use without explicit written permission from the copyright holder is prohibited
+3. Violators may be subject to legal action and liable for damages
+
+For licensing inquiries, contact: formatlyapp@gmail.com
+
+This license is effective immediately and supersedes any prior agreements.
 
 ## 🆘 Support
 
