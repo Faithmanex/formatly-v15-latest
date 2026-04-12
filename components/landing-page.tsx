@@ -520,6 +520,41 @@ export function LandingPage() {
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-20 left-10 w-48 h-48 sm:w-72 sm:h-72 bg-primary/5 rounded-full blur-3xl animate-float-slow" />
           <div className="absolute bottom-20 right-10 w-64 h-64 sm:w-96 sm:h-96 bg-secondary/5 rounded-full blur-3xl animate-float-slower" />
+          
+          {/* Floating Citation Style Bubbles */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[
+              { label: "APA", x: "10%", y: "15%", delay: "0s", duration: "15s" },
+              { label: "MLA", x: "85%", y: "20%", delay: "2s", duration: "18s" },
+              { label: "Chicago", x: "75%", y: "70%", delay: "4s", duration: "16s" },
+              { label: "Harvard", x: "5%", y: "75%", delay: "3s", duration: "20s" },
+              { label: "Turabian", x: "50%", y: "85%", delay: "5s", duration: "17s" },
+            ].map((style, index) => (
+              <motion.div
+                key={style.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ 
+                  opacity: [0.3, 0.6, 0.3],
+                  y: [0, -20, 0],
+                  x: [0, 10, 0],
+                }}
+                transition={{
+                  opacity: { repeat: Infinity, duration: 3, ease: "easeInOut" },
+                  y: { repeat: Infinity, duration: parseFloat(style.duration), ease: "easeInOut" },
+                  x: { repeat: Infinity, duration: parseFloat(style.duration) * 1.2, ease: "easeInOut" },
+                  delay: parseFloat(style.delay),
+                }}
+                className="absolute"
+                style={{ left: style.x, top: style.y }}
+              >
+                <div className="bg-card/80 backdrop-blur-sm border border-border/50 rounded-full px-4 sm:px-6 py-2 sm:py-3 shadow-lg">
+                  <span className="text-xs sm:text-sm font-semibold text-muted-foreground whitespace-nowrap">
+                    {style.label}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         <div className="max-w-7xl mx-auto">
