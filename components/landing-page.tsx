@@ -803,7 +803,7 @@ export function LandingPage() {
               {[
                 { step: 1, label: "Create Account" },
                 { step: 2, label: "Select Style" },
-                { step: 3, label: "Input Text" },
+                { step: 3, label: "Upload Document" },
                 { step: 4, label: "Preview" },
                 { step: 5, label: "Download" },
               ].map((item, index) => (
