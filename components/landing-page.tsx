@@ -16,6 +16,8 @@ import {
   Zap,
   ArrowRight,
   Play,
+  Shield,
+  Target,
 } from "lucide-react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
@@ -492,6 +494,7 @@ export function LandingPage() {
     ([, id]: [string, string]) => getUserUsageStats(id),
     { revalidateOnFocus: false, dedupingInterval: 60_000 }
   )
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -625,11 +628,31 @@ export function LandingPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 sm:mb-12 max-w-3xl mx-auto px-4"
+                  className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto px-4"
                 >
-                  Let Formatly handle the formatting while you focus on your research. Our AI ensures precision, speed,
-                  and compliance with every major academic style—APA, MLA, Chicago, Harvard, and Turabian.
+                  Let Formatly handle the formatting while you focus on your research. Our rule-based engine ensures precision, speed, and compliance with every major academic style—APA, MLA, Chicago, Harvard, and Turabian.
                 </motion.p>
+
+                {/* Value Propositions */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.25 }}
+                  className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-8 sm:mb-12 px-4"
+                >
+                  <div className="flex items-center gap-2 text-sm sm:text-base text-muted-foreground">
+                    <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                    <span>100% Privacy</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm sm:text-base text-muted-foreground">
+                    <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                    <span>Up to 3 documents free</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm sm:text-base text-muted-foreground">
+                    <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                    <span>Guaranteed accuracy</span>
+                  </div>
+                </motion.div>
 
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -719,6 +742,39 @@ export function LandingPage() {
               Your browser does not support the video tag.
             </video>
           </motion.div>
+
+          {/* How It Works Steps */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mt-8 sm:mt-12"
+          >
+            <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-8">
+              {[
+                { step: 1, label: "Create Account" },
+                { step: 2, label: "Select Style" },
+                { step: 3, label: "Input Text" },
+                { step: 4, label: "Preview" },
+                { step: 5, label: "Download" },
+              ].map((item, index) => (
+                <div key={item.step} className="flex items-center">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm sm:text-base font-bold">
+                      {item.step}
+                    </div>
+                    <span className="text-sm sm:text-base font-medium text-foreground">
+                      {item.label}
+                    </span>
+                  </div>
+                  {index < 4 && (
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 mx-2 sm:mx-3 text-muted-foreground" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -756,7 +812,7 @@ export function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12 sm:mb-16 px-4"
+            className="text-center mb-8 sm:mb-12 px-4"
           >
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
               Why Choose Formatly?
@@ -767,6 +823,86 @@ export function LandingPage() {
           </motion.div>
 
           <Features />
+        </div>
+      </section>
+
+      {/* How It Works Video Section */}
+      <section className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 relative">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-8 sm:mb-12 px-4"
+          >
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+              See Formatly in Action
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+              Watch how Formatly transforms your documents in seconds
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-border/50 group"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 z-10 pointer-events-none" />
+            <video
+              className="w-full h-full object-cover"
+              controls
+              preload="metadata"
+              poster="/og-image.png"
+              onPlay={() => setIsVideoPlaying(true)}
+              onPause={() => setIsVideoPlaying(false)}
+            >
+              <source src="/formatly-demo.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            {!isVideoPlaying && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/20 transition-colors pointer-events-none">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/90 flex items-center justify-center shadow-lg">
+                  <Play className="w-8 h-8 sm:w-10 sm:h-10 text-primary-foreground ml-1" />
+                </div>
+              </div>
+            )}
+          </motion.div>
+
+          {/* How It Works Steps */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mt-8 sm:mt-12"
+          >
+            <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-8">
+              {[
+                { step: 1, label: "Create Account" },
+                { step: 2, label: "Select Style" },
+                { step: 3, label: "Input Text" },
+                { step: 4, label: "Preview" },
+                { step: 5, label: "Download" },
+              ].map((item, index) => (
+                <div key={item.step} className="flex items-center">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm sm:text-base font-bold">
+                      {item.step}
+                    </div>
+                    <span className="text-sm sm:text-base font-medium text-foreground">
+                      {item.label}
+                    </span>
+                  </div>
+                  {index < 4 && (
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 mx-2 sm:mx-3 text-muted-foreground" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 

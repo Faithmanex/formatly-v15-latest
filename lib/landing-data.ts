@@ -10,6 +10,9 @@ import {
   GraduationCap,
   FileCheck,
   BookMarked,
+  Building2,
+  Briefcase,
+  PenTool,
 } from "lucide-react"
 
 export const features = [
@@ -160,31 +163,90 @@ export const pricingPlans = [
 export const useCases = [
   {
     icon: GraduationCap,
-    title: "Thesis & Dissertations",
+    title: "Students",
     description:
-      "Perfect for lengthy academic works. Formatly handles complex formatting requirements for theses across all major citation styles.",
+      "High school, homeschool, college, or PhD level. APA, MLA, Chicago and more — done right every time. Stop losing marks on formatting.",
     color: "text-blue-600 dark:text-blue-400",
     bgColor: "bg-blue-50 dark:bg-blue-950/50",
+  },
+  {
+    icon: BookOpen,
+    title: "Academic Professionals",
+    description:
+      "Researchers, lecturers, and academic writers. Focus on your analysis instead of margin alignment.",
+    color: "text-purple-600 dark:text-purple-400",
+    bgColor: "bg-purple-50 dark:bg-purple-950/50",
+  },
+  {
+    icon: Building2,
+    title: "Institutions",
+    description:
+      "Universities and research institutions. Streamline document formatting across departments with centralized style management.",
+    color: "text-green-600 dark:text-green-400",
+    bgColor: "bg-green-50 dark:bg-green-950/50",
+  },
+  {
+    icon: PenTool,
+    title: "Freelancers & Agencies",
+    description:
+      "Freelance editors and formatting agencies. Process client documents faster with accurate results every time.",
+    color: "text-orange-600 dark:text-orange-400",
+    bgColor: "bg-orange-50 dark:bg-orange-950/50",
+  },
+  {
+    icon: BookMarked,
+    title: "Self-Published Authors",
+    description:
+      "Indie authors and content creators. Get KDP-ready manuscripts with print-ready formatting — no designer needed.",
+    color: "text-indigo-600 dark:text-indigo-400",
+    bgColor: "bg-indigo-50 dark:bg-indigo-950/50",
   },
   {
     icon: FileCheck,
     title: "Journal Submissions",
     description:
       "Meet strict journal guidelines instantly. Ensure your manuscript meets every formatting requirement before submission.",
-    color: "text-green-600 dark:text-green-400",
-    bgColor: "bg-green-50 dark:bg-green-950/50",
-  },
-  {
-    icon: BookMarked,
-    title: "Research Papers",
-    description:
-      "Format research papers with precision. Support for all academic styles ensures your work looks professional and polished.",
-    color: "text-purple-600 dark:text-purple-400",
-    bgColor: "bg-purple-50 dark:bg-purple-950/50",
+    color: "text-teal-600 dark:text-teal-400",
+    bgColor: "bg-teal-50 dark:bg-teal-950/50",
   },
 ]
 
 export const faqs = [
+  {
+    question: "What does Formatly actually do?",
+    answer:
+      "Formatly formats your document — margins, spacing, fonts, headings, page layout, and structure — all matched to your chosen style (APA, MLA, Chicago, etc.). We don't edit your writing, check grammar, or validate citations. You write it; we make it look right.",
+  },
+  {
+    question: "Do I need to know anything about formatting?",
+    answer:
+      "Not at all. If you can paste text and click buttons, you can use Formatly. Our wizard walks you through every step — you don't need to know margin sizes, heading styles, or spacing rules.",
+  },
+  {
+    question: "What gets formatted automatically?",
+    answer:
+      "Margins, fonts, spacing, headings, page numbers, title pages, and structural layout — all applied exactly to published style guide rules. You focus on your writing; we handle the tedious formatting.",
+  },
+  {
+    question: "What doesn't Formatly do?",
+    answer:
+      "We format documents, not write them. We don't generate citations, write reference entries, create content for title pages or abstracts, or check grammar and spelling. Your writing is your responsibility — the formatting is ours.",
+  },
+  {
+    question: "How does pricing work?",
+    answer:
+      "Documents up to 3 per month are free with our basic plan. Upgrade to Pro for 50 documents per month with all styles. No per-page or per-word charges. Only you can see your documents.",
+  },
+  {
+    question: "Is my work secure?",
+    answer:
+      "Yes. Your documents are processed in real-time and only you can access them. We never see, store, or share your content — your work stays yours.",
+  },
+  {
+    question: "What is tracked changes?",
+    answer:
+      "Tracked Changes shows every formatting adjustment we make to your document — so you can see exactly what changed and approve or reject each change before finalizing your file.",
+  },
   {
     question: "Which citation styles are supported?",
     answer:
@@ -196,24 +258,9 @@ export const faqs = [
       "Yes. You can convert your document between any supported style in one click. All headings, citations, and references update automatically — no need to re-upload your document.",
   },
   {
-    question: "Is my data secure?",
-    answer:
-      "Yes, absolutely. We use enterprise-grade end-to-end encryption for all documents. Your files are never stored on our servers longer than necessary, and we comply with GDPR, CCPA, and other data protection regulations.",
-  },
-  {
-    question: "Can I use Formatly offline?",
-    answer:
-      "Currently, Formatly requires an internet connection. However, we're working on an offline mode for our Professional and Team plans. You can download your formatted documents and work with them offline.",
-  },
-  {
     question: "How long does formatting take?",
     answer:
       "Most documents are formatted in about 30 seconds. The time depends on document size and length, but our engine is optimised for speed without sacrificing accuracy.",
-  },
-  {
-    question: "Can I collaborate with my team?",
-    answer:
-      "Yes! Our Team plan includes real-time collaboration features. You can invite team members, share documents, and track changes together. Perfect for research groups and co-authored papers.",
   },
   {
     question: "What file formats do you support?",

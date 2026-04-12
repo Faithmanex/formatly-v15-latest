@@ -24,11 +24,11 @@ const KNOWLEDGE_BASE = {
     business: "Business plan: $39/month ($390/year), unlimited documents, team collaboration, centralized billing, SSO, enterprise security."
   },
   
-  supported_styles: "APA 7th edition, MLA 9th edition, Chicago Manual of Style, Harvard, and Turabian. You can convert between styles in one click.",
+  supported_styles: "You can format your documents in 5 citation styles: APA 7th Edition, MLA 9th Edition, Chicago 17th Edition, Harvard, and Turabian. We're working on adding more styles soon.",
   
   file_formats: "Formatly supports Word (.docx) files only. Upload your .docx document and download the formatted version.",
   
-  security: "Yes, we use enterprise-grade end-to-end encryption. Files are not stored longer than necessary. We comply with GDPR and CCPA.",
+  security: "Yes, we use enterprise-grade end-to-end encryption. Files are not stored longer than necessary. We comply with GDPR and CCPA. Your documents are processed in real-time and only you can access them - we never see, store, or share your content.",
   
   speed: "Most documents format in about 30 seconds. Time depends on document size.",
   
@@ -45,6 +45,8 @@ const KNOWLEDGE_BASE = {
   collaboration: "Team collaboration is available on the Business plan. Invite team members, share documents, and track changes together.",
   
   ai_assistant: "The AI Assistant is available on Pro and Business plans. It provides intelligent suggestions for formatting and document structure.",
+  
+  tracked_changes: "Tracked Changes shows every formatting adjustment we make to your document - so you can see exactly what changed and approve or reject each change before finalizing your file.",
 }
 
 const FAQ = [
@@ -56,6 +58,7 @@ const FAQ = [
   { q: "How long does formatting take?", a: KNOWLEDGE_BASE.speed },
   { q: "Can I switch to a different style?", a: KNOWLEDGE_BASE.switching_styles },
   { q: "How does the AI assistant work?", a: KNOWLEDGE_BASE.ai_assistant },
+  { q: "What is tracked changes?", a: KNOWLEDGE_BASE.tracked_changes },
 ]
 
 const findRelevantInfo = (query: string): string => {
@@ -84,6 +87,9 @@ const findRelevantInfo = (query: string): string => {
   }
   if (q.includes("ai") || q.includes("assistant") || q.includes("help")) {
     return KNOWLEDGE_BASE.ai_assistant
+  }
+  if (q.includes("track") || q.includes("change")) {
+    return KNOWLEDGE_BASE.tracked_changes
   }
   if (q.includes("about") || q.includes("what is")) {
     return KNOWLEDGE_BASE.about
