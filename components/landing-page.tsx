@@ -15,6 +15,7 @@ import {
   FileText,
   Zap,
   ArrowRight,
+  Play,
 } from "lucide-react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
@@ -680,6 +681,43 @@ export function LandingPage() {
               <span className="text-base sm:text-xl md:text-2xl font-bold">Harvard</span>
               <span className="text-base sm:text-xl md:text-2xl font-bold">Turabian</span>
             </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* How It Works Video Section */}
+      <section className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 relative">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-8 sm:mb-12 px-4"
+          >
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
+              See Formatly in Action
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+              Watch how Formatly transforms your documents in seconds
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-border/50"
+          >
+            <video
+              className="w-full h-full object-cover"
+              controls
+              preload="metadata"
+              poster="/og-image.png"
+            >
+              <source src="/formatly-demo.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
           </motion.div>
         </div>
       </section>
