@@ -665,7 +665,7 @@ export function LandingPage() {
                   transition={{ duration: 0.5, delay: 0.2 }}
                   className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto px-4"
                 >
-                  Let Formatly handle the formatting while you focus on your research. Our rule-based engine ensures precision, speed, and compliance with every major academic style—APA, MLA, Chicago, Harvard, and Turabian.
+                  Let Formatly handle the formatting while you focus on your research. Our rule-based engine ensures precision and speed—APA, MLA, Chicago, Harvard, and Turabian.
                 </motion.p>
 
                 {/* Value Propositions */}
