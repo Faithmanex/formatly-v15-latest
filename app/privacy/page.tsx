@@ -8,7 +8,11 @@ export const metadata: Metadata = {
 }
 
 export default function PrivacyPolicyPage() {
-  const lastUpdated = "March 1, 2026"
+  const lastUpdated = new Date().toLocaleDateString("en-US", { 
+    year: "numeric", 
+    month: "long", 
+    day: "numeric" 
+  })
 
   return (
     <div className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8">
@@ -82,7 +86,7 @@ export default function PrivacyPolicyPage() {
                We recognize that academic and professional documents are highly sensitive. This section explicitly defines our handling of your Document Payload.
             </p>
              <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-              <li><strong>Ephemerality & Processing:</strong> Document Payloads are transferred over TLS 1.3 encryption directly into our secure, isolated processing pipelines. They reside in volataile memory briefly during active parsing and formatting before being outputted back to you. They are then securely stored within segregated cloud buckets utilizing strict Row-Level Security (RLS) policies.</li>
+              <li><strong>Ephemerality & Processing:</strong> Document Payloads are transferred over TLS 1.3 encryption directly into our secure, isolated processing pipelines. They reside in volatile memory briefly during active parsing and formatting before being outputted back to you. They are then securely stored within segregated cloud buckets utilizing strict Row-Level Security (RLS) policies.</li>
               <li><strong>Zero Foundation Model Training:</strong> Under absolutely no circumstances do we harvest, mine, scrape, or otherwise utilize your Document Payload to train, fine-tune, or calibrate our foundational Large Language Models (LLMs) or heuristics algorithms.</li>
               <li><strong>Isolation Guarantee:</strong> Your Document Payload is exclusively tied to your authenticated user identity. Our architectural design prohibits cross-tenant data spillage. No other user on the Formatly platform can query, access, or derive insight from your stored documents.</li>
             </ul>
@@ -177,7 +181,7 @@ export default function PrivacyPolicyPage() {
               10. Contact Details & Privacy Officer
             </h2>
              <p className="text-muted-foreground leading-relaxed">
-               For escalations, formal GDRP Article 27 inquiries, or concerns regarding systemic privacy vulnerabilities, you must contact our dedicated compliance desk:
+               For escalations, formal GDPR Article 27 inquiries, or concerns regarding systemic privacy vulnerabilities, you must contact our dedicated compliance desk:
             </p>
             <div className="mt-4 p-4 bg-muted/50 rounded-lg border border-border inline-block min-w-[300px]">
                <p className="font-medium text-foreground text-lg mb-1">Formatly Data Protection Officer</p>

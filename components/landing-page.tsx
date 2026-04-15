@@ -87,13 +87,7 @@ const FlipCardCarousel = () => {
       title: "Export Instantly",
       subtitle: "Download clean, publication-ready files.",
       number: 4,
-      imageUrl: "https://images.unsplash.com/photo-1606857521015-7f9fdf423740?auto=format&fit=crop&q=80&w=800&h=600",
-    },
-    {
-      title: "Share & Collaborate",
-      subtitle: "Share, review, and finalize with your team.",
-      number: 5,
-      imageUrl: "https://images.unsplash.com/photo-1522071823991-b99c5517d815?auto=format&fit=crop&q=80&w=800&h=600",
+      imageUrl: "/download-card.svg",
     },
   ]
 
@@ -645,7 +639,7 @@ export function LandingPage() {
                     className="mb-4 sm:mb-6 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm rounded-full shadow-lg"
                   >
                     <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 inline" />
-                    New: AI-Powered Formatting
+                    New: Tracked Changes & AI-Powered Formatting
                   </Badge>
                 </motion.div>
 
