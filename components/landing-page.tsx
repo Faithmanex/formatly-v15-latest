@@ -524,11 +524,11 @@ export function LandingPage() {
           {/* Floating Citation Style Bubbles */}
           <div className="absolute inset-0 overflow-visible pointer-events-none">
             {[
-              { label: "APA", x: "5%", y: "20%", delay: "0s", duration: "15s" },
-              { label: "MLA", x: "88%", y: "25%", delay: "2s", duration: "18s" },
-              { label: "Chicago", x: "80%", y: "65%", delay: "4s", duration: "16s" },
-              { label: "Harvard", x: "8%", y: "70%", delay: "3s", duration: "20s" },
-              { label: "Turabian", x: "50%", y: "90%", delay: "5s", duration: "17s" },
+              { label: "APA", x: "3%", y: "15%", delay: "0s", duration: "15s" },
+              { label: "MLA", x: "85%", y: "12%", delay: "2s", duration: "18s" },
+              { label: "Chicago", x: "75%", y: "55%", delay: "4s", duration: "16s" },
+              { label: "Harvard", x: "5%", y: "60%", delay: "3s", duration: "20s" },
+              { label: "Turabian", x: "45%", y: "80%", delay: "5s", duration: "17s" },
             ].map((style) => (
               <motion.div
                 key={style.label}
@@ -549,8 +549,8 @@ export function LandingPage() {
                 className="absolute z-0"
                 style={{ left: style.x, top: style.y }}
               >
-                <div className="bg-primary/15 dark:bg-primary/10 border border-primary/30 rounded-full px-5 py-2.5 shadow-lg backdrop-blur-md">
-                  <span className="text-sm font-bold text-primary whitespace-nowrap">
+                <div className="bg-primary/20 dark:bg-primary/15 border border-primary/40 rounded-full px-4 py-2 shadow-lg backdrop-blur-md sm:px-5 sm:py-2.5">
+                  <span className="text-xs font-bold text-primary whitespace-nowrap sm:text-sm">
                     {style.label}
                   </span>
                 </div>
