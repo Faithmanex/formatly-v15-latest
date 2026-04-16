@@ -251,16 +251,13 @@ export default function AboutPage() {
               transition={{ duration: 0.5 }}
               className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-border/50 group"
             >
-              <video
-                className="w-full h-full object-cover"
-                controls
-                playsInline
-                preload="metadata"
-                poster="/og-image.png"
-              >
-                <source src="/formatly-demo.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+              <iframe
+                className="w-full h-full"
+                src="https://www.youtube.com/embed/YRWLfOx_g34"
+                title="Formatly Demo - AI-Powered Document Formatting"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
             </motion.div>
           </div>
         </section>

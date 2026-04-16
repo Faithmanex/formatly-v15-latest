@@ -10,3 +10,4 @@ Disallow: /admin/
 
 # Sitemap
 Sitemap: https://formatlyapp.com/sitemap.xml
+Sitemap: https://formatlyapp.com/video-sitemap.xml
