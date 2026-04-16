@@ -9,25 +9,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   async redirects() {
-    return [
-      {
-        source: '/:path*',
-        destination: 'https://formatlyapp.com/:path*',
-        permanent: true,
-        has: [
-          { type: 'host', value: 'formatlyapp.com' },
-          { type: 'header', key: 'x-forwarded-proto', value: 'http' },
-        ],
-      },
-      {
-        source: '/:path*',
-        destination: 'https://formatlyapp.com/:path*',
-        permanent: true,
-        has: [
-          { type: 'host', value: 'www.formatlyapp.com' },
-        ],
-      },
-    ]
+    return []
   },
   typescript: {
     ignoreBuildErrors: false,

@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Disallow admin/private routes
+Disallow: /api/
+Disallow: /auth/
+Disallow: /dashboard/
+Disallow: /my-documents/
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://formatlyapp.com/sitemap.xml
