@@ -639,7 +639,7 @@ export function LandingPage() {
                     className="mb-4 sm:mb-6 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm rounded-full shadow-lg"
                   >
                     <Zap className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 inline" />
-                    New: Tracked Changes & AI-Powered Formatting
+                    New: Tracked Changes
                   </Badge>
                 </motion.div>
 
